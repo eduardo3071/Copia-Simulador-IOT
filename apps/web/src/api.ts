@@ -49,10 +49,13 @@ export class ApiError extends Error {
   }
 }
 
+/** Lets the browser through ngrok's free-plan warning page when the API is exposed with an ngrok tunnel; other hosts ignore it. */
+export const API_HEADERS = { "ngrok-skip-browser-warning": "1" };
+
 async function request<T>(method: string, url: string, body?: unknown): Promise<T> {
   const response = await fetch(url, {
     method,
-    headers: body === undefined ? {} : { "content-type": "application/json" },
+    headers: body === undefined ? API_HEADERS : { ...API_HEADERS, "content-type": "application/json" },
     ...(body === undefined ? {} : { body: JSON.stringify(body) }),
   });
   const text = await response.text();
@@ -75,7 +78,7 @@ export const api = {
   compileStatus: (id: string) => request<CompileJob>("GET", `/api/compile/${id}`),
   cancelCompile: (id: string) => request<CompileJob>("DELETE", `/api/compile/${id}`),
   artifact: async (hash: string) => {
-    const response = await fetch(`/api/artifacts/${hash}.hex`);
+    const response = await fetch(`/api/artifacts/${hash}.hex`, { headers: API_HEADERS });
     if (!response.ok) throw new ApiError("Artefato não encontrado", response.status, undefined);
     return response.text();
   },
@@ -83,7 +86,7 @@ export const api = {
   fabrication: async (project: Project) => {
     const response = await fetch("/api/fabrication", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { ...API_HEADERS, "content-type": "application/json" },
       body: JSON.stringify({ project }),
     });
     if (!response.ok) throw new ApiError(`Falha ao gerar arquivos (HTTP ${response.status})`, response.status, undefined);

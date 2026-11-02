@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { api, downloadBlob } from "../api.ts";
+import { API_HEADERS, api, downloadBlob } from "../api.ts";
 import { isDirty, useApp, useProject } from "../store.ts";
 
 export function Toolbar({ onOpenProjects }: { onOpenProjects: () => void }) {
@@ -22,7 +22,7 @@ export function Toolbar({ onOpenProjects }: { onOpenProjects: () => void }) {
 
   const exportJson = async () => {
     await save();
-    const response = await fetch(api.exportUrl(project.id));
+    const response = await fetch(api.exportUrl(project.id), { headers: API_HEADERS });
     const name = /filename="([^"]+)"/.exec(response.headers.get("content-disposition") ?? "")?.[1] ?? "projeto.json";
     downloadBlob(await response.blob(), name);
   };

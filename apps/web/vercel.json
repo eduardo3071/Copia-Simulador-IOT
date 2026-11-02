@@ -1,3 +1,3 @@
 {
-  "rewrites": [{ "source": "/api/:path*", "destination": "https://SEU-USUARIO-NOME-DO-SPACE.hf.space/api/:path*" }]
+  "rewrites": [{ "source": "/api/:path*", "destination": "https://clique-lukewarm-frail.ngrok-free.dev/api/:path*" }]
 }
