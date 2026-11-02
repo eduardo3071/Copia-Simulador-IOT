@@ -2,6 +2,13 @@
 
 O site (`apps/web`) é estático e vai para a Vercel. A API (`apps/api`) precisa de servidor com disco e do `arduino-cli`, então roda num Hugging Face Space (Docker, plano gratuito). A Vercel encaminha `/api/*` para o Space (`apps/web/vercel.json`), e por isso não há CORS a configurar.
 
+## Atenção: Space com Docker exige o plano PRO
+Em novembro de 2026 o Hugging Face pede o plano **PRO (cerca de US$ 9/mês)** para criar Space com SDK Docker, mesmo no hardware CPU basic. A seção 1 abaixo só vale com o PRO. Sem ele, veja as alternativas:
+
+- **Google Cloud Run:** usa o mesmo `Dockerfile` (porta 7860, 2 GiB de memória). Pede cartão, mas o uso pequeno cabe na cota gratuita.
+- **Túnel do seu PC:** `docker run -p 7860:7860 simiot-api` e um túnel (por exemplo Cloudflare Tunnel) com o endereço no `vercel.json`. Grátis e sem cartão, mas só funciona com o PC ligado.
+- **Hospedagem gratuita de 512 MB (Render etc.):** não serve. Medido no contêiner: ~700 MiB parado e até ~950 MiB gerando esquemático e PCB.
+
 ## Limites do plano gratuito
 - O disco do Space **não é persistente**: os projetos salvos na API (SQLite) somem quando o Space reinicia.
 - O Space gratuito dorme quando fica sem uso; a primeira requisição depois disso demora.
