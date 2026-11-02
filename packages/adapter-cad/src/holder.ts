@@ -1,0 +1,261 @@
+import { CUT_MARGIN, EMBED, type Vec3 } from "./layout.ts";
+
+/**
+ * Light-box + C-column holder for the "pregoscopio" (a light-pipe tube with a slide clamp on top).
+ * Pure layout: every dimension is computed here, without any CAD kernel (see holder-geometry.ts).
+ * Millimetres, +Z up, tube axis on x = y = 0, z = 0 at the underside of the light box.
+ * The box extends toward -Y (front) and the column rises behind the tube (+Y).
+ */
+
+export interface HolderParams {
+  /** Outer tube diameter (caliper: 33-34 mm). */
+  tubeDiameter: number;
+  /** Outer tube length, from the underside of the head plate to its lower end (caliper: 115 mm). */
+  tubeLength: number;
+  /** Inner (telescopic) tube that carries the objective (caliper: 22-23 mm). */
+  sleeveDiameter: number;
+  /** How much of the inner tube shows below the outer one when fully pushed in (~9 mm in the photos). */
+  sleeveLength: number;
+  /** Nominal extension of the inner tube; the focus moves it between 0 and `INNER_PULL_MAX`. */
+  innerPull: number;
+  /** Objective body (caliper: ~20 mm). */
+  objectiveDiameter: number;
+  /** Objective length below the inner tube (caliper: ~35 mm). */
+  objectiveLength: number;
+  /** Front lens to slide-top distance at best focus: ~0.6 mm for a 40x/0.65 plus the 0.17 mm cover glass. */
+  workingDistance: number;
+  /** Trim of the whole tube, for a mounting height tuned after the test print. */
+  focusOffset: number;
+  /** Microscope slide: 76 x 26 x 1 mm. It slides in a channel in the box top, under the objective. */
+  slideWidth: number;
+  slideThickness: number;
+  slideFit: number;
+  channelDepth: number;
+  /** Added to the tube diameter for the clamp bore. */
+  boreClearance: number;
+  /** Space left open between the two clamp halves, closed by the screws to squeeze the tube. */
+  clampGap: number;
+  wall: number;
+  /** Radial wall of the clamp ring. */
+  ringWall: number;
+  ringHeight: number;
+  boxWidth: number;
+  boxDepthFront: number;
+  boxDepthBack: number;
+  boxHeight: number;
+  columnWidth: number;
+  columnDepth: number;
+  ledWindowDiameter: number;
+  switchCutout: { x: number; width: number; height: number };
+  cableCutout: { y: number; width: number; height: number };
+  screwHole: number;
+  /** Pilot for a self-tapping M3: 80 % of the screw hole. */
+  pilotHole: number;
+}
+
+/** The inner tube can be pulled 40 mm out of the outer one (155 mm in total, measured). */
+export const INNER_PULL_MAX = 40;
+
+export const DEFAULT_HOLDER_PARAMS: HolderParams = {
+  tubeDiameter: 33.5,
+  tubeLength: 115,
+  sleeveDiameter: 22.5,
+  sleeveLength: 9,
+  innerPull: 10,
+  objectiveDiameter: 20,
+  objectiveLength: 35,
+  workingDistance: 0.8,
+  focusOffset: 0,
+  slideWidth: 26,
+  slideThickness: 1,
+  slideFit: 0.6,
+  channelDepth: 0.6,
+  boreClearance: 0.2,
+  clampGap: 0.6,
+  wall: 2.4,
+  ringWall: 4,
+  ringHeight: 22,
+  boxWidth: 90,
+  boxDepthFront: 45,
+  boxDepthBack: 70,
+  boxHeight: 40,
+  columnWidth: 44,
+  columnDepth: 30,
+  ledWindowDiameter: 24,
+  switchCutout: { x: -25, width: 19, height: 13 },
+  cableCutout: { y: 0, width: 12, height: 7 },
+  screwHole: 3.4,
+  pilotHole: 2.6,
+};
+
+export interface HolderCutout {
+  id: string;
+  shape: "rect" | "circle";
+  axis: "x" | "y" | "z";
+  center: Vec3;
+  size: Vec3;
+}
+
+export interface HolderPost {
+  x: number;
+  y: number;
+  outerDiameter: number;
+  pilotDiameter: number;
+  bottom: number;
+  top: number;
+}
+
+export interface HolderLayout {
+  params: HolderParams;
+  box: { xMin: number; xMax: number; yMin: number; yMax: number; height: number };
+  cavity: { xMin: number; xMax: number; yMin: number; yMax: number; top: number };
+  posts: HolderPost[];
+  column: { xMin: number; xMax: number; yMin: number; yMax: number; bottom: number; top: number };
+  /** The arm that joins the column to the clamp ring, same z range as the ring. */
+  arm: { xMin: number; xMax: number; yMin: number; yMax: number; bottom: number; top: number };
+  ring: { outerRadius: number; boreDiameter: number; bottom: number; top: number; gap: number };
+  /** Screw axes (along Y) through the ears of the clamp. */
+  ears: { x: number; z: number; length: number; width: number }[];
+  /** The pregoscopio as the layout assumes it, in its nominal position: used for the fit check. */
+  tube: {
+    bottom: number;
+    top: number;
+    radius: number;
+    sleeveRadius: number;
+    sleeveBottom: number;
+    objectiveRadius: number;
+    /** Front lens of the objective. */
+    noseZ: number;
+  };
+  /** Top of the slide when it sits in the channel; the objective focuses `workingDistance` above it. */
+  samplePlane: number;
+  lid: { bottom: number; top: number; holes: { x: number; y: number }[] };
+  cutouts: HolderCutout[];
+  totalHeight: number;
+  issues: { severity: "error" | "warning"; message: string }[];
+}
+
+export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): HolderLayout {
+  const p = params;
+  const issues: HolderLayout["issues"] = [];
+  const box = { xMin: -p.boxWidth / 2, xMax: p.boxWidth / 2, yMin: -p.boxDepthFront, yMax: p.boxDepthBack, height: p.boxHeight };
+  const cavity = {
+    xMin: box.xMin + p.wall,
+    xMax: box.xMax - p.wall,
+    yMin: box.yMin + p.wall,
+    yMax: box.yMax - p.wall,
+    top: box.height - p.wall,
+  };
+
+  const samplePlane = box.height + p.slideThickness - p.channelDepth;
+  const noseZ = samplePlane + p.workingDistance + p.focusOffset;
+  const tubeBottom = noseZ + p.objectiveLength + p.sleeveLength + p.innerPull;
+  const tubeTop = tubeBottom + p.tubeLength;
+  const ringOuter = (p.tubeDiameter + p.boreClearance) / 2 + p.ringWall;
+  const ring = {
+    outerRadius: ringOuter,
+    boreDiameter: p.tubeDiameter + p.boreClearance,
+    bottom: tubeTop - p.ringHeight,
+    top: tubeTop,
+    gap: p.clampGap,
+  };
+
+  const column = {
+    xMin: -p.columnWidth / 2,
+    xMax: p.columnWidth / 2,
+    yMin: box.yMax - p.columnDepth,
+    yMax: box.yMax,
+    bottom: box.height - EMBED,
+    top: tubeTop,
+  };
+  const arm = { xMin: column.xMin, xMax: column.xMax, yMin: 0, yMax: column.yMin + EMBED, bottom: ring.bottom, top: ring.top };
+
+  const earLength = 10;
+  const earWidth = 12;
+  const earX = ringOuter + 3;
+  const ears = [-earX, earX].map((x) => ({ x, z: (ring.bottom + ring.top) / 2, length: earLength, width: earWidth }));
+
+  const postInset = p.wall + 5;
+  const postXs = [box.xMin + postInset, box.xMax - postInset];
+  const postYs = [box.yMin + postInset, box.yMax - postInset];
+  const posts: HolderPost[] = postXs.flatMap((x) =>
+    postYs.map((y) => ({ x, y, outerDiameter: 8, pilotDiameter: p.pilotHole, bottom: 0, top: cavity.top + EMBED })),
+  );
+  const lid = { bottom: -p.wall, top: 0, holes: posts.map(({ x, y }) => ({ x, y })) };
+
+  const switchZ = box.height / 2;
+  const cutouts: HolderCutout[] = [
+    {
+      id: "slide-channel",
+      shape: "rect",
+      axis: "x",
+      center: [0, 0, box.height - p.channelDepth / 2 + CUT_MARGIN / 2],
+      size: [p.boxWidth + 2 * CUT_MARGIN, p.slideWidth + p.slideFit, p.channelDepth + CUT_MARGIN],
+    },
+    {
+      id: "window",
+      shape: "circle",
+      axis: "z",
+      center: [0, 0, (cavity.top + box.height) / 2],
+      size: [p.ledWindowDiameter, p.ledWindowDiameter, p.wall + 2 * CUT_MARGIN],
+    },
+    {
+      id: "switch",
+      shape: "rect",
+      axis: "y",
+      center: [p.switchCutout.x, box.yMin + p.wall / 2, switchZ],
+      size: [p.switchCutout.width, p.wall + 2 * CUT_MARGIN, p.switchCutout.height],
+    },
+    {
+      id: "cable",
+      shape: "rect",
+      axis: "x",
+      center: [box.xMax - p.wall / 2, p.cableCutout.y, switchZ],
+      size: [p.wall + 2 * CUT_MARGIN, p.cableCutout.width, p.cableCutout.height],
+    },
+  ];
+
+  if (p.sleeveDiameter + p.boreClearance > p.tubeDiameter) {
+    issues.push({ severity: "warning", message: "A luva do objetivo é maior que o tubo: o tubo não desliza de baixo para cima no anel." });
+  }
+  if (p.slideWidth + p.slideFit > p.boxDepthFront * 2) {
+    issues.push({ severity: "error", message: "O canal da lâmina é mais largo que a caixa." });
+  }
+  if (p.ledWindowDiameter >= p.tubeDiameter) {
+    issues.push({ severity: "warning", message: "A janela do LED é maior que o tubo: a luz vaza ao redor." });
+  }
+  if (Math.abs(p.switchCutout.x) + p.switchCutout.width / 2 > box.xMax - p.wall) {
+    issues.push({ severity: "error", message: "O recorte do interruptor passa da parede frontal." });
+  }
+  if (p.workingDistance + p.focusOffset < 0.2) {
+    issues.push({ severity: "error", message: "A lente frontal ficaria a menos de 0,2 mm da lâmina: aumente workingDistance ou focusOffset." });
+  }
+  if (p.innerPull < 0 || p.innerPull > INNER_PULL_MAX) {
+    issues.push({ severity: "error", message: `O tubo interno só estende de 0 a ${INNER_PULL_MAX} mm.` });
+  }
+
+  return {
+    params: p,
+    box,
+    cavity,
+    posts,
+    column,
+    arm,
+    ring,
+    ears,
+    tube: {
+      bottom: tubeBottom,
+      top: tubeTop,
+      radius: p.tubeDiameter / 2,
+      sleeveRadius: p.sleeveDiameter / 2,
+      sleeveBottom: tubeBottom - p.sleeveLength - p.innerPull,
+      objectiveRadius: p.objectiveDiameter / 2,
+      noseZ,
+    },
+    samplePlane,
+    lid,
+    cutouts,
+    totalHeight: tubeTop,
+    issues,
+  };
+}

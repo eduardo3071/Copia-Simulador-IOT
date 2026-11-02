@@ -1,0 +1,5 @@
+# Simulador-IOT | Luz do pregoscopio | revisão 14
+"Designator","Comment","Value","Footprint"
+"J_U1","","","pinrow2"
+"R1","220","220","axial_p0.4in"
+"D1","","","pinrow2_color(red)"

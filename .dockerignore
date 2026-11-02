@@ -1,0 +1,10 @@
+.git
+**/node_modules
+tools
+data
+**/dist
+coverage
+fabricacao
+*.log
+.vite
+.claude

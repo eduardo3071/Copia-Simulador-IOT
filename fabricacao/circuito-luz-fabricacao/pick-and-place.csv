@@ -1,0 +1,5 @@
+# Simulador-IOT | Luz do pregoscopio | revisão 14
+Designator,Mid X,Mid Y,Layer,Rotation
+J_U1,0.000,0.000,top,0
+R1,1.270,-8.810,top,-90.00000000000001
+D1,-2.550,-5.810,top,90
