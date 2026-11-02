@@ -1,0 +1,423 @@
+{
+  "id": "prj_fixture_luz_rgb",
+  "schemaVersion": 2,
+  "revision": 25,
+  "title": "Luz RGB",
+  "createdAt": "2026-10-19T12:00:00.000Z",
+  "updatedAt": "2026-10-19T12:00:00.000Z",
+  "components": [
+    {
+      "id": "cmp_uno",
+      "definitionId": "arduino-uno",
+      "definitionVersion": 1,
+      "refDes": "U1",
+      "params": {}
+    },
+    {
+      "id": "cmp_ldr",
+      "definitionId": "ldr-module",
+      "definitionVersion": 1,
+      "refDes": "U2",
+      "params": {}
+    },
+    {
+      "id": "cmp_rgb",
+      "definitionId": "rgb-led",
+      "definitionVersion": 1,
+      "refDes": "D1",
+      "params": {}
+    },
+    {
+      "id": "cmp_slide",
+      "definitionId": "slide-potentiometer",
+      "definitionVersion": 1,
+      "refDes": "RV1",
+      "params": {
+        "resistance": 10000
+      }
+    },
+    {
+      "id": "cmp_c1",
+      "definitionId": "capacitor",
+      "definitionVersion": 1,
+      "refDes": "C1",
+      "params": {
+        "capacitance": 100
+      }
+    },
+    {
+      "id": "cmp_rr",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R1",
+      "params": {
+        "resistance": 220
+      }
+    },
+    {
+      "id": "cmp_rg",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R2",
+      "params": {
+        "resistance": 220
+      }
+    },
+    {
+      "id": "cmp_rb",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R3",
+      "params": {
+        "resistance": 220
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn_ldr_vcc",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_ldr",
+        "pinId": "VCC"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "5V"
+      }
+    },
+    {
+      "id": "conn_ldr_gnd",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_ldr",
+        "pinId": "GND"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.1"
+      }
+    },
+    {
+      "id": "conn_ldr_ao",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_ldr",
+        "pinId": "AO"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "A0"
+      }
+    },
+    {
+      "id": "conn_ldr_do",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_ldr",
+        "pinId": "DO"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "2"
+      }
+    },
+    {
+      "id": "conn_cmp_rr_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "9"
+      },
+      "b": {
+        "componentId": "cmp_rr",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rr_led",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rr",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_rgb",
+        "pinId": "R"
+      }
+    },
+    {
+      "id": "conn_cmp_rg_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "10"
+      },
+      "b": {
+        "componentId": "cmp_rg",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rg_led",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rg",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_rgb",
+        "pinId": "G"
+      }
+    },
+    {
+      "id": "conn_cmp_rb_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "11"
+      },
+      "b": {
+        "componentId": "cmp_rb",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rb_led",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rb",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_rgb",
+        "pinId": "B"
+      }
+    },
+    {
+      "id": "conn_rgb_com",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rgb",
+        "pinId": "COM"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.2"
+      }
+    },
+    {
+      "id": "conn_slide_vcc",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_slide",
+        "pinId": "VCC"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "5V"
+      }
+    },
+    {
+      "id": "conn_slide_gnd",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_slide",
+        "pinId": "GND"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.3"
+      }
+    },
+    {
+      "id": "conn_slide_sig",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_slide",
+        "pinId": "SIG"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "A1"
+      }
+    },
+    {
+      "id": "conn_c1_vcc",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_c1",
+        "pinId": "1"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "5V"
+      }
+    },
+    {
+      "id": "conn_c1_gnd",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_c1",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.3"
+      }
+    }
+  ],
+  "breadboard": {
+    "unit": "css-px",
+    "placements": {
+      "cmp_uno": {
+        "x": 40,
+        "y": 20,
+        "rotation": 0
+      },
+      "cmp_ldr": {
+        "x": 400,
+        "y": 10,
+        "rotation": 0
+      },
+      "cmp_rgb": {
+        "x": 520,
+        "y": 150,
+        "rotation": 0
+      },
+      "cmp_slide": {
+        "x": 340,
+        "y": 300,
+        "rotation": 0
+      },
+      "cmp_c1": {
+        "x": 200,
+        "y": 280,
+        "rotation": 0
+      },
+      "cmp_rr": {
+        "x": 360,
+        "y": 160,
+        "rotation": 0
+      },
+      "cmp_rg": {
+        "x": 360,
+        "y": 190,
+        "rotation": 0
+      },
+      "cmp_rb": {
+        "x": 360,
+        "y": 220,
+        "rotation": 0
+      }
+    },
+    "wires": {
+      "conn_ldr_vcc": {
+        "color": "red",
+        "points": []
+      },
+      "conn_ldr_gnd": {
+        "color": "black",
+        "points": []
+      },
+      "conn_ldr_ao": {
+        "color": "yellow",
+        "points": []
+      },
+      "conn_ldr_do": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_cmp_rr_mcu": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rr_led": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rg_mcu": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rg_led": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rb_mcu": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rb_led": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_rgb_com": {
+        "color": "black",
+        "points": []
+      },
+      "conn_slide_vcc": {
+        "color": "red",
+        "points": []
+      },
+      "conn_slide_gnd": {
+        "color": "black",
+        "points": []
+      },
+      "conn_slide_sig": {
+        "color": "green",
+        "points": []
+      },
+      "conn_c1_vcc": {
+        "color": "red",
+        "points": []
+      },
+      "conn_c1_gnd": {
+        "color": "black",
+        "points": []
+      }
+    }
+  },
+  "schematic": {
+    "unit": "schematic-unit",
+    "placements": {}
+  },
+  "pcb": {
+    "unit": "mm",
+    "origin": "board-center",
+    "board": {
+      "width": 50,
+      "height": 40
+    },
+    "layers": 2,
+    "placements": {},
+    "mountingHoles": []
+  },
+  "firmware": {
+    "fqbn": "arduino:avr:uno",
+    "core": "arduino:avr@1.8.8",
+    "mainFile": "sketch.ino",
+    "files": [
+      {
+        "path": "sketch.ino",
+        "content": "// Módulo LDR (AO em A0, DO em D2), potenciômetro deslizante em A1 e LED RGB em 9/10/11.\nconst int R = 9;\nconst int G = 10;\nconst int B = 11;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(2, INPUT);\n  pinMode(R, OUTPUT);\n  pinMode(G, OUTPUT);\n  pinMode(B, OUTPUT);\n}\n\nvoid loop() {\n  int luz = analogRead(A0);        // maior = mais escuro\n  int brilho = analogRead(A1) / 4; // 0-255\n  bool escuro = digitalRead(2) == HIGH;\n  if (escuro) {\n    analogWrite(R, 0);\n    analogWrite(G, 0);\n    analogWrite(B, brilho);\n  } else {\n    analogWrite(R, brilho);\n    analogWrite(G, brilho / 2);\n    analogWrite(B, 0);\n  }\n  Serial.print(\"AO=\");\n  Serial.print(luz);\n  Serial.print(\" DO=\");\n  Serial.print(escuro ? \"escuro\" : \"claro\");\n  Serial.print(\" brilho=\");\n  Serial.println(brilho);\n  delay(200);\n}"
+      }
+    ],
+    "libraries": []
+  },
+  "simulation": {
+    "engine": "avr8js",
+    "engineVersion": "0.21.1",
+    "clockHz": 16000000,
+    "speed": 1
+  },
+  "enclosure": null,
+  "artifacts": {
+    "firmware": {
+      "hash": "5aef79b53564faf8933fe90a34e906ddc6f76a1507d187d11d5f16198e2fc7e4",
+      "inputsKey": "d4b07e9d91545c28",
+      "sourceRevision": 25,
+      "createdAt": "2026-10-19T12:00:00.000Z"
+    }
+  }
+}

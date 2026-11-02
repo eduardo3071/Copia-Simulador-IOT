@@ -1,0 +1,350 @@
+{
+  "id": "prj_fixture_sensores_lcd",
+  "schemaVersion": 2,
+  "revision": 20,
+  "title": "Sensores LCD",
+  "createdAt": "2026-10-19T12:00:00.000Z",
+  "updatedAt": "2026-10-19T12:00:00.000Z",
+  "components": [
+    {
+      "id": "cmp_uno",
+      "definitionId": "arduino-uno",
+      "definitionVersion": 1,
+      "refDes": "U1",
+      "params": {}
+    },
+    {
+      "id": "cmp_lcd",
+      "definitionId": "lcd1602",
+      "definitionVersion": 1,
+      "refDes": "LCD1",
+      "params": {}
+    },
+    {
+      "id": "cmp_dht",
+      "definitionId": "dht22",
+      "definitionVersion": 1,
+      "refDes": "U2",
+      "params": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn_lcd_VSS",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_lcd",
+        "pinId": "VSS"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.1"
+      }
+    },
+    {
+      "id": "conn_lcd_VDD",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_lcd",
+        "pinId": "VDD"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "5V"
+      }
+    },
+    {
+      "id": "conn_lcd_V0",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_lcd",
+        "pinId": "V0"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.1"
+      }
+    },
+    {
+      "id": "conn_lcd_RS",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_lcd",
+        "pinId": "RS"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "12"
+      }
+    },
+    {
+      "id": "conn_lcd_RW",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_lcd",
+        "pinId": "RW"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.1"
+      }
+    },
+    {
+      "id": "conn_lcd_E",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_lcd",
+        "pinId": "E"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "11"
+      }
+    },
+    {
+      "id": "conn_lcd_D4",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_lcd",
+        "pinId": "D4"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "5"
+      }
+    },
+    {
+      "id": "conn_lcd_D5",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_lcd",
+        "pinId": "D5"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "4"
+      }
+    },
+    {
+      "id": "conn_lcd_D6",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_lcd",
+        "pinId": "D6"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "3"
+      }
+    },
+    {
+      "id": "conn_lcd_D7",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_lcd",
+        "pinId": "D7"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "2"
+      }
+    },
+    {
+      "id": "conn_lcd_A",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_lcd",
+        "pinId": "A"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "5V"
+      }
+    },
+    {
+      "id": "conn_lcd_K",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_lcd",
+        "pinId": "K"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.1"
+      }
+    },
+    {
+      "id": "conn_dht_vcc",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_dht",
+        "pinId": "VCC"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "5V"
+      }
+    },
+    {
+      "id": "conn_dht_sda",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_dht",
+        "pinId": "SDA"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "7"
+      }
+    },
+    {
+      "id": "conn_dht_gnd",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_dht",
+        "pinId": "GND"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.2"
+      }
+    }
+  ],
+  "breadboard": {
+    "unit": "css-px",
+    "placements": {
+      "cmp_uno": {
+        "x": 40,
+        "y": 20,
+        "rotation": 0
+      },
+      "cmp_lcd": {
+        "x": 360,
+        "y": 10,
+        "rotation": 0
+      },
+      "cmp_dht": {
+        "x": 400,
+        "y": 200,
+        "rotation": 0
+      }
+    },
+    "wires": {
+      "conn_lcd_VSS": {
+        "color": "black",
+        "points": []
+      },
+      "conn_lcd_VDD": {
+        "color": "red",
+        "points": []
+      },
+      "conn_lcd_V0": {
+        "color": "black",
+        "points": []
+      },
+      "conn_lcd_RS": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_lcd_RW": {
+        "color": "black",
+        "points": []
+      },
+      "conn_lcd_E": {
+        "color": "purple",
+        "points": []
+      },
+      "conn_lcd_D4": {
+        "color": "green",
+        "points": []
+      },
+      "conn_lcd_D5": {
+        "color": "green",
+        "points": []
+      },
+      "conn_lcd_D6": {
+        "color": "green",
+        "points": []
+      },
+      "conn_lcd_D7": {
+        "color": "green",
+        "points": []
+      },
+      "conn_lcd_A": {
+        "color": "red",
+        "points": []
+      },
+      "conn_lcd_K": {
+        "color": "black",
+        "points": []
+      },
+      "conn_dht_vcc": {
+        "color": "red",
+        "points": []
+      },
+      "conn_dht_sda": {
+        "color": "yellow",
+        "points": []
+      },
+      "conn_dht_gnd": {
+        "color": "black",
+        "points": []
+      }
+    }
+  },
+  "schematic": {
+    "unit": "schematic-unit",
+    "placements": {}
+  },
+  "pcb": {
+    "unit": "mm",
+    "origin": "board-center",
+    "board": {
+      "width": 50,
+      "height": 40
+    },
+    "layers": 2,
+    "placements": {},
+    "mountingHoles": []
+  },
+  "firmware": {
+    "fqbn": "arduino:avr:uno",
+    "core": "arduino:avr@1.8.8",
+    "mainFile": "sketch.ino",
+    "files": [
+      {
+        "path": "sketch.ino",
+        "content": "// DHT22 no pino 7; LCD 16x2 em modo 4 bits (RS=12, E=11, D4=5, D5=4, D6=3, D7=2).\n#include <LiquidCrystal.h>\n#include <DHT.h>\n\nLiquidCrystal lcd(12, 11, 5, 4, 3, 2);\nDHT dht(7, DHT22);\n\nvoid setup() {\n  Serial.begin(9600);\n  lcd.begin(16, 2);\n  lcd.print(\"Iniciando...\");\n  dht.begin();\n}\n\nvoid loop() {\n  delay(2000);\n  float h = dht.readHumidity();\n  float t = dht.readTemperature();\n  lcd.clear();\n  if (isnan(h) || isnan(t)) {\n    lcd.print(\"Falha no DHT22\");\n    Serial.println(\"Falha ao ler o DHT22\");\n    return;\n  }\n  lcd.setCursor(0, 0);\n  lcd.print(\"Temp: \");\n  lcd.print(t, 1);\n  lcd.print(\" C\");\n  lcd.setCursor(0, 1);\n  lcd.print(\"Umid: \");\n  lcd.print(h, 1);\n  lcd.print(\" %\");\n  Serial.print(\"T=\");\n  Serial.print(t, 1);\n  Serial.print(\" H=\");\n  Serial.println(h, 1);\n}"
+      }
+    ],
+    "libraries": [
+      {
+        "name": "Adafruit Unified Sensor",
+        "version": "1.1.15"
+      },
+      {
+        "name": "DHT sensor library",
+        "version": "1.4.7"
+      },
+      {
+        "name": "LiquidCrystal",
+        "version": "1.0.7"
+      }
+    ]
+  },
+  "simulation": {
+    "engine": "avr8js",
+    "engineVersion": "0.21.1",
+    "clockHz": 16000000,
+    "speed": 1
+  },
+  "enclosure": null,
+  "artifacts": {
+    "firmware": {
+      "hash": "70ffcbadecd68f46e598571b8482c253df4b19116e1428a6ac6c26376d5e5a97",
+      "inputsKey": "6a2ace84654ab54c",
+      "sourceRevision": 20,
+      "createdAt": "2026-10-19T12:00:00.000Z"
+    }
+  }
+}

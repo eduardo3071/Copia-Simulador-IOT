@@ -1,0 +1,17 @@
+{
+  "name": "@simiot/adapter-lab",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@simiot/component-catalog": "0.1.0",
+    "@simiot/netlist": "0.1.0",
+    "@simiot/project-model": "0.1.0"
+  }
+}

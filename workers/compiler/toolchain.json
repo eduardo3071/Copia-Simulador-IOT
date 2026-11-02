@@ -1,0 +1,12 @@
+{
+  "arduinoCli": "1.5.1",
+  "cores": {
+    "arduino:avr": "1.8.8"
+  },
+  "libraries": {
+    "Servo": "1.3.0",
+    "LiquidCrystal": "1.0.7",
+    "DHT sensor library": "1.4.7",
+    "Adafruit Unified Sensor": "1.1.15"
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "id": "prj_fixture_potenciometro_adc",
+  "schemaVersion": 2,
+  "revision": 6,
+  "title": "Potenciometro ADC",
+  "createdAt": "2026-10-19T12:00:00.000Z",
+  "updatedAt": "2026-10-19T12:00:00.000Z",
+  "components": [
+    {
+      "id": "cmp_uno",
+      "definitionId": "arduino-uno",
+      "definitionVersion": 1,
+      "refDes": "U1",
+      "params": {}
+    },
+    {
+      "id": "cmp_rv1",
+      "definitionId": "potentiometer",
+      "definitionVersion": 1,
+      "refDes": "RV1",
+      "params": {
+        "resistance": 10000
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn_w_pot_gnd",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rv1",
+        "pinId": "GND"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.2"
+      }
+    },
+    {
+      "id": "conn_w_pot_vcc",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rv1",
+        "pinId": "VCC"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "5V"
+      }
+    },
+    {
+      "id": "conn_w_pot_sig",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rv1",
+        "pinId": "SIG"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "A0"
+      }
+    }
+  ],
+  "breadboard": {
+    "unit": "css-px",
+    "placements": {
+      "cmp_uno": {
+        "x": 40,
+        "y": 20,
+        "rotation": 0
+      },
+      "cmp_rv1": {
+        "x": 160,
+        "y": 280,
+        "rotation": 0
+      }
+    },
+    "wires": {
+      "conn_w_pot_gnd": {
+        "color": "black",
+        "points": []
+      },
+      "conn_w_pot_vcc": {
+        "color": "red",
+        "points": []
+      },
+      "conn_w_pot_sig": {
+        "color": "yellow",
+        "points": []
+      }
+    }
+  },
+  "schematic": {
+    "unit": "schematic-unit",
+    "placements": {}
+  },
+  "pcb": {
+    "unit": "mm",
+    "origin": "board-center",
+    "board": {
+      "width": 50,
+      "height": 40
+    },
+    "layers": 2,
+    "placements": {},
+    "mountingHoles": []
+  },
+  "firmware": {
+    "fqbn": "arduino:avr:uno",
+    "core": "arduino:avr@1.8.8",
+    "mainFile": "sketch.ino",
+    "files": [
+      {
+        "path": "sketch.ino",
+        "content": "// Potenciômetro no A0: imprime a leitura do ADC (0-1023) a cada 100 ms.\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  Serial.print(\"A0=\");\n  Serial.println(analogRead(A0));\n  delay(100);\n}"
+      }
+    ],
+    "libraries": []
+  },
+  "simulation": {
+    "engine": "avr8js",
+    "engineVersion": "0.21.1",
+    "clockHz": 16000000,
+    "speed": 1
+  },
+  "enclosure": null,
+  "artifacts": {
+    "firmware": {
+      "hash": "1d0bd7dddb5eb92f493a951e95e7d18559ef035dd8b326ddfa4ab89d846ca716",
+      "inputsKey": "ecbc88097975eab8",
+      "sourceRevision": 6,
+      "createdAt": "2026-10-19T12:00:00.000Z"
+    }
+  }
+}

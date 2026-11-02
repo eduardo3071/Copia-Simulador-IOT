@@ -1,0 +1,258 @@
+{
+  "id": "prj_fixture_ultrassom_servo",
+  "schemaVersion": 2,
+  "revision": 15,
+  "title": "Ultrassom Servo",
+  "createdAt": "2026-10-19T12:00:00.000Z",
+  "updatedAt": "2026-10-19T12:00:00.000Z",
+  "components": [
+    {
+      "id": "cmp_uno",
+      "definitionId": "arduino-uno",
+      "definitionVersion": 1,
+      "refDes": "U1",
+      "params": {}
+    },
+    {
+      "id": "cmp_sonar",
+      "definitionId": "hc-sr04",
+      "definitionVersion": 1,
+      "refDes": "U2",
+      "params": {}
+    },
+    {
+      "id": "cmp_servo",
+      "definitionId": "servo",
+      "definitionVersion": 1,
+      "refDes": "M1",
+      "params": {}
+    },
+    {
+      "id": "cmp_bz",
+      "definitionId": "buzzer",
+      "definitionVersion": 1,
+      "refDes": "BZ1",
+      "params": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn_sonar_vcc",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_sonar",
+        "pinId": "VCC"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "5V"
+      }
+    },
+    {
+      "id": "conn_sonar_trig",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_sonar",
+        "pinId": "TRIG"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "7"
+      }
+    },
+    {
+      "id": "conn_sonar_echo",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_sonar",
+        "pinId": "ECHO"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "8"
+      }
+    },
+    {
+      "id": "conn_sonar_gnd",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_sonar",
+        "pinId": "GND"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.1"
+      }
+    },
+    {
+      "id": "conn_servo_gnd",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_servo",
+        "pinId": "GND"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.2"
+      }
+    },
+    {
+      "id": "conn_servo_vcc",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_servo",
+        "pinId": "V+"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "5V"
+      }
+    },
+    {
+      "id": "conn_servo_pwm",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_servo",
+        "pinId": "PWM"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "9"
+      }
+    },
+    {
+      "id": "conn_bz_plus",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_bz",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "10"
+      }
+    },
+    {
+      "id": "conn_bz_minus",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_bz",
+        "pinId": "1"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.3"
+      }
+    }
+  ],
+  "breadboard": {
+    "unit": "css-px",
+    "placements": {
+      "cmp_uno": {
+        "x": 40,
+        "y": 20,
+        "rotation": 0
+      },
+      "cmp_sonar": {
+        "x": 380,
+        "y": 10,
+        "rotation": 0
+      },
+      "cmp_servo": {
+        "x": 420,
+        "y": 170,
+        "rotation": 0
+      },
+      "cmp_bz": {
+        "x": 170,
+        "y": 270,
+        "rotation": 0
+      }
+    },
+    "wires": {
+      "conn_sonar_vcc": {
+        "color": "red",
+        "points": []
+      },
+      "conn_sonar_trig": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_sonar_echo": {
+        "color": "green",
+        "points": []
+      },
+      "conn_sonar_gnd": {
+        "color": "black",
+        "points": []
+      },
+      "conn_servo_gnd": {
+        "color": "black",
+        "points": []
+      },
+      "conn_servo_vcc": {
+        "color": "red",
+        "points": []
+      },
+      "conn_servo_pwm": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_bz_plus": {
+        "color": "purple",
+        "points": []
+      },
+      "conn_bz_minus": {
+        "color": "black",
+        "points": []
+      }
+    }
+  },
+  "schematic": {
+    "unit": "schematic-unit",
+    "placements": {}
+  },
+  "pcb": {
+    "unit": "mm",
+    "origin": "board-center",
+    "board": {
+      "width": 50,
+      "height": 40
+    },
+    "layers": 2,
+    "placements": {},
+    "mountingHoles": []
+  },
+  "firmware": {
+    "fqbn": "arduino:avr:uno",
+    "core": "arduino:avr@1.8.8",
+    "mainFile": "sketch.ino",
+    "files": [
+      {
+        "path": "sketch.ino",
+        "content": "// HC-SR04 (TRIG=7, ECHO=8) aponta o servo (pino 9) e o buzzer (pino 10) apita abaixo de 20 cm.\n#include <Servo.h>\n\nconst int TRIG = 7;\nconst int ECHO = 8;\nconst int BUZZER = 10;\nServo servo;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(TRIG, OUTPUT);\n  pinMode(ECHO, INPUT);\n  servo.attach(9);\n}\n\nvoid loop() {\n  digitalWrite(TRIG, LOW);\n  delayMicroseconds(2);\n  digitalWrite(TRIG, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(TRIG, LOW);\n  unsigned long us = pulseIn(ECHO, HIGH, 30000UL);\n  float cm = us / 58.0;\n  int angle = constrain(map((long)cm, 2, 200, 0, 180), 0, 180);\n  servo.write(angle);\n  if (us > 0 && cm < 20) tone(BUZZER, 1000);\n  else noTone(BUZZER);\n  Serial.print(\"Distancia: \");\n  Serial.print(cm, 1);\n  Serial.print(\" cm  angulo: \");\n  Serial.println(angle);\n  delay(100);\n}"
+      }
+    ],
+    "libraries": [
+      {
+        "name": "Servo",
+        "version": "1.3.0"
+      }
+    ]
+  },
+  "simulation": {
+    "engine": "avr8js",
+    "engineVersion": "0.21.1",
+    "clockHz": 16000000,
+    "speed": 1
+  },
+  "enclosure": null,
+  "artifacts": {
+    "firmware": {
+      "hash": "597e1c14afa87e055830ff018cbfbf6fff5e437b2b6feacf3057b7d1b1a790eb",
+      "inputsKey": "964ce33d4dcc250f",
+      "sourceRevision": 15,
+      "createdAt": "2026-10-19T12:00:00.000Z"
+    }
+  }
+}

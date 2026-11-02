@@ -1,0 +1,18 @@
+{
+  "name": "@simiot/adapter-eda",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "description": "tscircuit and exporter dependencies are declared in the root package.json: npm workspaces otherwise split the tscircuit tree between root and workspace node_modules.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@simiot/component-catalog": "0.1.0",
+    "@simiot/netlist": "0.1.0",
+    "@simiot/project-model": "0.1.0"
+  }
+}

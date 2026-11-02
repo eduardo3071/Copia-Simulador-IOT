@@ -1,0 +1,37 @@
+{
+  "name": "@simiot/web",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "4.7.0",
+    "@react-three/fiber": "9.8.1",
+    "@simiot/adapter-cad": "0.1.0",
+    "@simiot/adapter-lab": "0.1.0",
+    "@simiot/component-catalog": "0.1.0",
+    "@simiot/emulator-avr": "0.1.0",
+    "@simiot/netlist": "0.1.0",
+    "@simiot/project-model": "0.1.0",
+    "@tscircuit/pcb-viewer": "1.11.429",
+    "@wokwi/elements": "1.9.2",
+    "monaco-editor": "0.57.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "replicad-opencascadejs": "1.1.0",
+    "three": "0.179.1",
+    "zustand": "5.0.15"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/three": "0.179.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "vite": "8.3.4"
+  }
+}

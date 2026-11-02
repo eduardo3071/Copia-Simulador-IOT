@@ -1,0 +1,1059 @@
+{
+  "id": "prj_fixture_contador_7_segmentos",
+  "schemaVersion": 2,
+  "revision": 67,
+  "title": "Contador 7 segmentos",
+  "createdAt": "2026-10-19T12:00:00.000Z",
+  "updatedAt": "2026-10-19T12:00:00.000Z",
+  "components": [
+    {
+      "id": "cmp_uno",
+      "definitionId": "arduino-uno",
+      "definitionVersion": 1,
+      "refDes": "U1",
+      "params": {}
+    },
+    {
+      "id": "cmp_seg",
+      "definitionId": "7segment",
+      "definitionVersion": 1,
+      "refDes": "DS1",
+      "params": {
+        "color": "red"
+      }
+    },
+    {
+      "id": "cmp_bar",
+      "definitionId": "led-bar-graph",
+      "definitionVersion": 1,
+      "refDes": "BAR1",
+      "params": {
+        "color": "red"
+      }
+    },
+    {
+      "id": "cmp_rs0",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R1",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rs1",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R2",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rs2",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R3",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rs3",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R4",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rs4",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R5",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rs5",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R6",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rs6",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R7",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rb0",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R8",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rb1",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R9",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rb2",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R10",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rb3",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R11",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rb4",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R12",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rb5",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R13",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rb6",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R14",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rb7",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R15",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rb8",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R16",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_rb9",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R17",
+      "params": {
+        "resistance": 330
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn_cmp_rs0_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_rs0",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rs0_seg",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rs0",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_seg",
+        "pinId": "A"
+      }
+    },
+    {
+      "id": "conn_cmp_rs1_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "3"
+      },
+      "b": {
+        "componentId": "cmp_rs1",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rs1_seg",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rs1",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_seg",
+        "pinId": "B"
+      }
+    },
+    {
+      "id": "conn_cmp_rs2_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "4"
+      },
+      "b": {
+        "componentId": "cmp_rs2",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rs2_seg",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rs2",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_seg",
+        "pinId": "C"
+      }
+    },
+    {
+      "id": "conn_cmp_rs3_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "5"
+      },
+      "b": {
+        "componentId": "cmp_rs3",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rs3_seg",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rs3",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_seg",
+        "pinId": "D"
+      }
+    },
+    {
+      "id": "conn_cmp_rs4_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "6"
+      },
+      "b": {
+        "componentId": "cmp_rs4",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rs4_seg",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rs4",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_seg",
+        "pinId": "E"
+      }
+    },
+    {
+      "id": "conn_cmp_rs5_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "7"
+      },
+      "b": {
+        "componentId": "cmp_rs5",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rs5_seg",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rs5",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_seg",
+        "pinId": "F"
+      }
+    },
+    {
+      "id": "conn_cmp_rs6_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "8"
+      },
+      "b": {
+        "componentId": "cmp_rs6",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rs6_seg",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rs6",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_seg",
+        "pinId": "G"
+      }
+    },
+    {
+      "id": "conn_seg_com",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_seg",
+        "pinId": "COM.1"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.1"
+      }
+    },
+    {
+      "id": "conn_cmp_rb0_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "9"
+      },
+      "b": {
+        "componentId": "cmp_rb0",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rb0_bar",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rb0",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_bar",
+        "pinId": "A1"
+      }
+    },
+    {
+      "id": "conn_bar_c1",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_bar",
+        "pinId": "C1"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.2"
+      }
+    },
+    {
+      "id": "conn_cmp_rb1_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "10"
+      },
+      "b": {
+        "componentId": "cmp_rb1",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rb1_bar",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rb1",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_bar",
+        "pinId": "A2"
+      }
+    },
+    {
+      "id": "conn_bar_c2",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_bar",
+        "pinId": "C2"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.2"
+      }
+    },
+    {
+      "id": "conn_cmp_rb2_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "11"
+      },
+      "b": {
+        "componentId": "cmp_rb2",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rb2_bar",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rb2",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_bar",
+        "pinId": "A3"
+      }
+    },
+    {
+      "id": "conn_bar_c3",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_bar",
+        "pinId": "C3"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.2"
+      }
+    },
+    {
+      "id": "conn_cmp_rb3_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "12"
+      },
+      "b": {
+        "componentId": "cmp_rb3",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rb3_bar",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rb3",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_bar",
+        "pinId": "A4"
+      }
+    },
+    {
+      "id": "conn_bar_c4",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_bar",
+        "pinId": "C4"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.2"
+      }
+    },
+    {
+      "id": "conn_cmp_rb4_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "13"
+      },
+      "b": {
+        "componentId": "cmp_rb4",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rb4_bar",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rb4",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_bar",
+        "pinId": "A5"
+      }
+    },
+    {
+      "id": "conn_bar_c5",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_bar",
+        "pinId": "C5"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.2"
+      }
+    },
+    {
+      "id": "conn_cmp_rb5_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "A0"
+      },
+      "b": {
+        "componentId": "cmp_rb5",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rb5_bar",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rb5",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_bar",
+        "pinId": "A6"
+      }
+    },
+    {
+      "id": "conn_bar_c6",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_bar",
+        "pinId": "C6"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.2"
+      }
+    },
+    {
+      "id": "conn_cmp_rb6_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "A1"
+      },
+      "b": {
+        "componentId": "cmp_rb6",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rb6_bar",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rb6",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_bar",
+        "pinId": "A7"
+      }
+    },
+    {
+      "id": "conn_bar_c7",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_bar",
+        "pinId": "C7"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.2"
+      }
+    },
+    {
+      "id": "conn_cmp_rb7_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "A2"
+      },
+      "b": {
+        "componentId": "cmp_rb7",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rb7_bar",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rb7",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_bar",
+        "pinId": "A8"
+      }
+    },
+    {
+      "id": "conn_bar_c8",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_bar",
+        "pinId": "C8"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.2"
+      }
+    },
+    {
+      "id": "conn_cmp_rb8_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "A3"
+      },
+      "b": {
+        "componentId": "cmp_rb8",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rb8_bar",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rb8",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_bar",
+        "pinId": "A9"
+      }
+    },
+    {
+      "id": "conn_bar_c9",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_bar",
+        "pinId": "C9"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.2"
+      }
+    },
+    {
+      "id": "conn_cmp_rb9_mcu",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_uno",
+        "pinId": "A4"
+      },
+      "b": {
+        "componentId": "cmp_rb9",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_cmp_rb9_bar",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rb9",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_bar",
+        "pinId": "A10"
+      }
+    },
+    {
+      "id": "conn_bar_c10",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_bar",
+        "pinId": "C10"
+      },
+      "b": {
+        "componentId": "cmp_uno",
+        "pinId": "GND.2"
+      }
+    }
+  ],
+  "breadboard": {
+    "unit": "css-px",
+    "placements": {
+      "cmp_uno": {
+        "x": 40,
+        "y": 20,
+        "rotation": 0
+      },
+      "cmp_seg": {
+        "x": 640,
+        "y": 20,
+        "rotation": 0
+      },
+      "cmp_bar": {
+        "x": 640,
+        "y": 160,
+        "rotation": 0
+      },
+      "cmp_rs0": {
+        "x": 360,
+        "y": 10,
+        "rotation": 0
+      },
+      "cmp_rs1": {
+        "x": 360,
+        "y": 30,
+        "rotation": 0
+      },
+      "cmp_rs2": {
+        "x": 360,
+        "y": 50,
+        "rotation": 0
+      },
+      "cmp_rs3": {
+        "x": 360,
+        "y": 70,
+        "rotation": 0
+      },
+      "cmp_rs4": {
+        "x": 360,
+        "y": 90,
+        "rotation": 0
+      },
+      "cmp_rs5": {
+        "x": 360,
+        "y": 110,
+        "rotation": 0
+      },
+      "cmp_rs6": {
+        "x": 360,
+        "y": 130,
+        "rotation": 0
+      },
+      "cmp_rb0": {
+        "x": 360,
+        "y": 170,
+        "rotation": 0
+      },
+      "cmp_rb1": {
+        "x": 360,
+        "y": 190,
+        "rotation": 0
+      },
+      "cmp_rb2": {
+        "x": 360,
+        "y": 210,
+        "rotation": 0
+      },
+      "cmp_rb3": {
+        "x": 360,
+        "y": 230,
+        "rotation": 0
+      },
+      "cmp_rb4": {
+        "x": 360,
+        "y": 250,
+        "rotation": 0
+      },
+      "cmp_rb5": {
+        "x": 360,
+        "y": 270,
+        "rotation": 0
+      },
+      "cmp_rb6": {
+        "x": 360,
+        "y": 290,
+        "rotation": 0
+      },
+      "cmp_rb7": {
+        "x": 360,
+        "y": 310,
+        "rotation": 0
+      },
+      "cmp_rb8": {
+        "x": 360,
+        "y": 330,
+        "rotation": 0
+      },
+      "cmp_rb9": {
+        "x": 360,
+        "y": 350,
+        "rotation": 0
+      }
+    },
+    "wires": {
+      "conn_cmp_rs0_mcu": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rs0_seg": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rs1_mcu": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rs1_seg": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rs2_mcu": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rs2_seg": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rs3_mcu": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rs3_seg": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rs4_mcu": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rs4_seg": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rs5_mcu": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rs5_seg": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rs6_mcu": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_cmp_rs6_seg": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_seg_com": {
+        "color": "black",
+        "points": []
+      },
+      "conn_cmp_rb0_mcu": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_cmp_rb0_bar": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_bar_c1": {
+        "color": "black",
+        "points": []
+      },
+      "conn_cmp_rb1_mcu": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_cmp_rb1_bar": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_bar_c2": {
+        "color": "black",
+        "points": []
+      },
+      "conn_cmp_rb2_mcu": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_cmp_rb2_bar": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_bar_c3": {
+        "color": "black",
+        "points": []
+      },
+      "conn_cmp_rb3_mcu": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_cmp_rb3_bar": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_bar_c4": {
+        "color": "black",
+        "points": []
+      },
+      "conn_cmp_rb4_mcu": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_cmp_rb4_bar": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_bar_c5": {
+        "color": "black",
+        "points": []
+      },
+      "conn_cmp_rb5_mcu": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_cmp_rb5_bar": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_bar_c6": {
+        "color": "black",
+        "points": []
+      },
+      "conn_cmp_rb6_mcu": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_cmp_rb6_bar": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_bar_c7": {
+        "color": "black",
+        "points": []
+      },
+      "conn_cmp_rb7_mcu": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_cmp_rb7_bar": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_bar_c8": {
+        "color": "black",
+        "points": []
+      },
+      "conn_cmp_rb8_mcu": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_cmp_rb8_bar": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_bar_c9": {
+        "color": "black",
+        "points": []
+      },
+      "conn_cmp_rb9_mcu": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_cmp_rb9_bar": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_bar_c10": {
+        "color": "black",
+        "points": []
+      }
+    }
+  },
+  "schematic": {
+    "unit": "schematic-unit",
+    "placements": {}
+  },
+  "pcb": {
+    "unit": "mm",
+    "origin": "board-center",
+    "board": {
+      "width": 100,
+      "height": 80
+    },
+    "layers": 2,
+    "placements": {},
+    "mountingHoles": []
+  },
+  "firmware": {
+    "fqbn": "arduino:avr:uno",
+    "core": "arduino:avr@1.8.8",
+    "mainFile": "sketch.ino",
+    "files": [
+      {
+        "path": "sketch.ino",
+        "content": "// Contador 0-9: display de 7 segmentos em D2-D8 (A-G) e barra de LEDs em D9-D13 e A0-A4.\nconst byte SEG[7] = {2, 3, 4, 5, 6, 7, 8};\nconst byte BAR[10] = {9, 10, 11, 12, 13, A0, A1, A2, A3, A4};\n// bit 0 = segmento A ... bit 6 = segmento G\nconst byte DIGITS[10] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F};\n\nvoid setup() {\n  Serial.begin(9600);\n  for (byte p : SEG) pinMode(p, OUTPUT);\n  for (byte p : BAR) pinMode(p, OUTPUT);\n}\n\nvoid loop() {\n  for (int n = 0; n < 10; n++) {\n    for (int s = 0; s < 7; s++) digitalWrite(SEG[s], (DIGITS[n] >> s) & 1);\n    for (int i = 0; i < 10; i++) digitalWrite(BAR[i], i <= n ? HIGH : LOW);\n    Serial.println(n);\n    delay(500);\n  }\n}"
+      }
+    ],
+    "libraries": []
+  },
+  "simulation": {
+    "engine": "avr8js",
+    "engineVersion": "0.21.1",
+    "clockHz": 16000000,
+    "speed": 1
+  },
+  "enclosure": null,
+  "artifacts": {
+    "firmware": {
+      "hash": "cf0ea1f73fd7e87ddbe0ca58bbaac70f4a0f622118ea5e05f491d925ebfbf5e3",
+      "inputsKey": "9a60c5468828f666",
+      "sourceRevision": 67,
+      "createdAt": "2026-10-19T12:00:00.000Z"
+    }
+  }
+}

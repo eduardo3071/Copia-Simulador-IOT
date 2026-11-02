@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM", "WebWorker"],
+    "types": ["node"],
+    "jsx": "react-jsx"
+  },
+  "include": ["packages/*/src", "packages/*/test", "apps/api/src", "apps/api/test", "workers/*/src", "workers/*/test", "scripts/*.ts"]
+}

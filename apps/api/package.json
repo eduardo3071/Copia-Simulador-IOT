@@ -1,0 +1,20 @@
+{
+  "name": "@simiot/api",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --clear-screen=false src/main.ts",
+    "start": "tsx src/main.ts"
+  },
+  "dependencies": {
+    "@simiot/adapter-eda": "0.1.0",
+    "@simiot/compiler": "0.1.0",
+    "@simiot/component-catalog": "0.1.0",
+    "@simiot/project-model": "0.1.0",
+    "fastify": "5.12.7",
+    "fflate": "0.8.3",
+    "zod": "4.6.7"
+  }
+}
