@@ -1,6 +1,7 @@
 # Simulador-IOT | Luz do pregoscopio v2 (fonte + dimmer) | revisão 1
 "Designator","Comment","Value","Footprint"
 "J1","","","pinrow2"
+"SW1","","","pinrow2"
 "U1","","","to220"
 "R1","47","47","axial_p0.4in"
 "RV1","","","pinrow3"

@@ -5,7 +5,8 @@ Em vez de medir com paquímetro, imprima duas placas pequenas e prove as peças 
 | Arquivo | Tamanho | Para quê |
 |---|---|---|
 | `calibracao-tubo.stl` | 270 × 44 × 3,6 mm | diâmetro do tubo externo do pregoscópio |
-| `calibracao-pecas.stl` | 174 × 208 × 3,6 mm | lâmina, interruptor, LED, parafuso M3, conector P4 e eixo do reostato |
+| `calibracao-pecas.stl` | 174 × 208 × 3,6 mm | lâmina, interruptor, LED, parafuso M3, conector DC-022B e eixo do reostato |
+| `calibracao-bateria.stl` | 252 × 42 × 3,6 mm | bateria 9 V (a peça é grande demais para a placa de peças) |
 
 Imprima com as **mesmas configurações das peças finais** (PLA, 0,2 mm, mesmo bico), deitadas e sem suportes. Cada série cresce da esquerda para a direita. Os pontinhos em relevo acima de cada furo indicam a posição: 1 ponto é o primeiro furo, 2 pontos o segundo, e assim por diante.
 
@@ -14,13 +15,14 @@ Experimente a peça real em cada furo, do menor para o maior, e escolha o **meno
 
 | Série | Furos (1, 2, 3, ...) em mm | Peça a provar | Parâmetro a atualizar |
 |---|---|---|---|
-| `tubo` | 33,4 · 33,6 · 33,8 · 34,0 · 34,2 · 34,4 · 34,6 | tubo externo | `tubeDiameter` = valor escolhido − 0,2 |
+| `tubo` | 30,2 · 33,0 · 33,4 · 33,8 · 34,2 · 34,6 · 36,4 | tubo externo (30,2 e 36,4 cobrem o STEP V1) | `tubeDiameter` = valor escolhido − 0,2 |
 | `lamina` | 26,2 · 26,4 · 26,6 · 26,8 · 27,0 (rebaixo de 1,2 mm) | lâmina deitada | `slideWidth` = valor escolhido − 0,6 |
-| `interruptor` | 19×13 · 20×14 · 21×15 · 22×16 | interruptor de frente | `switchCutout` (largura e altura) = valor escolhido |
+| `interruptor` | 20,8×14,6 · 21,0×14,8 · 21,2×15,0 · 21,4×15,2 · 21,6×15,4 | interruptor KCD1-101 de frente | `switchCutout` (largura e altura) = valor escolhido |
 | `led` | 5,8 · 6,0 · 6,2 · 6,4 · 6,6 | flange do LED de 5 mm | `ledFlange` = valor escolhido − 0,4 |
 | `parafuso-m3` | 2,4 · 2,6 · 2,8 | parafuso M3 autoatarraxante | `pilotHole` = valor onde ele entra apertado, mas rosqueia |
-| `conector-p4` | 10 · 11 · 12 | rosca do conector P4 (v2) | `jackDiameter` = valor escolhido |
-| `eixo-reostato` | 7 · 7,5 · 8 | eixo do reostato (v2) | `knobDiameter` = valor escolhido |
+| `conector-dc` | 7,6 · 7,8 · 8,0 · 8,2 | rosca do conector DC-022B (v2) | `jackDiameter` = valor escolhido |
+| `eixo-reostato` | 7,0 · 7,3 · 7,5 · 7,8 | rosca M7 do reostato (v2) | `knobDiameter` = valor escolhido |
+| `bateria` (C3) | 48,6×26,6 · 49,1×27,1 · 49,6×27,6 · 50,1×28,1 | bateria 9 V | `batteryFit` = valor escolhido − medida da bateria |
 
 Se a peça não entrar nem no maior furo de uma série, me diga: preciso de uma série com furos maiores.
 

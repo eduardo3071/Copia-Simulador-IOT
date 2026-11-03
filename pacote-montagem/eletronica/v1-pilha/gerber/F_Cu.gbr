@@ -1,13 +1,13 @@
 G04 Simulador-IOT | Luz do pregoscopio v1 (pilha 9 V) | revisão 1*
 %TF.GenerationSoftware,tscircuit,circuit-json-to-gerber,0.0.112*%
-%TF.CreationDate,2026-11-03T00:03:45.137Z*%
+%TF.CreationDate,2026-11-03T01:28:34.952Z*%
 %TF.SameCoordinates,Original*%
 %TF.FileFunction,Copper,L1,Top*%
 %TF.FilePolarity,Positive*%
 %FSLAX46Y46*%
 %MOMM*%
 G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
-G04 Created by tscircuit (builder) date 2026-11-03T00:03:45.139Z*
+G04 Created by tscircuit (builder) date 2026-11-03T01:28:34.955Z*
 G01*
 %LPD*%
 G75*

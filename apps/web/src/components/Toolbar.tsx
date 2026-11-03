@@ -46,6 +46,7 @@ export function Toolbar({ onOpenProjects }: { onOpenProjects: () => void }) {
   return (
     <header className="toolbar">
       <div className="brand">Simulador IoT</div>
+      <a className="suporte-link" href="#suporte" title="Peças, 3D, eletrônica e gabaritos do suporte do pregoscópio">Suporte do Pregoscópio</a>
       <input
         className="title-input"
         value={project.title}

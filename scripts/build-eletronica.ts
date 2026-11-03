@@ -54,14 +54,16 @@ await render("v1-pilha", "Luz do pregoscopio v1 (pilha 9 V)", [
 ]);
 
 await render("v2-fonte-dimmer", "Luz do pregoscopio v2 (fonte + dimmer)", [
-  header("J1", ["VIN", "GND"], -22),
-  h("chip", { name: "U1", footprint: "to220", pcbX: -8, pcbY: 0, pinLabels: { pin1: "ADJ", pin2: "OUT", pin3: "IN" } }),
-  h("resistor", { name: "R1", resistance: V2.fixed, footprint: "axial_p0.4in", pcbX: 8, pcbY: 6, pcbRotation: 90 }),
-  h("potentiometer", { name: "RV1", maxResistance: V2.rheostat, footprint: "pinrow3", pinVariant: "three_pin", pcbX: 16, pcbY: 0 }),
-  header("D1", ["ANODO", "CATODO"], 26),
+  header("J1", ["VIN", "GND"], -24),
+  header("SW1", ["A", "B"], -16),
+  h("chip", { name: "U1", footprint: "to220", pcbX: -3, pcbY: 0, pinLabels: { pin1: "ADJ", pin2: "OUT", pin3: "IN" } }),
+  h("resistor", { name: "R1", resistance: V2.fixed, footprint: "axial_p0.4in", pcbX: 9, pcbY: 5, pcbRotation: 90 }),
+  h("potentiometer", { name: "RV1", maxResistance: V2.rheostat, footprint: "pinrow3", pinVariant: "three_pin", pcbX: 17, pcbY: -3 }),
+  header("D1", ["ANODO", "CATODO"], 25),
   // M3 holes for the standoffs of the light box (53 x 18 mm pattern)
   ...[-1, 1].flatMap((sx) => [-1, 1].map((sy) => h("hole", { name: `MH${sx}${sy}`, diameter: 3.2, pcbX: sx * 26.5, pcbY: sy * 9 }))),
-  ...net("VIN", ".J1 > .pin1", ".U1 > .pin3"),
+  ...net("VJ1", ".J1 > .pin1", ".SW1 > .pin1"),
+  ...net("VIN", ".SW1 > .pin2", ".U1 > .pin3"),
   ...net("GND", ".J1 > .pin2", ".D1 > .pin2"),
   ...net("VOUT", ".U1 > .pin2", ".R1 > .pin1"),
   // current-regulator topology: the set resistor (R1 + rheostat) sits between OUT and ADJ, and the LED hangs from ADJ to GND

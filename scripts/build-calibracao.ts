@@ -23,15 +23,22 @@ export interface Series {
   uses: string;
 }
 
-export const TUBE_SERIES: Series = { name: "tubo", kind: "round", sizes: [33.4, 33.6, 33.8, 34.0, 34.2, 34.4, 34.6], uses: "tubo externo do pregoscópio (o menor furo em que ele desliza sem folga)" };
+export const TUBE_SERIES: Series = {
+  name: "tubo",
+  kind: "round",
+  sizes: [30.2, 33.0, 33.4, 33.8, 34.2, 34.6, 36.4],
+  uses: "tubo externo do pregoscópio (o menor furo em que ele desliza sem folga); 30,2 e 36,4 cobrem as medidas do STEP V1 (30 e 36 mm)",
+};
 export const PLATE_SERIES: Series[] = [
   { name: "lamina", kind: "slot", sizes: [26.2, 26.4, 26.6, 26.8, 27.0], uses: "lâmina de microscopia deitada no rebaixo (a largura que a deixa deslizar sem folga; profundidade 1,2 mm)" },
-  { name: "interruptor", kind: "rect", sizes: [[19, 13], [20, 14], [21, 15], [22, 16]], uses: "corpo do interruptor de balancim, de frente" },
+  { name: "interruptor", kind: "rect", sizes: [[20.8, 14.6], [21.0, 14.8], [21.2, 15.0], [21.4, 15.2], [21.6, 15.4]], uses: "interruptor de balancim KCD1-101 (recorte padrão 21,2 x 15,0 mm segundo guia da LCSC)" },
   { name: "led", kind: "round", sizes: [5.8, 6.0, 6.2, 6.4, 6.6], uses: "flange do LED de 5 mm (sede do porta-LED)" },
   { name: "parafuso-m3", kind: "round", sizes: [2.4, 2.6, 2.8], uses: "parafuso M3 autoatarraxante (furo-piloto)" },
-  { name: "conector-p4", kind: "round", sizes: [10, 11, 12], uses: "rosca do conector P4 de painel (v2)" },
-  { name: "eixo-reostato", kind: "round", sizes: [7, 7.5, 8], uses: "eixo do reostato (v2)" },
+  { name: "conector-dc", kind: "round", sizes: [7.6, 7.8, 8.0, 8.2], uses: "rosca do conector DC-022B de painel (furo de 7,8 mm segundo anúncios de venda)" },
+  { name: "eixo-reostato", kind: "round", sizes: [7.0, 7.3, 7.5, 7.8], uses: "rosca M7 do reostato WH148 (v2)" },
 ];
+
+export const BATTERY_SERIES: Series = { name: "bateria", kind: "rect", sizes: [[48.6, 26.6], [49.1, 27.1], [49.6, 27.6], [50.1, 28.1]], uses: "bateria 9 V (48,5 x 26,5 mm) no berço da tampa" };
 
 const widthOf = (s: number | [number, number]) => (Array.isArray(s) ? s[0] : s);
 const heightOf = (s: number | [number, number]) => (Array.isArray(s) ? s[1] : s);
@@ -71,8 +78,9 @@ mkdirSync(out, { recursive: true });
 const write = async (name: string, shape: Shape3D) =>
   writeFileSync(new URL(name, out), Buffer.from(withStlHeader(await stlOf(shape), `Calibracao ${name}`)));
 
-await write("calibracao-tubo.stl", plateFor([TUBE_SERIES], 38, 40));
+await write("calibracao-tubo.stl", plateFor([TUBE_SERIES], 38, 44));
 await write("calibracao-pecas.stl", plateFor(PLATE_SERIES, 34, 34));
-const table = [TUBE_SERIES, ...PLATE_SERIES].map((s) => ({ ...s, sizes: s.sizes.map((x) => (Array.isArray(x) ? `${x[0]}x${x[1]}` : x)) }));
+await write("calibracao-bateria.stl", plateFor([BATTERY_SERIES], 62, 38));
+const table = [TUBE_SERIES, ...PLATE_SERIES, BATTERY_SERIES].map((s) => ({ ...s, sizes: s.sizes.map((x) => (Array.isArray(x) ? `${x[0]}x${x[1]}` : x)) }));
 writeFileSync(new URL("series.json", out), `${JSON.stringify(table, null, 2)}\n`);
-console.log("calibracao-tubo.stl, calibracao-pecas.stl, series.json");
+console.log("calibracao-tubo.stl, calibracao-pecas.stl, calibracao-bateria.stl, series.json");

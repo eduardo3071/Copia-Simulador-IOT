@@ -1,0 +1,146 @@
+[
+  {
+    "index": 1,
+    "key": "cabeca",
+    "name": "Cabeça: placa e haste roscada",
+    "file": "pregoscopio-1.stl",
+    "moving": false,
+    "triangles": 8072,
+    "min": [
+      -85.0,
+      -25.0,
+      0.0
+    ],
+    "max": [
+      85.0,
+      25.0,
+      15.0
+    ]
+  },
+  {
+    "index": 2,
+    "key": "tubo-externo",
+    "name": "Tubo externo",
+    "file": "pregoscopio-2.stl",
+    "moving": false,
+    "triangles": 1957,
+    "min": [
+      -15.0,
+      -15.0,
+      -136.5
+    ],
+    "max": [
+      15.0,
+      15.0,
+      13.5
+    ]
+  },
+  {
+    "index": 3,
+    "key": "tubo-interno",
+    "name": "Tubo interno (telescópico)",
+    "file": "pregoscopio-3.stl",
+    "moving": true,
+    "triangles": 1418,
+    "min": [
+      -11.69,
+      -11.75,
+      -146.5
+    ],
+    "max": [
+      11.69,
+      11.75,
+      -13.5
+    ]
+  },
+  {
+    "index": 4,
+    "key": "garra-esquerda",
+    "name": "Garra esquerda",
+    "file": "pregoscopio-4.stl",
+    "moving": false,
+    "triangles": 2432,
+    "min": [
+      -65.0,
+      -15.24,
+      -7.75
+    ],
+    "max": [
+      -55.0,
+      15.26,
+      34.25
+    ]
+  },
+  {
+    "index": 5,
+    "key": "garra-direita",
+    "name": "Garra direita",
+    "file": "pregoscopio-5.stl",
+    "moving": false,
+    "triangles": 3652,
+    "min": [
+      55.0,
+      -15.22,
+      -7.75
+    ],
+    "max": [
+      65.0,
+      15.28,
+      34.25
+    ]
+  },
+  {
+    "index": 6,
+    "key": "manopla",
+    "name": "Manopla",
+    "file": "pregoscopio-6.stl",
+    "moving": false,
+    "triangles": 10932,
+    "min": [
+      72.83,
+      -16.89,
+      -9.42
+    ],
+    "max": [
+      85.0,
+      16.95,
+      24.41
+    ]
+  },
+  {
+    "index": 7,
+    "key": "anel-objetiva",
+    "name": "Anel da objetiva",
+    "file": "pregoscopio-7.stl",
+    "moving": true,
+    "triangles": 5479,
+    "min": [
+      -13.75,
+      -13.75,
+      -147.5
+    ],
+    "max": [
+      13.75,
+      13.75,
+      -142.0
+    ]
+  },
+  {
+    "index": 8,
+    "key": "luva-inferior",
+    "name": "Luva inferior",
+    "file": "pregoscopio-8.stl",
+    "moving": true,
+    "triangles": 4472,
+    "min": [
+      -17.99,
+      -18.0,
+      -156.5
+    ],
+    "max": [
+      17.99,
+      18.0,
+      -136.5
+    ]
+  }
+]

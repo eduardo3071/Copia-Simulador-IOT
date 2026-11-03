@@ -26,7 +26,7 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | 0.4 | Ler o demo do João | ✅ | é demo de teste, tubo genérico |
 | 0.5 | Confirmar pilha 9 V e a premissa de 330 Ω | ⏳ | decisão do usuário, não se mede nem se calcula por código |
 | 0.6 | Calibrar a lâmina (largura) | 🟡 | gabarito gerado (`calibracao-pecas.stl`); falta imprimir e provar; a espessura de 1 mm é padrão |
-| 0.7 | Calibrar o furo do interruptor | 🟡 | série `interruptor` do gabarito; falta imprimir e provar |
+| 0.7 | Calibrar o furo do interruptor (KCD1-101, 21,2 × 15,0 mm pelo guia da LCSC) e do conector DC-022B (7,8 mm pelos anúncios) | 🟡 | séries `interruptor` e `conector-dc` do gabarito; falta imprimir e provar |
 | 0.8 | Calibrar o tubo externo | 🟡 | gabarito `calibracao-tubo.stl`; falta imprimir e provar |
 | 0.9 | Medir o quanto a objetiva sai do tubo interno recolhido | ⏳ | só com régua ou paquímetro; não cabe no gabarito |
 
@@ -80,6 +80,9 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | # | Tarefa | Status | Critério de pronto |
 |---|---|---|---|
 | 5.1 | Site publicado na Vercel | ✅ | `copia-simulador-iot.vercel.app` |
+| 5.5 | Página "Suporte do Pregoscópio" no site (`#suporte`): 3D com identificador por peça, lista com o motivo de cada escolha, eletrônica com calculadora e gabaritos | ✅ | estática: não depende da API |
+| 5.6 | Pregoscópio no 3D com a geometria do STEP V1 (8 sólidos, tubo interno móvel) | ✅ | cabeça, garras, manopla e tubos do STEP; o tubo externo do STEP (30 mm) difere do paquímetro (33,5 mm) |
+| 5.7 | Circuito simulado na aba Protoboard | ❓ | esta cópia do simulador não tem pilha, interruptor nem LM317 como peças; a eletrônica aparece só no esquemático e na calculadora |
 | 5.2 | API acessível pelo site | 🟡 | só funciona com o PC ligado, Docker e `ngrok http 7860` rodando |
 | 5.3 | API permanente e gratuita | ❓ | Hugging Face exige PRO; Google Cloud Run pede cartão |
 | 5.4 | Código no GitHub | 🟡 | `main` publicada; falta commitar o pacote atualizado |

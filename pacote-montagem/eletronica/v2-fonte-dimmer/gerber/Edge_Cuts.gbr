@@ -1,12 +1,12 @@
 G04 Simulador-IOT | Luz do pregoscopio v2 (fonte + dimmer) | revisão 1*
 %TF.GenerationSoftware,tscircuit,circuit-json-to-gerber,0.0.112*%
-%TF.CreationDate,2026-11-03T00:03:46.627Z*%
+%TF.CreationDate,2026-11-03T01:28:36.485Z*%
 %TF.SameCoordinates,Original*%
 %TF.FileFunction,Profile,NP*%
 %FSLAX46Y46*%
 %MOMM*%
 G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
-G04 Created by tscircuit (builder) date 2026-11-03T00:03:46.627Z*
+G04 Created by tscircuit (builder) date 2026-11-03T01:28:36.485Z*
 G01*
 %LPD*%
 G75*

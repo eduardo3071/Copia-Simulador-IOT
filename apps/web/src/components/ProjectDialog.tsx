@@ -56,6 +56,8 @@ export function ProjectDialog({ onClose }: { onClose?: () => void }) {
           </form>
         </section>
         <section>
+          <h3>Suporte do Pregoscópio</h3>
+          <p className="small"><a href="#suporte">Abrir o 3D, a lista de peças com identificadores, a eletrônica e os gabaritos de calibração</a></p>
           <h3>Exemplos de referência</h3>
           {fixtures.map((name) => (
             <button key={name} className="list-item" onClick={() => void go({ fixture: name })}>

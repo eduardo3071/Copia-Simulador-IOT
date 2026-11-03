@@ -16,6 +16,9 @@ import { Toolbar } from "./components/Toolbar.tsx";
 // three.js and the 3D viewer load only when the Gabinete tab is opened
 const EnclosureView = lazy(() => import("./components/EnclosureView.tsx").then((m) => ({ default: m.EnclosureView })));
 
+// the support page (3D, parts, electronics, calibration) is static: it needs neither a project nor the API
+const SuportePage = lazy(() => import("./suporte/SuportePage.tsx").then((m) => ({ default: m.SuportePage })));
+
 const TABS: { id: Tab; label: string }[] = [
   { id: "breadboard", label: "Protoboard" },
   { id: "code", label: "Código" },
@@ -30,6 +33,13 @@ export function App() {
   const toast = useApp((s) => s.toast);
   const [dialog, setDialog] = useState(false);
   const [booting, setBooting] = useState(true);
+  const [route, setRoute] = useState(location.hash);
+
+  useEffect(() => {
+    const onHash = () => setRoute(location.hash);
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
 
   useEffect(() => {
     let last: string | null = null;
@@ -66,6 +76,13 @@ export function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  if (route.startsWith("#suporte")) {
+    return (
+      <Suspense fallback={<div className="boot">Carregando o suporte…</div>}>
+        <SuportePage />
+      </Suspense>
+    );
+  }
   if (booting) return <div className="boot">Carregando…</div>;
   if (!hasProject) return <ProjectDialog />;
 

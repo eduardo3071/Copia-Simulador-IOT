@@ -187,3 +187,62 @@ h3 small { color: var(--muted); font-weight: normal; }
 .libraries { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; padding: 4px 10px; border-bottom: 1px solid var(--border); font-size: 12px; }
 .libraries label { display: flex; gap: 4px; align-items: center; }
 .libraries small { color: var(--muted); }
+/* ---- Suporte do Pregoscópio ---- */
+.suporte-link { color: var(--accent); text-decoration: none; font-size: 13px; padding: 3px 8px; border: 1px solid var(--border); border-radius: var(--radius); }
+.suporte-link:hover { border-color: var(--accent); }
+.suporte { min-height: 100%; background: var(--bg); display: grid; grid-template-rows: auto 1fr; }
+.suporte-top { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--border); }
+.suporte-top h1 { font-size: 18px; margin: 0; }
+.suporte-back { color: var(--muted); text-decoration: none; }
+.suporte-back:hover { color: var(--text); }
+.seg { display: inline-flex; gap: 2px; padding: 2px; border: 1px solid var(--border); border-radius: var(--radius); }
+.seg button { border: 0; background: transparent; }
+.seg button.active { background: #1f6fb2; }
+.suporte-tabs { margin-left: auto; }
+.suporte-3d, .suporte-ele { display: grid; grid-template-columns: minmax(0, 1fr) 360px; min-height: 0; }
+.suporte-main, .suporte-ele-main { padding: 10px 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.suporte-stage { position: relative; height: min(64vh, 640px); min-height: 380px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: radial-gradient(120% 90% at 50% 0%, #2a2f3a, #14171d); }
+.suporte-stage canvas { display: block; }
+.suporte-badges { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.badge-id { position: absolute; left: 0; top: 0; pointer-events: auto; padding: 1px 6px; font: 600 11px/1.4 ui-monospace, Consolas, monospace; color: #10131a; background: #ffd27a; border: 1px solid #00000055; border-radius: 9px; cursor: pointer; }
+.badge-id:hover, .badge-id.on { background: #ff8a00; color: #000; border-color: #fff; z-index: 2; }
+.suporte-hint { position: absolute; left: 10px; bottom: 8px; font-size: 11px; color: var(--muted); pointer-events: none; }
+.suporte-controls { display: grid; gap: 8px; }
+.suporte-controls .sliders { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.suporte-controls .sliders label { display: grid; gap: 2px; font-size: 12px; color: var(--muted); }
+.suporte-controls .sliders b { color: var(--text); font-weight: 600; float: right; }
+.suporte-controls input[type="range"] { width: 100%; padding: 0; }
+.check { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }
+.error { color: var(--error); }
+.suporte-diff table, .suporte-cal table, .calc dl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.suporte-diff th, .suporte-diff td, .suporte-cal th, .suporte-cal td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.suporte-diff h4, .wiring h4, .calc h4, .cal-intro h4 { margin: 0 0 6px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+.suporte-side { border-left: 1px solid var(--border); background: var(--panel); padding: 10px 12px; overflow: auto; display: grid; gap: 12px; align-content: start; }
+.suporte-side h4 { margin: 0 0 6px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+.part-row { display: grid; grid-template-columns: 44px 1fr auto; gap: 8px; width: 100%; text-align: left; margin-bottom: 3px; padding: 4px 8px; }
+.part-row.on { border-color: #ff8a00; background: #3a2f20; }
+.part-id { font: 600 12px ui-monospace, Consolas, monospace; color: #ffd27a; }
+.part-qty { color: var(--muted); font-size: 12px; }
+.part-card { border: 1px solid #ff8a0088; border-radius: var(--radius); padding: 10px 12px; background: var(--panel-2); }
+.part-card h4 { text-transform: none; letter-spacing: 0; font-size: 14px; color: var(--text); margin-bottom: 8px; }
+.part-card dl { display: grid; grid-template-columns: 110px 1fr; gap: 4px 10px; margin: 0 0 8px; font-size: 13px; }
+.part-card dt { color: var(--muted); }
+.part-card dd { margin: 0; }
+.download { display: inline-block; color: var(--accent); font-size: 13px; }
+.schematic { margin: 0; padding: 12px; background: #fff; border-radius: var(--radius); color: #333; }
+.schematic img { width: 100%; max-height: 420px; object-fit: contain; display: block; }
+.schematic figcaption { margin-top: 8px; color: #555 !important; }
+.calc, .wiring, .cal-intro { border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; background: var(--panel); }
+.calc .row { margin-bottom: 8px; }
+.calc label { font-size: 12px; color: var(--muted); display: grid; gap: 2px; }
+.calc input[type="number"] { width: 110px; }
+.calc dl { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; margin: 0; }
+.calc dd { margin: 0; text-align: right; font-family: ui-monospace, Consolas, monospace; }
+.wiring ol, .cal-intro ol { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 13px; }
+.suporte-cal { padding: 10px 14px; display: grid; gap: 12px; align-content: start; }
+.cal-grid { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 12px; }
+.cal-main { display: grid; gap: 10px; min-width: 0; }
+.suporte-jig { height: 300px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: #14171d; }
+.mono { font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.guard { padding: 24px; border: 1px dashed var(--border); border-radius: var(--radius); }

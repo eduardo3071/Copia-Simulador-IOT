@@ -4,6 +4,8 @@ Revisão 1 (02/11/2026). Gerado por `scripts/build-suporte.ts` e `scripts/build-
 
 > **Status: projeto digital completo, nada impresso nem montado ainda.** Tudo o que não foi medido ou testado na bancada está na seção "O que ainda não foi verificado". Imprima antes os gabaritos de `CALIBRACAO.md` e depois a abraçadeira, antes das peças grandes.
 
+> Cada peça tem um identificador (M1 a M4 impressas, P1 a P9 do pregoscópio, D1, R1, SW1, BT1, J1, U1, RV1 e PCB1 eletrônicas, H1 a H3 parafusos, C1 a C3 gabaritos). A página **Suporte do Pregoscópio** do site mostra cada um no modelo 3D com a especificação e o motivo da escolha (`#suporte` no endereço do site).
+
 ## 1. O que é
 Um suporte em C que segura o pregoscópio na vertical, com uma caixa luminosa na base. A lâmina desliza num canal no topo da caixa, sob a objetiva, e um LED branco ilumina por baixo. O pregoscópio (tubo telescópico com objetiva) é impresso à parte.
 
@@ -35,7 +37,8 @@ Os arquivos `*-impressao.stl` já estão deitados sobre a face de trás da colun
 | Parte visível do tubo interno, recolhido | 9 mm | fotos (regra de três) |
 | Lâmina | 76 × 26 × 1 mm | padrão, **não medida** |
 | Pilha 9 V | 48,5 × 26,5 × 17,5 mm | padrão |
-| Interruptor de balancim (furo) | 19 × 13 mm | típico, **não medido** |
+| Interruptor de balancim KCD1-101 (furo) | 21,2 × 15,0 mm | guia da LCSC; **não conferido** |
+| Conector DC-022B (furo) | 7,8 mm | anúncios de venda; **não conferido** |
 
 Alturas resultantes: lente frontal a 0,8 mm acima da lâmina, tubo externo de z = 95,2 a 210,2 mm, anel da abraçadeira (22 mm) no topo.
 
@@ -59,7 +62,7 @@ Alturas resultantes: lente frontal a 0,8 mm acima da lâmina, tubo externo de z 
 | Qtd | Item |
 |---|---|
 | 1 | Fonte 12 V, 500 mA, plugue P4 5,5 × 2,1 mm com centro positivo |
-| 1 | Conector P4 fêmea de painel (furo de 11 mm) |
+| 1 | Conector P4 fêmea de painel DC-022B (furo de 7,8 mm) |
 | 1 | LM317T (TO-220) |
 | 1 | Resistor 47 Ω, 1/4 W |
 | 1 | Potenciômetro linear 220 Ω com eixo de 6 mm, mais botão |

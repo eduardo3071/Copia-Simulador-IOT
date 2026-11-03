@@ -61,7 +61,7 @@ export interface HolderParams {
   windowMargin: number;
   ledWindowDiameter: number;
   switchCutout: { x: number; width: number; height: number };
-  /** Panel DC barrel jack (5.5 x 2.1 mm plug, 11 mm panel hole) on the right wall. */
+  /** Panel DC barrel jack DC-022B (5.5 x 2.1 mm plug, 7.8 mm panel hole per seller listings) on the right wall. */
   jackDiameter: number;
   jackY: number;
   /** Rheostat shaft hole on the front wall (6 mm shaft, 7.5 mm hole). */
@@ -130,8 +130,8 @@ export const DEFAULT_HOLDER_PARAMS: HolderParams = {
   windowWidth: 30,
   windowMargin: 22,
   ledWindowDiameter: 24,
-  switchCutout: { x: -25, width: 19, height: 13 },
-  jackDiameter: 11,
+  switchCutout: { x: -25, width: 21.2, height: 15 },
+  jackDiameter: 7.8,
   jackY: 0,
   knobDiameter: 7.5,
   knobX: 25,
