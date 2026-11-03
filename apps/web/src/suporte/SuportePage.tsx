@@ -1,6 +1,6 @@
 import { Component, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
-  bom, EVIDENCE_LABEL, partFile, v1Light, v2Light, LED_VF, BATTERY_MAH,
+  bom, bomCsv, EVIDENCE_LABEL, partFile, testPlan, v1Light, v2Light, LED_VF, BATTERY_MAH, R1_OHMS, RHEOSTAT_OHMS, DIODE_DROP_V,
   type PartKind, type SuportePart, type SuporteVersion,
 } from "@simiot/adapter-cad";
 import { ASSETS, HEAD_Z, JigPreview, NOMINAL_RETRACT, OBJECTIVE_LENGTH, SLEEVE_DEPTH, SLIDE_Z, SuporteScene, type Layer } from "./Scene.tsx";
@@ -109,7 +109,7 @@ function ThreeD({ version, selected, setSelected, startView }: { version: Suport
   const [view, setView] = useState({ name: ["iso", "front", "side", "top", "inside"].includes(startView) ? startView : "iso", n: 0 });
   const [layers, setLayers] = useState<Record<Layer, boolean>>({ impressa: true, pregoscopio: true, eletronica: true, parafusos: true, lamina: true });
   const lines = useMemo(() => bom(version), [version]);
-  const ids = useMemo(() => (labels ? lines.map((l) => l.part.id).filter((id) => !id.startsWith("C")) : []), [lines, labels]);
+  const ids = useMemo(() => (labels ? lines.map((l) => l.part.id).filter((id) => !id.startsWith("G")) : []), [lines, labels]);
   const part = lines.find((l) => l.part.id === selected)?.part;
   const nose = HEAD_Z - SLEEVE_DEPTH + retract - OBJECTIVE_LENGTH;
   const gap = nose - SLIDE_Z;
@@ -159,7 +159,7 @@ function ThreeD({ version, selected, setSelected, startView }: { version: Suport
               <tr><td>Comprimento total estendido</td><td>156,5 mm</td><td>155 mm</td></tr>
             </tbody>
           </table>
-          <p className="small muted">O anel da abraçadeira (M2) segue o valor do paquímetro. A cabeça e as garras vêm do STEP. O gabarito C1 resolve a dúvida do tubo externo.</p>
+          <p className="small muted">O anel da abraçadeira (M2) segue o valor do paquímetro. A cabeça e as garras vêm do STEP. O gabarito G1 resolve a dúvida do tubo externo.</p>
         </div>
       </div>
       <aside className="suporte-side">
@@ -179,7 +179,16 @@ function ThreeD({ version, selected, setSelected, startView }: { version: Suport
   );
 }
 
-const ELECTRICAL = /^(D|R|SW|BT|PS|J|U|RV|PCB)\d/;
+const ELECTRICAL = /^(D|R|SW|BT|PS|J|U|RV|PCB|C)\d/;
+
+function downloadCsv(version: SuporteVersion) {
+  const url = URL.createObjectURL(new Blob([bomCsv(version)], { type: "text/csv;charset=utf-8" }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `lista-de-compras-${version}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
 
 function Eletronica({ version, selected, setSelected }: { version: SuporteVersion; selected: string | null; setSelected(id: string | null): void }) {
   const parts = bom(version).map((l) => l.part).filter((p) => ELECTRICAL.test(p.id));
@@ -191,16 +200,17 @@ function Eletronica({ version, selected, setSelected }: { version: SuporteVersio
           <img src={`${ASSETS}eletronica/${version}-esquematico.svg`} alt={`Esquemático da versão ${version}`} />
           <figcaption className="small muted">
             {version === "v1"
-              ? "BT1 → SW1 → R1 → D1 → BT1. Os conectores BT1, SW1 e D1 são os fios que saem da placa para as peças da caixa."
-              : "J1 → SW1 → U1 (IN). U1 (OUT) → R1 → RV1 → ADJ → D1 → J1. R1 e RV1 em série ajustam a corrente do LED."}
+              ? "BT1 → SW1 → U1 (IN). U1 (OUT) → R1 → ADJ → D1 → GND. C1 entre IN e GND. O LM317 mantém 1,25 V sobre R1, então a corrente do LED é fixa."
+              : "J1 → D2 → SW1 → U1 (IN). U1 (OUT) → R1 → RV1 → ADJ → D1 → J1. C1 entre IN e GND. R1 e RV1 em série ajustam a corrente do LED."}
           </figcaption>
         </figure>
         <Calculator version={version} />
+        <TestPlan version={version} />
         <section className="calc">
           <h4>No simulador</h4>
           <p className="small">
             Em <b>Projetos → Exemplos de referência</b> há o circuito {version === "v1" ? "“SUPORTE do PREGOSCÓPIO v1”" : "“SUPORTE do PREGOSCÓPIO v2”"} montado com as mesmas peças e os mesmos identificadores. Clique em <b>Executar</b>
-            {version === "v1" ? " e no interruptor SW1 para ligar e desligar o LED." : ", clique no interruptor SW1 e gire o reostato RV1: o painel Laboratório mostra a corrente do LED de cerca de 5 a 26 mA."} Esses exemplos usam a API do simulador.
+            {version === "v1" ? " e no interruptor SW1 para ligar e desligar o LED; mude a tensão da pilha em BT1 para ver a corrente continuar em 18,4 mA até 6,35 V." : ", clique no interruptor SW1 e gire o reostato RV1: o painel Laboratório mostra a corrente do LED de 18 mA a 4,3 mA."} Esses exemplos usam a API do simulador.
           </p>
           <p className="small muted">O simulador avalia só corrente contínua, com fonte ideal e LED por limiar; não substitui a medição com multímetro.</p>
         </section>
@@ -208,20 +218,23 @@ function Eletronica({ version, selected, setSelected }: { version: SuporteVersio
           <h4>Ordem das ligações</h4>
           {version === "v1" ? (
             <ol>
-              <li>Fio vermelho do clipe BT1 ao primeiro terminal do interruptor SW1.</li>
-              <li>Segundo terminal de SW1 a uma ponta de R1 (330 Ω).</li>
-              <li>Outra ponta de R1 à perna mais longa de D1 (ânodo).</li>
-              <li>Perna mais curta de D1 (cátodo) ao fio preto do clipe BT1.</li>
-              <li>Meça a corrente com o multímetro em série: o esperado é cerca de 17,9 mA.</li>
+              <li>Fio vermelho do clipe BT1 ao terminal 1 do interruptor SW1.</li>
+              <li>Terminal 2 do SW1 ao pino IN do U1. Vendo o LM317T de frente, com o lado das letras para você, os pinos são ADJ, OUT e IN, da esquerda para a direita.</li>
+              <li>C1 (100 nF) entre o pino IN do U1 e o GND, soldado perto do U1.</li>
+              <li>Pino OUT do U1 a uma ponta de R1 (68 Ω).</li>
+              <li>Outra ponta de R1 ao pino ADJ do U1 e à perna mais longa do D1 (ânodo): os três no mesmo ponto.</li>
+              <li>Perna mais curta do D1 (cátodo) ao fio preto do clipe BT1 (GND). O outro terminal do C1 também vai ao GND.</li>
+              <li>Antes de fechar a tampa, faça o plano de teste acima.</li>
             </ol>
           ) : (
             <ol>
-              <li>Fonte PS1 (12 V, centro positivo) no conector J1; confira a polaridade antes.</li>
-              <li>Positivo de J1 ao interruptor SW1; SW1 ao terminal IN do U1 (LM317). Negativo de J1 ao GND.</li>
-              <li>OUT do U1 a R1 (47 Ω); R1 ao terminal 1 do RV1; os terminais 2 e 3 do RV1 ligados entre si.</li>
-              <li>Terminais 2 e 3 de RV1 ao pino ADJ do U1 e ao ânodo de D1.</li>
-              <li>Cátodo de D1 ao GND de J1.</li>
-              <li>Meça a corrente com o multímetro em série: de cerca de 5 mA a 27 mA girando RV1.</li>
+              <li>Fonte PS1 (12 V) no conector J1. Confirme com o multímetro que o centro do plugue é positivo.</li>
+              <li>Positivo do J1 ao ânodo do D2 (1N5819, o lado sem faixa). O cátodo do D2 (lado da faixa) ao terminal 1 do SW1.</li>
+              <li>Terminal 2 do SW1 ao pino IN do U1. C1 (100 nF) entre IN e GND, perto do U1.</li>
+              <li>Pino OUT do U1 a R1 (68 Ω); R1 ao terminal 1 do RV1; os terminais 2 e 3 do RV1 ligados entre si.</li>
+              <li>Terminais 2 e 3 do RV1 ao pino ADJ do U1 e ao ânodo do D1.</li>
+              <li>Cátodo do D1 ao GND do J1. O outro terminal do C1 também vai ao GND.</li>
+              <li>Antes de fechar a tampa, faça o plano de teste acima.</li>
             </ol>
           )}
         </section>
@@ -232,20 +245,50 @@ function Eletronica({ version, selected, setSelected }: { version: SuporteVersio
           <h4>Peças elétricas da {version === "v1" ? "v1" : "v2"}</h4>
           {parts.map((p) => <PartRow key={p.id} part={p} version={version} selected={selected === p.id} onSelect={() => setSelected(p.id)} />)}
         </section>
+        <section>
+          <h4>Lista de compras</h4>
+          <p className="small muted">Todas as peças compradas da {version}, com o que procurar na loja. O preço fica em branco: nenhum foi conferido.</p>
+          <button onClick={() => downloadCsv(version)}>Baixar lista (CSV)</button>
+        </section>
       </aside>
     </div>
   );
 }
 
+function TestPlan({ version }: { version: SuporteVersion }) {
+  const rows = testPlan(version);
+  return (
+    <section className="calc">
+      <h4>Plano de teste com o multímetro</h4>
+      <p className="small muted">
+        {version === "v1" ? "Pilha nova de 9 V, LED branco de 3,1 V." : "Fonte de 12 V e LED branco de 3,1 V."} Meça nesta ordem; a primeira leitura fora da faixa mostra onde procurar o erro.
+      </p>
+      <table className="plan">
+        <thead><tr><th>Ponto</th><th>Esperado</th><th>Faixa</th><th>Se estiver fora</th></tr></thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.point}>
+              <td>{r.point}</td>
+              <td className="mono">{r.expected}</td>
+              <td className="mono">{r.low.toFixed(r.unit === "V" ? 1 : 1).replace(".", ",")} a {r.high.toFixed(1).replace(".", ",")} {r.unit}</td>
+              <td className="small">{r.hint}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  );
+}
+
 function Calculator({ version }: { version: SuporteVersion }) {
   const [vbat, setVbat] = useState(9);
-  const [r1, setR1] = useState(330);
+  const [r1, setR1] = useState(R1_OHMS);
   const [vf, setVf] = useState(LED_VF);
   const [cap, setCap] = useState(BATTERY_MAH);
   const [vin, setVin] = useState(12);
   const [pot, setPot] = useState(0);
   const a = v1Light(vbat, r1, vf, cap);
-  const b = v2Light(vin, 47, pot, vf);
+  const b = v2Light(vin, R1_OHMS, pot, vf);
   const num = (value: number, set: (n: number) => void, props: { min?: number; max?: number; step?: number } = {}) => (
     <input type="number" value={value} onChange={(e) => set(Number(e.target.value))} {...props} />
   );
@@ -261,23 +304,25 @@ function Calculator({ version }: { version: SuporteVersion }) {
             <label>Capacidade (mAh) {num(cap, setCap, { min: 50, max: 3000 })}</label>
           </div>
           <dl>
-            <dt>Corrente do LED</dt><dd>{a.currentmA.toFixed(1)} mA {a.currentmA > 20 ? <span className="error">acima de 20 mA</span> : null}</dd>
-            <dt>Dissipação em R1</dt><dd>{a.resistorMilliwatts.toFixed(0)} mW de 250 mW</dd>
+            <dt>Corrente do LED</dt><dd>{a.regulating ? a.currentmA.toFixed(1) : "0,0"} mA {a.currentmA > 20 ? <span className="error">acima de 20 mA</span> : null}</dd>
+            <dt>Entrada mínima do U1</dt><dd>{a.minInputV.toFixed(2)} V {a.regulating ? "" : <span className="error">a pilha está abaixo: o LED escurece</span>}</dd>
+            <dt>Dissipação em R1</dt><dd>{a.setResistorMilliwatts.toFixed(0)} mW de 250 mW</dd>
+            <dt>Dissipação no U1</dt><dd>{a.regulatorMilliwatts.toFixed(0)} mW</dd>
             <dt>Autonomia estimada</dt><dd>{a.hours.toFixed(0)} h</dd>
-            <dt>R1 para 20 mA</dt><dd>{a.resistorForTarget.toFixed(0)} Ω</dd>
           </dl>
+          <p className="small muted">A corrente é 1,25 V ÷ R1 e não depende da pilha enquanto ela estiver acima da entrada mínima.</p>
         </>
       ) : (
         <>
           <div className="row">
             <label>Fonte (V) {num(vin, setVin, { min: 3, max: 20, step: 0.5 })}</label>
-            <label>Reostato RV1: {pot} Ω <input type="range" min={0} max={220} value={pot} onChange={(e) => setPot(Number(e.target.value))} /></label>
+            <label>Reostato RV1: {pot} Ω <input type="range" min={0} max={RHEOSTAT_OHMS} value={pot} onChange={(e) => setPot(Number(e.target.value))} /></label>
           </div>
           <dl>
-            <dt>Corrente do LED</dt><dd>{b.currentmA.toFixed(1)} mA</dd>
+            <dt>Corrente do LED</dt><dd>{b.regulating ? b.currentmA.toFixed(1) : "0,0"} mA</dd>
             <dt>Resistência de ajuste (R1 + RV1)</dt><dd>{b.setOhms} Ω</dd>
             <dt>Dissipação no U1</dt><dd>{b.regulatorMilliwatts.toFixed(0)} mW</dd>
-            <dt>Entrada mínima do U1</dt><dd>{b.minInputV.toFixed(2)} V {b.regulating ? "" : <span className="error">a fonte está abaixo</span>}</dd>
+            <dt>Entrada mínima da fonte (com o D2 de {DIODE_DROP_V.toFixed(1).replace(".", ",")} V)</dt><dd>{b.minInputV.toFixed(2)} V {b.regulating ? "" : <span className="error">a fonte está abaixo</span>}</dd>
             <dt>Carga mínima do U1</dt><dd>{b.aboveMinLoad ? "atendida" : <span className="error">corrente abaixo de 3,5 mA, o LM317 pode oscilar</span>}</dd>
           </dl>
         </>
@@ -288,10 +333,10 @@ function Calculator({ version }: { version: SuporteVersion }) {
 
 interface Series { name: string; id: string; sizes: string[]; param: string }
 const JIGS: { id: string; file: string; title: string; series: Series[] }[] = [
-  { id: "C1", file: "calibracao-tubo.stl", title: "Gabarito do tubo", series: [
+  { id: "G1", file: "calibracao-tubo.stl", title: "Gabarito do tubo", series: [
     { name: "Tubo externo", id: "P2", sizes: ["30,2", "33,0", "33,4", "33,8", "34,2", "34,6", "36,4"], param: "tubeDiameter = valor escolhido − 0,2" },
   ] },
-  { id: "C2", file: "calibracao-pecas.stl", title: "Gabarito das peças", series: [
+  { id: "G2", file: "calibracao-pecas.stl", title: "Gabarito das peças", series: [
     { name: "Lâmina (rebaixo de 1,2 mm)", id: "L1", sizes: ["26,2", "26,4", "26,6", "26,8", "27,0"], param: "slideWidth = valor escolhido − 0,6" },
     { name: "Interruptor KCD1-101", id: "SW1", sizes: ["20,8×14,6", "21,0×14,8", "21,2×15,0", "21,4×15,2", "21,6×15,4"], param: "switchCutout (largura e altura)" },
     { name: "Flange do LED", id: "D1", sizes: ["5,8", "6,0", "6,2", "6,4", "6,6"], param: "ledFlange = valor escolhido − 0,4" },
@@ -299,7 +344,7 @@ const JIGS: { id: string; file: string; title: string; series: Series[] }[] = [
     { name: "Conector DC-022B", id: "J1", sizes: ["7,6", "7,8", "8,0", "8,2"], param: "jackDiameter" },
     { name: "Rosca M7 do reostato", id: "RV1", sizes: ["7,0", "7,3", "7,5", "7,8"], param: "knobDiameter" },
   ] },
-  { id: "C3", file: "calibracao-bateria.stl", title: "Gabarito da bateria", series: [
+  { id: "G3", file: "calibracao-bateria.stl", title: "Gabarito da bateria", series: [
     { name: "Bateria 9 V", id: "BT1", sizes: ["48,6×26,6", "49,1×27,1", "49,6×27,6", "50,1×28,1"], param: "batteryFit = valor escolhido − medida da bateria" },
   ] },
 ];

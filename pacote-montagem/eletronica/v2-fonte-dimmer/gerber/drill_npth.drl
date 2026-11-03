@@ -1,8 +1,8 @@
 M48
-; Simulador-IOT | Luz do pregoscopio v2 (fonte + dimmer) | revisão 1
-; DRILL file {tscircuit} date 2026-11-03T01:28:36.496Z
+; Simulador-IOT | Luz do pregoscopio v2 (fonte + dimmer) | revisão 2
+; DRILL file {tscircuit} date 2026-11-03T12:35:19.195Z
 ; FORMAT={-:-/ absolute / metric / decimal}
-; #@! TF.CreationDate,2026-11-03T01:28:36.496Z
+; #@! TF.CreationDate,2026-11-03T12:35:19.195Z
 ; #@! TF.GenerationSoftware,tscircuit
 ; #@! TF.FileFunction,NonPlated,1,2,NPTH
 FMAT,2
@@ -13,8 +13,8 @@ T10C3.200000
 G90
 G05
 T10
-X-26.5000Y-9.0000
-X-26.5000Y9.0000
-X26.5000Y-9.0000
-X26.5000Y9.0000
+X-31.5000Y-9.0000
+X-31.5000Y9.0000
+X31.5000Y-9.0000
+X31.5000Y9.0000
 M30

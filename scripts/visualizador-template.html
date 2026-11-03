@@ -309,16 +309,30 @@ const STL = /*STL_DATA*/{};
   battery.position.set(0, 38, 8.75);
   battery.castShadow = true;
   addEdges(battery);
-  const board = new THREE.Mesh(new THREE.BoxGeometry(60, 25, 1.6), material("#1f7a4f"));
-  board.position.set(0, 38, 6.8);
-  board.castShadow = true;
-  addEdges(board);
+  // driver board: v1 40 x 25 mm in front of the LED, v2 70 x 25 mm where the battery would be (LM317, R1, C1 and, in v2, D2)
+  function driverBoard(width, x, y) {
+    const g = new THREE.Group();
+    const pcb = new THREE.Mesh(new THREE.BoxGeometry(width, 25, 1.6), material("#1f7a4f"));
+    pcb.castShadow = true;
+    addEdges(pcb);
+    const u1 = new THREE.Mesh(new THREE.BoxGeometry(10, 4.5, 9), material("#262c36"));
+    u1.position.set(-width * 0.12, 4, 5.3);
+    const r1 = cyl(1.6, -4.5, 4.5, "#c9b27a", {}, "x");
+    r1.position.set(width * 0.12, -3, 2.4);
+    const c1 = new THREE.Mesh(new THREE.BoxGeometry(5, 3, 6), material("#d9a441"));
+    c1.position.set(width * 0.02, -7, 3.8);
+    g.add(pcb, u1, r1, c1);
+    g.position.set(x, y, 6.8);
+    return g;
+  }
+  const board1 = driverBoard(40, 8, -19);
+  const board2 = driverBoard(70, 0, 38);
 
   const lidGroup = new THREE.Group();
-  const refGroups = { pregoscopio, slide, led, battery, board };
+  const refGroups = { pregoscopio, slide, led, battery, board1, board2 };
 
   [parts.body1, parts.body2, parts.clamp, parts.diffuser, pregoscopio, slide, lidGroup].forEach((o) => root.add(o));
-  lidGroup.add(parts.lid1, parts.lid2, led, battery, board);
+  lidGroup.add(parts.lid1, parts.lid2, led, battery, board1, board2);
 
   // ---- layers panel ----
   const layerDefs = [
@@ -329,7 +343,7 @@ const STL = /*STL_DATA*/{};
     { id: "pregoscopio", label: "Pregoscópio", color: "#47515f", ghost: true, get: () => [pregoscopio] },
     { id: "slide", label: "Lâmina", color: "#8fd0ff", ghost: true, get: () => [slide] },
     { id: "led", label: "LED 5 mm", color: "#ffd27a", ghost: true, get: () => [led] },
-    { id: "power", label: "Pilha 9 V", color: "#3b4757", ghost: true, get: () => [version === "v1" ? battery : board] },
+    { id: "power", label: "Pilha 9 V", color: "#3b4757", ghost: true, get: () => [version === "v1" ? battery : board2] },
   ];
   const state = {};
   const layersBox = $("#layers");
@@ -346,20 +360,22 @@ const STL = /*STL_DATA*/{};
   let version = "v1";
   const dimsBox = $("#dims");
   const DIMS = {
-    v1: [["Altura total", "210,2 mm"], ["Base da caixa", "90 × 115 × 40 mm"], ["Coluna em C", "44 × 30 mm"], ["Lente até a lâmina", "0,8 mm"], ["Anel da abraçadeira", "⌀ 33,7 × 22 mm"], ["Pilha 9 V", "48,5 × 26,5 × 17,5 mm"], ["Corrente do LED", "≈ 17,9 mA"]],
-    v2: [["Altura total", "210,2 mm"], ["Base da caixa", "90 × 115 × 40 mm"], ["Coluna em C", "44 × 30 mm"], ["Lente até a lâmina", "0,8 mm"], ["Anel da abraçadeira", "⌀ 33,7 × 22 mm"], ["Placa do dimmer", "60 × 25 mm, 4 × M3"], ["Corrente do LED", "4,7 a 26,6 mA"]],
+    v1: [["Altura total", "210,2 mm"], ["Base da caixa", "90 × 115 × 40 mm"], ["Coluna em C", "44 × 30 mm"], ["Lente até a lâmina", "0,8 mm"], ["Anel da abraçadeira", "⌀ 33,7 × 22 mm"], ["Pilha 9 V", "48,5 × 26,5 × 17,5 mm"], ["Placa do driver", "40 × 25 mm, 4 × M3"], ["Corrente do LED", "18,4 mA constantes (LM317)"]],
+    v2: [["Altura total", "210,2 mm"], ["Base da caixa", "90 × 115 × 40 mm"], ["Coluna em C", "44 × 30 mm"], ["Lente até a lâmina", "0,8 mm"], ["Anel da abraçadeira", "⌀ 33,7 × 22 mm"], ["Placa do driver", "70 × 25 mm, 4 × M3"], ["Corrente do LED", "18,4 a 4,3 mA"]],
   };
 
   function refresh() {
     parts.body1.visible = parts.body2.visible = parts.lid1.visible = parts.lid2.visible = false;
     layerDefs.forEach((d) => {
-      d.labelEl.textContent = d.id === "power" ? (version === "v1" ? "Pilha 9 V" : "Placa do dimmer") : d.label;
+      d.labelEl.textContent = d.id === "power" ? (version === "v1" ? "Pilha 9 V" : "Placa do driver") : d.label;
       const on = state[d.id];
       if (d.id === "body") parts.body1.visible = parts.body2.visible = false;
       d.get().forEach((o) => { o.visible = on; });
     });
     battery.visible = state.power && version === "v1";
-    board.visible = state.power && version === "v2";
+    board1.visible = state.power;
+    board2.visible = state.power && version === "v2";
+    board1.visible = state.power && version === "v1";
     dimsBox.innerHTML = DIMS[version].map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
     applyLight();
   }

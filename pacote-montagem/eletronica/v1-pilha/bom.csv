@@ -1,6 +1,8 @@
-# Simulador-IOT | Luz do pregoscopio v1 (pilha 9 V) | revisão 1
+# Simulador-IOT | Luz do pregoscopio v1 (pilha 9 V) | revisão 2
 "Designator","Comment","Value","Footprint"
 "BT1","","","pinrow2"
 "SW1","","","pinrow2"
-"R1","330","330","axial_p0.4in"
+"U1","","","to220"
+"C1","100n","100n","pinrow2_p5.08mm"
+"R1","68","68","axial_p0.4in"
 "D1","","","pinrow2"

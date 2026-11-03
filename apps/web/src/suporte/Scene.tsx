@@ -151,6 +151,7 @@ function Assembly({ options, registry }: { options: SceneOptions; registry: Regi
   const plane = useMemo(() => new Plane(new Vector3(0, 1, 0), 0), []);
   plane.constant = -options.cut;
   const v = version === "v1" ? "v1-pilha" : "v2-fonte";
+  const board = version === "v1" ? { w: 40, x: 8, y: -19 } : { w: 70, x: 0, y: 38 };
   const base = { options, registry, plane };
   const stl = (name: string) => `${ASSETS}mecanica/${name}`;
   const pre = (n: number) => `${ASSETS}pregoscopio/pregoscopio-${n}.stl`;
@@ -170,18 +171,21 @@ function Assembly({ options, registry }: { options: SceneOptions; registry: Regi
         <StlPart {...base} id="M3" layer="impressa" url={stl(`${v}/tampa-fundo.stl`)} color={COLORS.lid} />
         <Primitive {...base} id="D1" layer="eletronica" shape={{ kind: "cyl", r: 2.5, len: 4.5, axis: "z" }} color={COLORS.led} emissive={options.lightOn ? "#ffd27a" : undefined} position={[0, 0, 30.85]} />
         <Primitive {...base} id="D1" layer="eletronica" shape={{ kind: "dome" }} color={COLORS.led} emissive={options.lightOn ? "#ffd27a" : undefined} position={[0, 0, 33.1]} />
-        {version === "v1" ? (
-          <>
-            <Primitive {...base} id="BT1" layer="eletronica" shape={{ kind: "box", size: [48.5, 26.5, 17.5] }} color={COLORS.battery} position={[0, 38, 8.75]} />
-            <Primitive {...base} id="R1" layer="eletronica" shape={{ kind: "cyl", r: 1.6, len: 9, axis: "x" }} color="#c9b27a" position={[-26, 12, 3.2]} />
-          </>
-        ) : (
-          <>
-            <Primitive {...base} id="PCB1" layer="eletronica" shape={{ kind: "box", size: [60, 25, 1.6] }} color={COLORS.board} position={[0, 38, 6.8]} />
-            <Primitive {...base} id="U1" layer="eletronica" shape={{ kind: "box", size: [10, 4.5, 9] }} color={COLORS.dark} position={[-14, 38, 12.1]} />
-            <Primitive {...base} id="R1" layer="eletronica" shape={{ kind: "cyl", r: 1.6, len: 9, axis: "x" }} color="#c9b27a" position={[8, 42, 9.2]} />
-            {[-26.5, 26.5].flatMap((x) => [29, 47].map((y) => <Primitive key={`${x},${y}`} {...base} id="H3" layer="parafusos" shape={{ kind: "cyl", r: 3, len: 1.5, axis: "z" }} color={COLORS.screw} position={[x, y, 8.5]} />))}
-          </>
+        {version === "v1" && (
+          <Primitive {...base} id="BT1" layer="eletronica" shape={{ kind: "box", size: [48.5, 26.5, 17.5] }} color={COLORS.battery} position={[0, 38, 8.75]} />
+        )}
+        {/* driver board on its four standoffs: v1 40 x 25 mm in front of the LED, v2 70 x 25 mm where the battery would be */}
+        <Primitive {...base} id="PCB1" layer="eletronica" shape={{ kind: "box", size: [board.w, 25, 1.6] }} color={COLORS.board} position={[board.x, board.y, 6.8]} />
+        <Primitive {...base} id="U1" layer="eletronica" shape={{ kind: "box", size: [10, 4.5, 9] }} color={COLORS.dark} position={[board.x - board.w * 0.12, board.y + 4, 12.1]} />
+        <Primitive {...base} id="R1" layer="eletronica" shape={{ kind: "cyl", r: 1.6, len: 9, axis: "x" }} color="#c9b27a" position={[board.x + board.w * 0.12, board.y - 3, 9.2]} />
+        <Primitive {...base} id="C1" layer="eletronica" shape={{ kind: "box", size: [5, 3, 6] }} color="#d9a441" position={[board.x + board.w * 0.02, board.y - 7, 10.6]} />
+        {version === "v2" && (
+          <Primitive {...base} id="D2" layer="eletronica" shape={{ kind: "cyl", r: 1.8, len: 7, axis: "x" }} color="#1d2027" position={[board.x - board.w * 0.3, board.y - 7, 9.2]} />
+        )}
+        {[-1, 1].flatMap((sx) =>
+          [-1, 1].map((sy) => (
+            <Primitive key={`${sx},${sy}`} {...base} id="H3" layer="parafusos" shape={{ kind: "cyl", r: 3, len: 1.5, axis: "z" }} color={COLORS.screw} position={[board.x + (sx * (board.w - 7)) / 2, board.y + sy * 9, 8.5]} />
+          )),
         )}
         {[-37.6, 37.6].flatMap((x) => [-37.6, 62.6].map((y) => <Primitive key={`${x},${y}`} {...base} id="H1" layer="parafusos" shape={{ kind: "cyl", r: 3, len: 2, axis: "z" }} color={COLORS.screw} position={[x, y, -3.4]} />))}
       </group>

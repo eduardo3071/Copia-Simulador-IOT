@@ -22,7 +22,7 @@ Experimente a peça real em cada furo, do menor para o maior, e escolha o **meno
 | `parafuso-m3` | 2,4 · 2,6 · 2,8 | parafuso M3 autoatarraxante | `pilotHole` = valor onde ele entra apertado, mas rosqueia |
 | `conector-dc` | 7,6 · 7,8 · 8,0 · 8,2 | rosca do conector DC-022B (v2) | `jackDiameter` = valor escolhido |
 | `eixo-reostato` | 7,0 · 7,3 · 7,5 · 7,8 | rosca M7 do reostato (v2) | `knobDiameter` = valor escolhido |
-| `bateria` (C3) | 48,6×26,6 · 49,1×27,1 · 49,6×27,6 · 50,1×28,1 | bateria 9 V | `batteryFit` = valor escolhido − medida da bateria |
+| `bateria` (G3) | 48,6×26,6 · 49,1×27,1 · 49,6×27,6 · 50,1×28,1 | bateria 9 V | `batteryFit` = valor escolhido − medida da bateria |
 
 Se a peça não entrar nem no maior furo de uma série, me diga: preciso de uma série com furos maiores.
 

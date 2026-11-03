@@ -38,7 +38,7 @@ export interface ParamDef {
  * - module: off-board module/part, becomes a header with all its pins (pin order = edaPort)
  * - chip: generic part with an explicit footprint and pin labels
  */
-export type EdaKind = "resistor" | "led" | "pushbutton" | "potentiometer" | "capacitor" | "chip" | "connector" | "module" | "none";
+export type EdaKind = "resistor" | "led" | "pushbutton" | "potentiometer" | "capacitor" | "diode" | "chip" | "connector" | "module" | "none";
 
 export type SimulationModel =
   | "mcu-avr"
@@ -54,6 +54,8 @@ export type SimulationModel =
   | "hc-sr04"
   | "lcd1602"
   | "capacitor"
+  /** Rectifier diode in series with a fixed supply: drops `DIODE_DROP_V` while the anode is held by a source, blocks otherwise. */
+  | "diode"
   /** Ideal DC source: pin "+" at the `voltage` parameter, pin "-" at 0 V (battery, wall adapter). */
   | "source"
   /** LM317-style adjustable regulator in its constant-current topology (IN, OUT, ADJ). */
@@ -103,7 +105,7 @@ export interface ComponentDefinition {
   params: ParamDef[];
   /** Groups of pins connected inside the part (breadboard strips, button legs). */
   internalNets: string[][];
-  visual: { kind: "wokwi"; tag: string } | { kind: "breadboard" } | { kind: "capacitor" } | { kind: "generic"; shape: "battery" | "switch" | "regulator" | "supply" };
+  visual: { kind: "wokwi"; tag: string } | { kind: "breadboard" } | { kind: "capacitor" } | { kind: "generic"; shape: "battery" | "switch" | "regulator" | "supply" | "diode" };
   eda: { kind: EdaKind; footprints: string[] };
   simulation: { model: SimulationModel; leds?: LedSegment[]; env?: EnvDef[]; note?: string; /** A switch that keeps its position after a click (rocker), unlike a push button. */ latching?: boolean };
   capabilities: Capabilities;

@@ -66,6 +66,27 @@ export const rockerSwitch: ComponentDefinition = {
   provenance: { visual: OWN, footprint: `${FOOTPRINTER} pinrow2 (conector dos fios)`, license: "MIT" },
 };
 
+/** Rectifier diode in DO-41 (1N5819), axial. Used as reverse-polarity protection in series with a supply. */
+export const diode: ComponentDefinition = {
+  id: "diode",
+  version: 1,
+  name: "Diodo retificador (1N5819)",
+  category: "passive",
+  refDesPrefix: "D",
+  size: { width: 50, height: 16 },
+  pins: [
+    { id: "A", label: "Anodo", x: 0, y: 8, role: "passive", edaPort: "pin1" },
+    { id: "K", label: "Catodo (faixa)", x: 50, y: 8, role: "passive", edaPort: "pin2" },
+  ],
+  params: [],
+  internalNets: [],
+  visual: { kind: "generic", shape: "diode" },
+  eda: { kind: "diode", footprints: ["axial_p0.4in", "axial_p0.3in"] },
+  simulation: { model: "diode", note: "Queda fixa de 0,4 V quando o anodo está numa fonte; bloqueia no sentido contrário." },
+  capabilities: { drawable: true, simulable: true, fabricable: true, model3d: false },
+  provenance: { visual: OWN, footprint: `${FOOTPRINTER} axial (MIT)`, license: "MIT" },
+};
+
 /** LM317T in TO-220, front view: ADJ, OUT, IN from the left. Legs 9.6 px apart so it also fits the breadboard. */
 export const lm317: ComponentDefinition = {
   id: "lm317",

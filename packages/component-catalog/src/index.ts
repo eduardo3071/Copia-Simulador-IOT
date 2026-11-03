@@ -1,5 +1,5 @@
 import { breadboardHalf } from "./breadboard.ts";
-import { battery9v, dcSupply, lm317, rockerSwitch } from "./parts-power.ts";
+import { battery9v, dcSupply, diode, lm317, rockerSwitch } from "./parts-power.ts";
 import { arduinoUno, led, potentiometer, pushbutton, resistor } from "./parts.ts";
 import { buzzer, capacitor, dht22, hcsr04, lcd1602, ldrModule, ledBarGraph, rgbLed, servo, sevenSegment, slidePotentiometer } from "./parts-extra.ts";
 import type { ComponentDefinition, PinDef } from "./types.ts";
@@ -33,6 +33,7 @@ export const catalog: readonly ComponentDefinition[] = [
   dcSupply,
   rockerSwitch,
   lm317,
+  diode,
 ];
 
 const byId = new Map(catalog.map((d) => [d.id, d]));

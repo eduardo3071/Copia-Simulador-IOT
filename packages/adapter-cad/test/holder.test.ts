@@ -116,10 +116,10 @@ describe("holder (suporte do pregoscopio)", () => {
     expect(v2.cradle).toBeNull();
     expect(v2.cutouts.map((c) => c.id).sort()).toEqual(["jack", "knob", "slide-channel", "switch", "window"]);
     expect(layout.cutouts.map((c) => c.id).sort()).toEqual(["slide-channel", "switch", "window"]);
-    // four standoffs on the 53 x 18 mm hole pattern of the 60 x 25 mm board
+    // four standoffs on the 63 x 18 mm hole pattern of the 70 x 25 mm board
     expect(v2.boardPosts).toHaveLength(4);
     const xs = v2.boardPosts.map((q) => q.x);
-    expect(Math.max(...xs) - Math.min(...xs)).toBeCloseTo(p.dimmerBoard.width - 2 * p.dimmerBoard.holeInset, 6);
+    expect(Math.max(...xs) - Math.min(...xs)).toBeCloseTo(p.driverBoards.fonte.width - 2 * p.driverBoards.fonte.holeInset, 6);
     const { body, lid } = buildHolder(v2);
     const overlap = body.clone().intersect(lid.clone());
     expect(overlap.mesh({ tolerance: 0.02, angularTolerance: 0.1 }).triangles.length).toBe(0);
@@ -154,5 +154,19 @@ describe("holder (suporte do pregoscopio)", () => {
     expect(win.zMin).toBeGreaterThanOrEqual(layout.box.height + 20);
     expect(win.zMax).toBeLessThanOrEqual(layout.ring.bottom - 20);
     expect(holderLayout({ ...p, windowWidth: 40 }).issues.some((i) => i.severity === "error")).toBe(true);
+  });
+
+  it("the 'pilha' variant carries the 40 x 25 mm driver board in front of the LED, clear of the post, the cradle and the switch", () => {
+    expect(layout.boardPosts).toHaveLength(4);
+    const xs = layout.boardPosts.map((q) => q.x);
+    const ys = layout.boardPosts.map((q) => q.y);
+    expect(Math.max(...xs) - Math.min(...xs)).toBeCloseTo(p.driverBoards.pilha.width - 2 * p.driverBoards.pilha.holeInset, 6);
+    expect(Math.max(...ys) - Math.min(...ys)).toBeCloseTo(p.driverBoards.pilha.depth - 2 * p.driverBoards.pilha.holeInset, 6);
+    expect(layout.board.yMax).toBeLessThan(layout.ledPost.y - layout.ledPost.diameter / 2);
+    expect(layout.board.yMax).toBeLessThan(layout.cradle!.yMin);
+    expect(layout.issues).toEqual([]);
+    // a board pushed onto the LED post is reported
+    const crowded = holderLayout({ ...p, driverBoards: { ...p.driverBoards, pilha: { ...p.driverBoards.pilha, x: 0, y: 0 } } });
+    expect(crowded.issues.some((i) => i.message.includes("porta-LED"))).toBe(true);
   });
 });

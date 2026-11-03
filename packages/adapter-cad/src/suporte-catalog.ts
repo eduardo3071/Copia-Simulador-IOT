@@ -57,7 +57,7 @@ export const SUPORTE_PARTS: SuportePart[] = [
     spec: "50 × 15 mm, haste de 170 mm", criterion: "Apoia no topo do anel (M2) e segura o celular ou a câmera pelas garras.", file: "pregoscopio/pregoscopio-1.stl" },
   { id: "P2", name: "Tubo externo", kind: "referencia", versions: both, qty: 1, evidence: "step",
     spec: "⌀ 30 mm no STEP; ⌀ 33,5 mm medido com paquímetro",
-    criterion: "O anel M2 foi dimensionado para o valor medido. O STEP V1 é de uma versão anterior: confira no gabarito C1.", file: "pregoscopio/pregoscopio-2.stl" },
+    criterion: "O anel M2 foi dimensionado para o valor medido. O STEP V1 é de uma versão anterior: confira no gabarito G1.", file: "pregoscopio/pregoscopio-2.stl" },
   { id: "P3", name: "Tubo interno (telescópico)", kind: "referencia", versions: both, qty: 1, evidence: "step",
     spec: "⌀ 23,4 mm no STEP; ⌀ 22,5 mm medido; curso de 40 mm", criterion: "Faz o foco fino. Move junto com P7 e P8.", file: "pregoscopio/pregoscopio-3.stl" },
   { id: "P4", name: "Garra esquerda", kind: "referencia", versions: both, qty: 1, evidence: "step", spec: "10 mm de espessura", criterion: "Prende um lado do aparelho de captura.", file: "pregoscopio/pregoscopio-4.stl" },
@@ -72,52 +72,58 @@ export const SUPORTE_PARTS: SuportePart[] = [
     spec: "⌀ 20 mm, 35 mm abaixo do tubo interno, distância de trabalho típica de 0,8 mm",
     criterion: "A objetiva já faz parte do pregoscópio. Ela define a altura do suporte: a lente fica a 0,8 mm da lâmina." },
   { id: "L1", name: "Lâmina de microscopia", kind: "comprada", versions: both, qty: 1, evidence: "padrao",
-    spec: "76 × 26 × 1 mm, vidro", criterion: "Medida padrão do mercado. O canal da caixa tem folga de 0,6 mm; confira no gabarito C2." },
+    spec: "76 × 26 × 1 mm, vidro", criterion: "Medida padrão do mercado. O canal da caixa tem folga de 0,6 mm; confira no gabarito G2." },
 
   // ---- electronics -------------------------------------------------------------------------------
   { id: "D1", name: "LED branco 5 mm difuso", kind: "comprada", versions: both, qty: 1, evidence: "padrao",
     spec: "Vf ≈ 3,1 V a 20 mA, ângulo de 100° ou mais, corpo leitoso",
     criterion: "Ângulo largo e corpo difuso dão luz mais uniforme sob a lâmina. LED de feixe estreito (15°) faz um ponto quente no campo." },
-  { id: "R1", name: "Resistor limitador", kind: "comprada", versions: both, qty: 1, evidence: "calculado",
-    spec: "v1: 330 Ω ¼ W 1 % (≈ 17,9 mA). v2: 47 Ω ¼ W 1 % (ajuste de corrente)",
-    criterion: "Filme metálico 1 % mantém a corrente estável. A dissipação é de 0,1 W na v1 e de 33 mW na v2, bem abaixo de ¼ W." },
+  { id: "R1", name: "Resistor R1 (ajuste da corrente)", kind: "comprada", versions: both, qty: 1, evidence: "calculado",
+    spec: "68 Ω ¼ W 1 %, filme metálico (azul, cinza, preto, dourado); 18,4 mA nas duas versões",
+    criterion: "1,25 V / 68 Ω = 18,4 mA, abaixo dos 20 mA do LED. Dissipa 23 mW, bem abaixo de ¼ W, e o 1 % mantém a corrente estável." },
+  { id: "C1", name: "Capacitor cerâmico 100 nF", kind: "comprada", versions: both, qty: 1, evidence: "padrao",
+    spec: "100 nF (104) 50 V, passo de 5 mm, entre a entrada do U1 e o GND",
+    criterion: "O datasheet do LM317 pede 0,1 µF na entrada quando o regulador fica longe do capacitor da fonte. Os fios da pilha e do conector são longos." },
+  { id: "D2", name: "Diodo 1N5819 (proteção de polaridade)", kind: "comprada", versions: ["v2"], qty: 1, evidence: "padrao",
+    spec: "Schottky 1 A 40 V, DO-41, em série no positivo do conector J1",
+    criterion: "Impede que um plugue com polaridade invertida chegue ao LM317. O Schottky derruba cerca de 0,4 V, contra 0,7 V do 1N4007, e o mínimo de entrada fica em 6,75 V." },
   { id: "SW1", name: "Interruptor de balancim KCD1-101", kind: "comprada", versions: both, qty: 1, evidence: "anuncio",
     spec: "2 terminais, liga-desliga, recorte de painel de 21,2 × 15,0 mm",
-    criterion: "Modelo comum, barato e com recorte retangular padrão que a caixa já tem. A medida vem do guia da LCSC; confirme no gabarito C2." },
+    criterion: "Modelo comum, barato e com recorte retangular padrão que a caixa já tem. A medida vem do guia da LCSC; confirme no gabarito G2." },
   { id: "BT1", name: "Bateria 9 V (6F22) com clipe", kind: "comprada", versions: ["v1"], qty: 1, evidence: "padrao",
     spec: "48,5 × 26,5 × 17,5 mm, alcalina, cerca de 500 mAh",
-    criterion: "Passa com sobra da queda do LED (3,1 V) e dura cerca de 28 horas a 17,9 mA. É a pilha que o berço da tampa comporta." },
+    criterion: "O LM317 mantém 18,4 mA enquanto a pilha estiver acima de 6,35 V, cerca de 22 horas (80 % dos 500 mAh). É a pilha que o berço da tampa comporta." },
   { id: "PS1", name: "Fonte 12 V 500 mA", kind: "comprada", versions: ["v2"], qty: 1, evidence: "suposto",
     spec: "Plugue P4 5,5 × 2,1 mm, centro positivo",
-    criterion: "12 V sobram acima do mínimo de 6,3 V do LM317 e 500 mA cobrem 27 mA com folga. Confirme a polaridade do plugue antes de ligar." },
+    criterion: "12 V sobram acima do mínimo de 6,75 V (LED, LM317 e diodo) e 500 mA cobrem 18 mA com folga. Confirme com o multímetro que o centro do plugue é positivo antes de ligar." },
   { id: "J1", name: "Conector P4 de painel DC-022B", kind: "comprada", versions: ["v2"], qty: 1, evidence: "anuncio",
     spec: "5,5 × 2,1 mm, furo de painel de 7,8 mm",
-    criterion: "Com porca, fixa na parede de 2,4 mm. O DC-022 simples pede furo de 11 a 12 mm: confira qual você comprou no gabarito C2." },
-  { id: "U1", name: "LM317T regulador ajustável", kind: "comprada", versions: ["v2"], qty: 1, evidence: "calculado",
+    criterion: "Com porca, fixa na parede de 2,4 mm. O DC-022 simples pede furo de 11 a 12 mm: confira qual você comprou no gabarito G2." },
+  { id: "U1", name: "LM317T regulador ajustável", kind: "comprada", versions: both, qty: 1, evidence: "calculado",
     spec: "TO-220, referência de 1,25 V, carga mínima de cerca de 3,5 mA",
-    criterion: "Corrente constante em vez de PWM: a câmera do celular não grava faixas. Dissipa até 0,2 W, sem dissipador." },
+    criterion: "Corrente constante (I = 1,25 V / R) em vez de PWM: a câmera não grava faixas e, na v1, o brilho não cai quando a pilha descarrega. Dissipa até 0,1 W, sem dissipador." },
   { id: "RV1", name: "Reostato linear 220 Ω (WH148 B221)", kind: "comprada", versions: ["v2"], qty: 1, evidence: "anuncio",
     spec: "Eixo de 6 mm, rosca M7, com botão",
-    criterion: "Em série com R1 varia a corrente de 4,7 a 26,6 mA. O piso de 4,7 mA fica acima da carga mínima do LM317." },
-  { id: "PCB1", name: "Placa do dimmer 60 × 25 mm", kind: "comprada", versions: ["v2"], qty: 1, evidence: "calculado",
+    criterion: "Em série com R1 varia a corrente de 18 mA a 4,3 mA. O piso de 4,3 mA fica acima da carga mínima do LM317: não use um reostato maior que 220 Ω. É linear porque é o que se acha com facilidade nesse valor; a mudança de brilho fica concentrada no lado claro." },
+  { id: "PCB1", name: "Placa do driver (40 × 25 mm na v1, 70 × 25 mm na v2)", kind: "comprada", versions: both, qty: 1, evidence: "calculado",
     spec: "4 furos M3 a 3,5 mm das bordas; Gerbers incluídos ou placa perfurada",
-    criterion: "Os Gerbers saem do autorroteador e não foram abertos num visualizador independente: confira antes de fabricar." },
+    criterion: "Os Gerbers passaram numa checagem independente de contorno, furos e distância do cobre. As trilhas e a máscara ainda não foram vistas num programa de PCB: confira antes de fabricar." },
 
   // ---- hardware -----------------------------------------------------------------------------------
   { id: "H1", name: "Parafuso M3 × 10 autoatarraxante", kind: "comprada", versions: both, qty: 4, evidence: "calculado",
     spec: "Cabeça panela", criterion: "Prendem a tampa de fundo (2,4 mm de chapa mais 7,6 mm nos suportes)." },
   { id: "H2", name: "Parafuso M3 × 16 autoatarraxante", kind: "comprada", versions: both, qty: 2, evidence: "calculado",
     spec: "Cabeça panela", criterion: "Atravessam a orelha da abraçadeira (10 mm) mais a abertura de 0,6 mm e entram 8 mm na outra." },
-  { id: "H3", name: "Parafuso M3 × 8 autoatarraxante", kind: "comprada", versions: ["v2"], qty: 4, evidence: "calculado",
-    spec: "Cabeça panela", criterion: "Prendem a placa do dimmer nos suportes de 6 mm." },
+  { id: "H3", name: "Parafuso M3 × 8 autoatarraxante", kind: "comprada", versions: both, qty: 4, evidence: "calculado",
+    spec: "Cabeça panela", criterion: "Prendem a placa do driver nos suportes de 6 mm." },
 
   // ---- calibration jigs --------------------------------------------------------------------------
-  { id: "C1", name: "Gabarito do tubo", kind: "calibracao", versions: both, qty: 1, evidence: "calculado",
+  { id: "G1", name: "Gabarito do tubo", kind: "calibracao", versions: both, qty: 1, evidence: "calculado",
     spec: "270 × 48 × 3,6 mm, 7 furos de 30,2 a 36,4 mm", criterion: "Cobre as medidas do STEP (30 e 36 mm) e do paquímetro (33 a 34 mm).", file: "mecanica/calibracao/calibracao-tubo.stl" },
-  { id: "C2", name: "Gabarito das peças", kind: "calibracao", versions: both, qty: 1, evidence: "calculado",
+  { id: "G2", name: "Gabarito das peças", kind: "calibracao", versions: both, qty: 1, evidence: "calculado",
     spec: "174 × 208 × 3,6 mm: lâmina, interruptor, LED, parafuso, conector DC, eixo do reostato", criterion: "Todos os furos de recorte da caixa saem de uma só impressão.", file: "mecanica/calibracao/calibracao-pecas.stl" },
-  { id: "C3", name: "Gabarito da bateria", kind: "calibracao", versions: ["v1"], qty: 1, evidence: "calculado",
-    spec: "252 × 42 × 3,6 mm, 4 aberturas de 48,6 × 26,6 a 50,1 × 28,1 mm", criterion: "A bateria é grande demais para caber na placa C2.", file: "mecanica/calibracao/calibracao-bateria.stl" },
+  { id: "G3", name: "Gabarito da bateria", kind: "calibracao", versions: ["v1"], qty: 1, evidence: "calculado",
+    spec: "252 × 42 × 3,6 mm, 4 aberturas de 48,6 × 26,6 a 50,1 × 28,1 mm", criterion: "A bateria é grande demais para caber na placa G2.", file: "mecanica/calibracao/calibracao-bateria.stl" },
 ];
 
 export interface BomLine {
@@ -133,4 +139,38 @@ export function bom(version: SuporteVersion): BomLine[] {
 /** Path of the part's file for a version ("{v}" stands for "v1-pilha" or "v2-fonte"). */
 export function partFile(part: SuportePart, version: SuporteVersion): string | undefined {
   return part.file?.replace("{v}", version === "v1" ? "v1-pilha" : "v2-fonte");
+}
+
+/** What to type in a shop's search box for each purchased part. */
+const SEARCH: Record<string, string> = {
+  P9: "objetiva acromática 40x 0,65 RMS 160/0,17",
+  L1: "lâmina de microscopia 76x26 mm vidro",
+  D1: "LED branco 5mm difuso leitoso 120 graus",
+  R1: "resistor 68R 1/4W 1% filme metálico",
+  C1: "capacitor cerâmico 100nF 104 50V",
+  D2: "diodo 1N5819 schottky 1A 40V DO-41",
+  SW1: "chave gangorra KCD1-101 2 terminais",
+  BT1: "bateria 9V alcalina 6F22 e conector clip para bateria 9V",
+  PS1: "fonte 12V 500mA plugue P4 5,5x2,1 centro positivo",
+  J1: "conector P4 fêmea de painel DC-022B 5,5x2,1 com porca",
+  U1: "LM317T TO-220",
+  RV1: "potenciômetro 220R linear WH148 B221 eixo 6mm com knob",
+  PCB1: "placa perfurada 4x6cm (v1) ou 7x3cm (v2), ou fabrique com os Gerbers",
+  H1: "parafuso M3 autoatarraxante 10mm cabeça panela",
+  H2: "parafuso M3 autoatarraxante 16mm cabeça panela",
+  H3: "parafuso M3 autoatarraxante 8mm cabeça panela",
+};
+
+/**
+ * Shopping list of one version as CSV (semicolon-separated, with a byte-order mark so Excel in Portuguese opens it).
+ * The price column is left empty on purpose: prices change and none was checked.
+ */
+export function bomCsv(version: SuporteVersion): string {
+  const cell = (value: string | number) => `"${String(value).replaceAll('"', '""')}"`;
+  const lines = [["ID", "Peça", "Especificação", "Quantidade", "O que procurar", "Confiança nos números", "Preço (preencher)"]];
+  for (const { part, qty } of bom(version)) {
+    if (part.kind !== "comprada") continue;
+    lines.push([part.id, part.name, part.spec, String(qty), SEARCH[part.id] ?? "", EVIDENCE_LABEL[part.evidence], ""]);
+  }
+  return "\uFEFF" + lines.map((l) => l.map(cell).join(";")).join("\r\n") + "\r\n";
 }

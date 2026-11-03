@@ -64,6 +64,15 @@ export function GenericSvg({ shape, label, closed, onToggle }: Props) {
           </g>
         </svg>
       );
+    case "diode":
+      return (
+        <svg width={50} height={16} viewBox="0 0 50 16">
+          <line x1={0} y1={8} x2={50} y2={8} stroke="#9a9a9a" strokeWidth={1.6} />
+          <rect x={12} y={2} width={26} height={12} rx={2} fill="#1d2027" stroke="#05070a" />
+          <rect x={31} y={2} width={4} height={12} fill="#c5ccd5" />
+          <text x={22} y={11.5} textAnchor="middle" fontSize={5.5} fontFamily="monospace" fill="#9aa3b5">5819</text>
+        </svg>
+      );
     case "regulator":
       return (
         <svg width={50} height={74} viewBox="0 0 50 74">

@@ -10,6 +10,16 @@ import { CUT_MARGIN, EMBED, type Vec3 } from "./layout.ts";
 /** "pilha": 9 V battery and an on/off switch. "fonte": DC jack, LM317 dimmer board and its knob. */
 export type HolderVariant = "pilha" | "fonte";
 
+export interface DriverBoard {
+  width: number;
+  depth: number;
+  holeInset: number;
+  standoffHeight: number;
+  /** Centre of the board on the lid. */
+  x: number;
+  y: number;
+}
+
 export interface HolderParams {
   variant: HolderVariant;
   /** Outer tube diameter (caliper: 33-34 mm). */
@@ -67,8 +77,8 @@ export interface HolderParams {
   /** Rheostat shaft hole on the front wall (6 mm shaft, 7.5 mm hole). */
   knobDiameter: number;
   knobX: number;
-  /** Dimmer board (v2): 60 x 25 mm, M3 holes 3.5 mm from the edges. */
-  dimmerBoard: { width: number; depth: number; holeInset: number; standoffHeight: number };
+  /** Driver board (LM317, R1, C1...): M3 holes `holeInset` from the edges, standing on the lid. v1 is 40 x 25 mm in front of the LED, v2 is 70 x 25 mm where the battery would be. */
+  driverBoards: Record<HolderVariant, DriverBoard>;
   /** 9 V battery (PP3 / 6F22): 48.5 x 26.5 x 17.5 mm. */
   batteryLength: number;
   batteryWidth: number;
@@ -135,7 +145,10 @@ export const DEFAULT_HOLDER_PARAMS: HolderParams = {
   jackY: 0,
   knobDiameter: 7.5,
   knobX: 25,
-  dimmerBoard: { width: 60, depth: 25, holeInset: 3.5, standoffHeight: 6 },
+  driverBoards: {
+    pilha: { width: 40, depth: 25, holeInset: 3.5, standoffHeight: 6, x: 8, y: -19 },
+    fonte: { width: 70, depth: 25, holeInset: 3.5, standoffHeight: 6, x: 0, y: 38 },
+  },
   batteryLength: 48.5,
   batteryWidth: 26.5,
   batteryFit: 0.6,
@@ -201,8 +214,9 @@ export interface HolderLayout {
   lid: { bottom: number; top: number; holes: { x: number; y: number }[] };
   /** Parts that stand on the lid, inside the box. */
   cradle: { xMin: number; xMax: number; yMin: number; yMax: number; height: number } | null;
-  /** v2: standoffs for the dimmer board, on the lid. */
+  /** Standoffs and outline of the driver board, on the lid. */
   boardPosts: { x: number; y: number; outerDiameter: number; top: number }[];
+  board: { xMin: number; xMax: number; yMin: number; yMax: number; standoffHeight: number };
   ledPost: { x: number; y: number; diameter: number; top: number; seatDiameter: number; seatDepth: number; legHole: number; ledTop: number };
   /** Seat cut into the ceiling around the window, from inside. */
   diffuserSeat: { diameter: number; bottom: number; top: number; discDiameter: number; discThickness: number };
@@ -265,18 +279,16 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
   const cradleX = (p.batteryLength + p.batteryFit) / 2 + p.cradleWall;
   const cradleHalfY = (p.batteryWidth + p.batteryFit) / 2 + p.cradleWall;
   const cradle = p.variant === "pilha" ? { xMin: -cradleX, xMax: cradleX, yMin: p.batteryY - cradleHalfY, yMax: p.batteryY + cradleHalfY, height: p.cradleHeight } : null;
-  const db = p.dimmerBoard;
-  const boardPosts =
-    p.variant === "fonte"
-      ? [-1, 1].flatMap((sx) =>
-          [-1, 1].map((sy) => ({
-            x: (sx * (db.width - 2 * db.holeInset)) / 2,
-            y: p.batteryY + (sy * (db.depth - 2 * db.holeInset)) / 2,
-            outerDiameter: 7,
-            top: db.standoffHeight,
-          })),
-        )
-      : [];
+  const db = p.driverBoards[p.variant];
+  const boardPosts = [-1, 1].flatMap((sx) =>
+    [-1, 1].map((sy) => ({
+      x: db.x + (sx * (db.width - 2 * db.holeInset)) / 2,
+      y: db.y + (sy * (db.depth - 2 * db.holeInset)) / 2,
+      outerDiameter: 7,
+      top: db.standoffHeight,
+    })),
+  );
+  const board = { xMin: db.x - db.width / 2, xMax: db.x + db.width / 2, yMin: db.y - db.depth / 2, yMax: db.y + db.depth / 2, standoffHeight: db.standoffHeight };
 
   const ledTop = cavity.top - p.ledToCeiling;
   const ledPost = {
@@ -368,6 +380,21 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
   if (p.cornerRadius > 0 && p.cornerRadius <= p.wall) {
     issues.push({ severity: "warning", message: "Raio dos cantos menor que a parede: o interior da caixa fica com canto vivo." });
   }
+  if (board.xMin < cavity.xMin + 2 || board.xMax > cavity.xMax - 2 || board.yMin < cavity.yMin + 2 || board.yMax > cavity.yMax - 2) {
+    issues.push({ severity: "error", message: "A placa do driver não cabe na caixa." });
+  }
+  const ledGap = Math.hypot(Math.max(board.xMin - ledPost.x, 0, ledPost.x - board.xMax), Math.max(board.yMin - ledPost.y, 0, ledPost.y - board.yMax));
+  if (ledGap < ledPost.diameter / 2 + 1.5) {
+    issues.push({ severity: "error", message: "A placa do driver encosta no porta-LED." });
+  }
+  if (cradle && board.yMax > cradle.yMin - 2 && board.xMax > cradle.xMin && board.xMin < cradle.xMax) {
+    issues.push({ severity: "error", message: "A placa do driver encosta no berço da pilha." });
+  }
+  // the rocker switch hangs about 15 mm inside the front wall
+  const swHalf = p.switchCutout.width / 2 + 2;
+  if (board.yMin < cavity.yMin + 15 && board.xMin < p.switchCutout.x + swHalf && board.xMax > p.switchCutout.x - swHalf) {
+    issues.push({ severity: "warning", message: "A placa do driver fica na frente do corpo do interruptor." });
+  }
   if (p.workingDistance + p.focusOffset < 0.2) {
     issues.push({ severity: "error", message: "A lente frontal ficaria a menos de 0,2 mm da lâmina: aumente workingDistance ou focusOffset." });
   }
@@ -398,6 +425,7 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
     lid,
     cradle,
     boardPosts,
+    board,
     ledPost,
     diffuserSeat,
     cutouts,

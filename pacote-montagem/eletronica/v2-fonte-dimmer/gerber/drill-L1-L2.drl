@@ -1,8 +1,8 @@
 M48
-; Simulador-IOT | Luz do pregoscopio v2 (fonte + dimmer) | revisão 1
-; DRILL file {tscircuit} date 2026-11-03T01:28:36.495Z
+; Simulador-IOT | Luz do pregoscopio v2 (fonte + dimmer) | revisão 2
+; DRILL file {tscircuit} date 2026-11-03T12:35:19.193Z
 ; FORMAT={-:-/ absolute / metric / decimal}
-; #@! TF.CreationDate,2026-11-03T01:28:36.495Z
+; #@! TF.CreationDate,2026-11-03T12:35:19.193Z
 ; #@! TF.GenerationSoftware,tscircuit
 ; #@! TF.FileFunction,Plated,1,2,PTH
 FMAT,2
@@ -11,23 +11,31 @@ METRIC
 T10C1.000000
 ; #@! TA.AperFunction,Plated,PTH,ComponentDrill
 T11C0.700000
+; #@! TA.AperFunction,Plated,PTH,ViaDrill
+T12C0.200000
 %
 G90
 G05
 T10
-X-25.2700Y0.0000
-X-22.7300Y0.0000
-X-17.2700Y0.0000
-X-14.7300Y0.0000
-X-5.6000Y-1.0000
-X-3.0000Y-1.0000
-X-0.4000Y-1.0000
-X14.4600Y-3.0000
-X17.0000Y-3.0000
-X19.5400Y-3.0000
-X23.7300Y0.0000
-X26.2700Y0.0000
+X-13.2700Y-0.6800
+X-10.7300Y-0.6800
+X-8.3500Y-7.6400
+X-10.8900Y-7.6400
+X-14.6000Y4.0000
+X-12.0000Y4.0000
+X-9.4000Y4.0000
+X-2.5400Y-8.0000
+X2.5400Y-8.0000
+X-2.5400Y0.0000
+X0.0000Y0.0000
+X2.5400Y0.0000
+X-1.3110Y7.6400
+X-3.8510Y7.6400
 T11
-X9.0000Y-0.0800
-X9.0000Y10.0800
+X-13.2700Y-3.8200
+X-3.1100Y-3.8200
+X7.6200Y3.8200
+X-2.5400Y3.8200
+T12
+X-4.3350Y-3.9400
 M30

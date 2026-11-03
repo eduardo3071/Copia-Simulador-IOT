@@ -197,6 +197,13 @@ function partElement(
         node: h("led", { ...base, name, color: String(component.params.color ?? "red") }),
       };
     }
+    case "diode": {
+      const name = uniqueName(component.refDes, usedNames);
+      return {
+        part: { componentId: component.id, name, ports: directPorts() },
+        node: h("diode", { ...base, name }),
+      };
+    }
     case "pushbutton": {
       const name = uniqueName(component.refDes, usedNames);
       return {

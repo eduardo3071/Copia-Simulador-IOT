@@ -246,3 +246,7 @@ h3 small { color: var(--muted); font-weight: normal; }
 .mono { font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .guard { padding: 24px; border: 1px dashed var(--border); border-radius: var(--radius); }
+
+.plan { width: 100%; border-collapse: collapse; font-size: 13px; }
+.plan th, .plan td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.plan th { color: var(--muted); font-weight: 500; }

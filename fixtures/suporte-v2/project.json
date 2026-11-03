@@ -1,7 +1,7 @@
 {
   "id": "prj_fixture_suporte_do_pregoscopio_v2_fonte_e_dimmer_",
   "schemaVersion": 2,
-  "revision": 15,
+  "revision": 20,
   "title": "SUPORTE do PREGOSCOPIO v2 (fonte e dimmer)",
   "createdAt": "2026-10-19T12:00:00.000Z",
   "updatedAt": "2026-10-19T12:00:00.000Z",
@@ -16,11 +16,27 @@
       }
     },
     {
+      "id": "cmp_d2",
+      "definitionId": "diode",
+      "definitionVersion": 1,
+      "refDes": "D2",
+      "params": {}
+    },
+    {
       "id": "cmp_sw1",
       "definitionId": "rocker-switch",
       "definitionVersion": 1,
       "refDes": "SW1",
       "params": {}
+    },
+    {
+      "id": "cmp_c1",
+      "definitionId": "capacitor",
+      "definitionVersion": 1,
+      "refDes": "C1",
+      "params": {
+        "capacitance": 100
+      }
     },
     {
       "id": "cmp_u1",
@@ -35,7 +51,7 @@
       "definitionVersion": 1,
       "refDes": "R1",
       "params": {
-        "resistance": 47
+        "resistance": 68
       }
     },
     {
@@ -59,11 +75,23 @@
   ],
   "connections": [
     {
-      "id": "conn_ps_sw",
+      "id": "conn_ps_d2",
       "kind": "wire",
       "a": {
         "componentId": "cmp_ps1",
         "pinId": "+"
+      },
+      "b": {
+        "componentId": "cmp_d2",
+        "pinId": "A"
+      }
+    },
+    {
+      "id": "conn_d2_sw",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_d2",
+        "pinId": "K"
       },
       "b": {
         "componentId": "cmp_sw1",
@@ -80,6 +108,30 @@
       "b": {
         "componentId": "cmp_u1",
         "pinId": "IN"
+      }
+    },
+    {
+      "id": "conn_c1_in",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_c1",
+        "pinId": "1"
+      },
+      "b": {
+        "componentId": "cmp_u1",
+        "pinId": "IN"
+      }
+    },
+    {
+      "id": "conn_c1_gnd",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_c1",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_ps1",
+        "pinId": "-"
       }
     },
     {
@@ -159,43 +211,65 @@
     "unit": "css-px",
     "placements": {
       "cmp_ps1": {
-        "x": 40,
+        "x": 30,
         "y": 30,
         "rotation": 0
       },
-      "cmp_sw1": {
-        "x": 170,
+      "cmp_d2": {
+        "x": 150,
         "y": 60,
         "rotation": 0
       },
+      "cmp_sw1": {
+        "x": 240,
+        "y": 60,
+        "rotation": 0
+      },
+      "cmp_c1": {
+        "x": 330,
+        "y": 170,
+        "rotation": 0
+      },
       "cmp_u1": {
-        "x": 290,
+        "x": 360,
         "y": 50,
         "rotation": 0
       },
       "cmp_r1": {
-        "x": 410,
+        "x": 470,
         "y": 130,
         "rotation": 0
       },
       "cmp_rv1": {
-        "x": 560,
+        "x": 620,
         "y": 170,
         "rotation": 0
       },
       "cmp_d1": {
-        "x": 720,
+        "x": 780,
         "y": 70,
         "rotation": 0
       }
     },
     "wires": {
-      "conn_ps_sw": {
+      "conn_ps_d2": {
+        "color": "red",
+        "points": []
+      },
+      "conn_d2_sw": {
         "color": "red",
         "points": []
       },
       "conn_sw_u1": {
         "color": "orange",
+        "points": []
+      },
+      "conn_c1_in": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_c1_gnd": {
+        "color": "black",
         "points": []
       },
       "conn_u1_r1": {

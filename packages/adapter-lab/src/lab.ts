@@ -20,6 +20,8 @@ const LDR_FIXED_OHMS = 10_000;
 
 /** LM317: reference between OUT and ADJ, and the input-to-output dropout at these currents. */
 export const LM317_VREF = 1.25;
+/** Forward drop of the 1N5819 used against a reversed plug, at about 20 mA (with margin). */
+export const DIODE_DROP_V = 0.4;
 export const LM317_DROPOUT = 2;
 /** Below this load current the LM317 may not regulate (datasheet: 3.5 mA typical, 10 mA maximum). */
 export const LM317_MIN_LOAD_A = 0.0035;
@@ -59,6 +61,7 @@ export interface LabCircuit {
   switches: { componentId: string; a?: string; b?: string }[];
   pots: { componentId: string; ohms: number; endA?: string; wiper?: string; endB?: string }[];
   regulators: { componentId: string; in?: string; out?: string; adj?: string }[];
+  diodes: { componentId: string; anode?: string; cathode?: string }[];
   buzzers: { componentId: string; plus?: string; minus?: string }[];
   servos: ({ componentId: string; signal?: string } & Powered)[];
   ldrModules: ({ componentId: string; ao?: string; do?: string } & Powered)[];
@@ -138,6 +141,7 @@ export function compileLab(
     switches: [],
     pots: [],
     regulators: [],
+    diodes: [],
     buzzers: [],
     servos: [],
     ldrModules: [],
@@ -209,6 +213,9 @@ export function compileLab(
         if (minus) lab.sources.set(minus, 0);
         break;
       }
+      case "diode":
+        lab.diodes.push({ componentId: id, ...opt("anode", net(id, "A")), ...opt("cathode", net(id, "K")) });
+        break;
       case "regulator":
         lab.regulators.push({ componentId: id, ...opt("in", net(id, "IN")), ...opt("out", net(id, "OUT")), ...opt("adj", net(id, "ADJ")) });
         break;
@@ -299,6 +306,11 @@ export function evaluateLab(lab: LabCircuit, inputs: LabInputs): LabState {
     fixed.set(net, volts);
   };
   for (const [net, volts] of lab.sources) fix(net, volts, "alimentação");
+  // a diode whose anode is held by a source passes it on, minus its drop; the other way round it blocks
+  for (const d of lab.diodes) {
+    const va = d.anode ? fixed.get(d.anode) : undefined;
+    if (d.cathode && va !== undefined) fix(d.cathode, Math.max(0, va - DIODE_DROP_V), "diodo");
+  }
 
   const resistances: Resistance[] = [];
   const outputNets = new Map<string, { pinId: string; drive: McuPinDrive; duty: number }>();

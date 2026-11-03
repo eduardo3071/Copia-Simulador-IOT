@@ -8,7 +8,7 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | Decisão | Valor | Quem decidiu |
 |---|---|---|
 | LEDs | 1 LED branco de 5 mm | usuário |
-| Versão 1 | pilha 9 V, interruptor, resistor de 330 Ω | premissa minha (confirmar) |
+| Versão 1 | pilha 9 V, interruptor, LM317 com R1 de 68 Ω (corrente constante) | premissa minha da pilha (confirmar) |
 | Versão 2 | fonte 12 V, interruptor, brilho ajustável por corrente constante (LM317) | usuário pediu brilho ajustável; o LM317 é escolha minha |
 | Impressora | mesa de 30 cm | usuário |
 | Pregoscópio | impresso à parte; o escopo é o suporte e a luz | usuário |
@@ -24,7 +24,7 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | 0.2 | Quantidade de LEDs e versões | ✅ | — |
 | 0.3 | Mesa da impressora | ✅ | peças em orientação que cabe em 300 mm |
 | 0.4 | Ler o demo do João | ✅ | é demo de teste, tubo genérico |
-| 0.5 | Confirmar pilha 9 V e a premissa de 330 Ω | ⏳ | decisão do usuário, não se mede nem se calcula por código |
+| 0.5 | Confirmar a pilha de 9 V | ⏳ | decisão do usuário; com o LM317 a pilha vale de 9 V até 6,35 V |
 | 0.6 | Calibrar a lâmina (largura) | 🟡 | gabarito gerado (`calibracao-pecas.stl`); falta imprimir e provar; a espessura de 1 mm é padrão |
 | 0.7 | Calibrar o furo do interruptor (KCD1-101, 21,2 × 15,0 mm pelo guia da LCSC) e do conector DC-022B (7,8 mm pelos anúncios) | 🟡 | séries `interruptor` e `conector-dc` do gabarito; falta imprimir e provar |
 | 0.8 | Calibrar o tubo externo | 🟡 | gabarito `calibracao-tubo.stl`; falta imprimir e provar |
@@ -33,12 +33,15 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 ## Fase 1 — Elétrica
 | # | Tarefa | Status | Critério de pronto |
 |---|---|---|---|
-| 1.1 | Esquemático e cálculo da v1 (9 V → chave → 330 Ω → LED, ≈ 17,9 mA) | ✅ | `eletronica/v1-pilha/` |
-| 1.2 | Esquemático e cálculo da v2 (LM317, 4,7 a 26,6 mA) | ✅ | `eletronica/v2-fonte-dimmer/` |
-| 1.3 | PCB e Gerbers da v1 e da v2 (opcionais) | 🟡 | gerados pelo autorroteador; **não conferidos** |
-| 1.4 | Conferir os Gerbers com ferramenta independente | 🟡 | `scripts/verificar-gerber.py` (gerbonara): contorno, furos dentro da placa, furos de montagem em (±26,5; ±9) mm e cobre a 1,75 mm da borda ou mais, nas duas placas. Falta abrir no KiCad GerbView para conferir trilhas e máscara |
-| 1.5 | Montar a v1 na protoboard e medir a corrente do LED | ⏳ | 15 a 20 mA com multímetro |
-| 1.6 | Montar a v2 e medir o intervalo de corrente | ⏳ | ≈ 5 a 26 mA sem o LED piscar no mínimo |
+| 1.1 | Esquemático e cálculo da v1 (9 V → chave → LM317 → R1 de 68 Ω → LED, 18,4 mA constantes até 6,35 V, cerca de 22 h) | ✅ | `eletronica/v1-pilha/`; corrige a queda de brilho da versão com resistor direto |
+| 1.2 | Esquemático e cálculo da v2 (diodo 1N5819, LM317, R1 de 68 Ω e reostato de 220 Ω: 18,4 a 4,3 mA) | ✅ | `eletronica/v2-fonte-dimmer/`; entrada mínima de 6,75 V |
+| 1.9 | Proteção contra plugue invertido (D2) e capacitor de 100 nF na entrada do LM317 (C1) | ✅ | no esquemático, no simulador, na calculadora e no 3D |
+| 1.10 | Plano de teste com tensões e correntes esperadas | ✅ | no guia e na aba Eletrônica; os números vêm do mesmo código dos cálculos, com testes |
+| 1.11 | Lista de compras com o que procurar na loja | ✅ | `lista-de-compras-v1.csv` e `v2.csv`, com o preço em branco (nenhum foi conferido) |
+| 1.3 | PCB e Gerbers da v1 (40 × 25 mm) e da v2 (70 × 25 mm), opcionais | 🟡 | sem erro nas verificações do tscircuit; trilhas e máscara ainda não vistas num programa de PCB |
+| 1.4 | Conferir os Gerbers com ferramenta independente | 🟡 | `scripts/verificar-gerber.py` (gerbonara): contorno, furos dentro da placa, furos de montagem em (±16,5; ±9) mm na v1 e (±31,5; ±9) mm na v2, e cobre a 3 mm da borda ou mais, nas duas placas. Falta abrir no KiCad GerbView para conferir trilhas e máscara |
+| 1.5 | Montar a v1 e fazer o plano de teste | ⏳ | 18,4 mA (17,4 a 19,4) e as tensões da tabela do guia |
+| 1.6 | Montar a v2 e fazer o plano de teste | ⏳ | 18,4 a 4,3 mA sem o LED piscar no mínimo |
 | 1.7 | Conferir se o brilho ajustável não gera faixas na câmera | ⏳ | imagem estável em vídeo no celular |
 | 1.8 | Simular no site | ✅ | peças novas (pilha 9 V, fonte 12 V, interruptor de balancim, LM317) e exemplos "SUPORTE do PREGOSCÓPIO v1 e v2"; 7 testes do laboratório |
 
@@ -50,7 +53,8 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | 2.3 | Canal da lâmina e janela do LED | ✅ | — |
 | 2.4 | Berço da pilha 9 V (v1) | ✅ | cabe na caixa e não encosta no porta-LED |
 | 2.5 | Porta-LED na tampa e difusor | ✅ | LED abaixo do difusor |
-| 2.6 | Variante v2 (conector de força, botão, 4 suportes da placa) | ✅ | — |
+| 2.6 | Variante v2 (conector de força, botão, placa de 70 × 25 mm em 4 suportes) | ✅ | — |
+| 2.12 | Placa do driver da v1 (40 × 25 mm) em 4 suportes na tampa, na frente do LED | ✅ | verificado contra o porta-LED, o berço e o interruptor |
 | 2.7 | Testes automáticos | ✅ | 26 testes do pacote CAD |
 | 2.8 | Orientação de impressão para mesa de 30 cm | ✅ | arquivos `-impressao.stl` |
 | 2.9 | Esvaziar a coluna para economizar material | ✅ | janela em estádio de 30 mm atravessando a coluna (saída vertical ao imprimir deitado) |
