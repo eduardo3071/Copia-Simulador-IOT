@@ -1,0 +1,459 @@
+<title>Suporte do Pregoscópio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a bancada de projeto. Palco 3D grande à esquerda, comandos e medidas numa coluna à direita; no celular o palco vem primeiro. */
+:root {
+  --bg: #eceff2;
+  --surface: #f7f8fa;
+  --stage: #e1e7ed;
+  --line: #d0d7df;
+  --fg: #1b2430;
+  --muted: #566475;
+  --accent: #a85f00;
+  --accent-fg: #ffffff;
+  --edge-color: #1b2430;
+  --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1217; --surface: #161b22; --stage: #10151b; --line: #28303a; --fg: #e5eaf0;
+    --muted: #93a0af; --accent: #ffb54d; --accent-fg: #1b1303; --edge-color: #ffffff; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1217; --surface: #161b22; --stage: #10151b; --line: #28303a; --fg: #e5eaf0;
+  --muted: #93a0af; --accent: #ffb54d; --accent-fg: #1b1303; --edge-color: #ffffff; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.45;
+  padding-block: 20px 28px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1280px; margin: 0 auto; display: grid; gap: 16px; }
+.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
+h1 { font-size: clamp(22px, 3.2vw, 30px); font-weight: 600; letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+.sub { color: var(--muted); margin: 4px 0 0; max-width: 62ch; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 3px; gap: 2px; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label { padding: 7px 14px; border-radius: 6px; cursor: pointer; font-weight: 500; color: var(--muted); }
+.seg input:checked + label { background: var(--accent); color: var(--accent-fg); }
+.seg input:focus-visible + label { outline: 2px solid var(--fg); outline-offset: 2px; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+@media (min-width: 980px) { .grid { grid-template-columns: minmax(0, 1fr) 330px; align-items: start; } }
+#stage { position: relative; height: min(70vh, 680px); min-height: 380px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 0%, var(--surface), var(--stage)); }
+#stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.hint { position: absolute; left: 12px; bottom: 10px; font: 12px var(--font-mono); color: var(--muted); pointer-events: none; }
+.fail { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); }
+.side { display: grid; gap: 12px; min-width: 0; }
+.panel { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 14px; display: grid; gap: 10px; min-width: 0; }
+.panel h2 { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.checks { display: grid; gap: 6px; }
+.checks label { display: flex; align-items: center; gap: 9px; cursor: pointer; }
+.sw { width: 12px; height: 12px; border-radius: 3px; flex: none; border: 1px solid var(--line); }
+.sw.ghost { background: transparent !important; border-style: dashed; border-color: var(--muted); }
+input[type="checkbox"] { accent-color: var(--accent); width: 16px; height: 16px; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+.row { display: grid; gap: 4px; }
+.row .lab { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; }
+.row .lab b { font: 500 13px var(--font-mono); color: var(--fg); }
+.btns { display: flex; flex-wrap: wrap; gap: 6px; }
+button { font: inherit; font-weight: 500; color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 7px; padding: 6px 11px; cursor: pointer; }
+button:hover { border-color: var(--muted); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: 13.5px; }
+dt { color: var(--muted); }
+dd { margin: 0; font-family: var(--font-mono); font-size: 12.5px; text-align: right; }
+.note { color: var(--muted); font-size: 13px; margin: 0; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Suporte do Pregoscópio</h1>
+      <p class="sub">Caixa luminosa, coluna em C e abraçadeira, na posição de montagem. Gire com o mouse, use o corte para ver o LED por dentro.</p>
+    </div>
+    <div class="seg" role="radiogroup" aria-label="Versão">
+      <input type="radio" name="ver" id="ver1" value="v1" checked><label for="ver1">v1 · pilha 9 V</label>
+      <input type="radio" name="ver" id="ver2" value="v2"><label for="ver2">v2 · fonte e dimmer</label>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div id="stage" aria-label="Modelo 3D interativo"><div class="hint">arrastar: girar · rolar: zoom · botão direito: mover</div></div>
+
+    <aside class="side">
+      <section class="panel" aria-labelledby="h-camadas">
+        <h2 id="h-camadas">Peças</h2>
+        <div class="checks" id="layers"></div>
+        <p class="note">Sólido: peça impressa, gerada pelo código. Tracejado: referência aproximada.</p>
+      </section>
+
+      <section class="panel" aria-labelledby="h-vista">
+        <h2 id="h-vista">Vista</h2>
+        <div class="row"><div class="lab"><label for="explode">Explodir</label><b id="explodeV">0 mm</b></div><input id="explode" type="range" min="0" max="70" value="0"></div>
+        <div class="row"><div class="lab"><label for="cut">Corte (da frente para trás)</label><b id="cutV">desligado</b></div><input id="cut" type="range" min="-50" max="70" value="-50"></div>
+        <div class="btns" role="group" aria-label="Câmera">
+          <button type="button" data-view="iso">Isométrica</button>
+          <button type="button" data-view="front">Frente</button>
+          <button type="button" data-view="side">Lateral</button>
+          <button type="button" data-view="top">Topo</button>
+          <button type="button" data-view="inside">Interior da caixa</button>
+        </div>
+        <div class="btns"><button type="button" id="light" aria-pressed="true">Luz ligada</button></div>
+      </section>
+
+      <section class="panel" aria-labelledby="h-med">
+        <h2 id="h-med">Medidas</h2>
+        <dl id="dims"></dl>
+        <p class="note">Folgas de impressão e medidas da lâmina e do interruptor ainda não foram verificadas na bancada.</p>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<script>
+const STL = /*STL_DATA*/{};
+(function () {
+  const $ = (s) => document.querySelector(s);
+  const stage = $("#stage");
+  const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  } catch (error) {
+    stage.insertAdjacentHTML("beforeend", '<div class="fail">Este navegador não conseguiu iniciar o 3D (WebGL). Abra a página em outro navegador.</div>');
+    return;
+  }
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.localClippingEnabled = true;
+  stage.prepend(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(32, 1, 5, 3000);
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.target.set(0, 100, -8);
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x7b8798, 0.62));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.62);
+  sun.position.set(220, 380, 260);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, { left: -260, right: 260, top: 260, bottom: -260, near: 50, far: 900 });
+  sun.shadow.bias = -0.0004;
+  sun.shadow.normalBias = 1.4;
+  scene.add(sun);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(900, 900), new THREE.ShadowMaterial({ opacity: 0.22 }));
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -2.4;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // Everything below is modelled with +Z up, like the CAD; this group stands it up for the camera.
+  const root = new THREE.Group();
+  root.rotation.x = -Math.PI / 2;
+  scene.add(root);
+
+  // keeps the back half (model y >= c); the camera looks from the front, so the cut face shows the inside
+  const plane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 200);
+  const surfaces = [];
+  const edges = [];
+
+  function stlGeometry(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const view = new DataView(bytes.buffer);
+    const n = view.getUint32(80, true);
+    const pos = new Float32Array(n * 9);
+    for (let t = 0; t < n; t++) for (let k = 0; k < 9; k++) pos[t * 9 + k] = view.getFloat32(84 + t * 50 + 12 + k * 4, true);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute("normal", new THREE.BufferAttribute(creasedNormals(pos, 38), 3));
+    return geo;
+  }
+
+  /** Smooth shading across curved faces, hard edges where faces meet at more than `angle` degrees. */
+  function creasedNormals(pos, angle) {
+    const n = pos.length / 9;
+    const face = new Float32Array(n * 3);
+    const at = new Map();
+    const key = (i) => Math.round(pos[i] * 200) + "," + Math.round(pos[i + 1] * 200) + "," + Math.round(pos[i + 2] * 200);
+    for (let t = 0; t < n; t++) {
+      const o = t * 9;
+      const ux = pos[o + 3] - pos[o], uy = pos[o + 4] - pos[o + 1], uz = pos[o + 5] - pos[o + 2];
+      const vx = pos[o + 6] - pos[o], vy = pos[o + 7] - pos[o + 1], vz = pos[o + 8] - pos[o + 2];
+      let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+      const len = Math.hypot(nx, ny, nz) || 1;
+      face[t * 3] = nx / len; face[t * 3 + 1] = ny / len; face[t * 3 + 2] = nz / len;
+      for (let v = 0; v < 3; v++) {
+        const k = key(o + v * 3);
+        if (!at.has(k)) at.set(k, []);
+        at.get(k).push(t);
+      }
+    }
+    const cos = Math.cos((angle * Math.PI) / 180);
+    const out = new Float32Array(n * 9);
+    for (let t = 0; t < n; t++) {
+      for (let v = 0; v < 3; v++) {
+        let sx = 0, sy = 0, sz = 0;
+        for (const u of at.get(key(t * 9 + v * 3))) {
+          const d = face[t * 3] * face[u * 3] + face[t * 3 + 1] * face[u * 3 + 1] + face[t * 3 + 2] * face[u * 3 + 2];
+          if (d > cos) { sx += face[u * 3]; sy += face[u * 3 + 1]; sz += face[u * 3 + 2]; }
+        }
+        const len = Math.hypot(sx, sy, sz) || 1;
+        out[t * 9 + v * 3] = sx / len; out[t * 9 + v * 3 + 1] = sy / len; out[t * 9 + v * 3 + 2] = sz / len;
+      }
+    }
+    return out;
+  }
+
+  function material(color, extra) {
+    const m = new THREE.MeshStandardMaterial(Object.assign({ color, roughness: 0.58, metalness: 0.04, side: THREE.DoubleSide, clippingPlanes: [] }, extra || {}));
+    surfaces.push(m);
+    return m;
+  }
+  function addEdges(mesh, threshold) {
+    const lines = new THREE.LineSegments(
+      new THREE.EdgesGeometry(mesh.geometry, threshold || 35),
+      new THREE.LineBasicMaterial({ color: css("--edge-color") || "#1b2430", transparent: true, opacity: 0.32, clippingPlanes: [] }),
+    );
+    mesh.add(lines);
+    edges.push(lines.material);
+  }
+  function solid(geometry, color, opts) {
+    const mesh = new THREE.Mesh(geometry, material(color, opts));
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    addEdges(mesh);
+    return mesh;
+  }
+  /** Cylinder with its axis along Z (or X), between two heights. */
+  function cyl(r, z0, z1, color, opts, axis) {
+    const geo = new THREE.CylinderGeometry(r, r, z1 - z0, 56);
+    if (axis === "x") geo.rotateZ(Math.PI / 2); else geo.rotateX(Math.PI / 2);
+    const mesh = new THREE.Mesh(geo, material(color, opts));
+    if (axis === "x") mesh.position.x = (z0 + z1) / 2; else mesh.position.z = (z0 + z1) / 2;
+    return mesh;
+  }
+  const ghost = (color, opacity) => ({ transparent: true, opacity, depthWrite: false });
+
+  // ---- printed parts (STL, assembled position) ----
+  const parts = {
+    body1: solid(stlGeometry(STL.body1), "#a3afbc"),
+    body2: solid(stlGeometry(STL.body2), "#a3afbc"),
+    lid1: solid(stlGeometry(STL.lid1), "#7a8796"),
+    lid2: solid(stlGeometry(STL.lid2), "#7a8796"),
+    clamp: solid(stlGeometry(STL.clamp), "#e8872b"),
+    diffuser: solid(stlGeometry(STL.diffuser), "#f3efe4", { transparent: true, opacity: 0.78 }),
+  };
+  parts.diffuser.position.z = 37.8;
+  parts.diffuser.castShadow = false;
+
+  // ---- references (approximate) ----
+  const pregoscopio = new THREE.Group();
+  const tube = cyl(16.75, 95.2, 210.2, "#47515f", ghost(0x47515f, 0.55));
+  const sleeve = cyl(11.25, 76.2, 95.2, "#8c96a3", ghost(0x8c96a3, 0.8));
+  const objective = cyl(10, 41.2, 76.2, "#d5dae0", { metalness: 0.25, roughness: 0.35 });
+  const head = new THREE.Mesh(new THREE.BoxGeometry(54, 50, 17), material("#47515f", ghost(0x47515f, 0.55)));
+  head.position.z = 210.2 + 8.5;
+  const bar = cyl(7, -106, 106, "#47515f", ghost(0x47515f, 0.55), "x");
+  bar.position.z = 218.7;
+  const hooks = [-68, 68].map((x) => {
+    const h = new THREE.Mesh(new THREE.BoxGeometry(22, 34, 46), material("#47515f", ghost(0x47515f, 0.55)));
+    h.position.set(x, 0, 222);
+    return h;
+  });
+  pregoscopio.add(tube, sleeve, objective, head, bar, ...hooks);
+  pregoscopio.userData.ghost = true;
+
+  const slide = new THREE.Mesh(new THREE.BoxGeometry(76, 26, 1), material("#8fd0ff", ghost(0x8fd0ff, 0.4)));
+  slide.position.z = 39.9;
+
+  // LED, 5 mm, standing in the post of the lid; the lid group carries it, the battery and the board.
+  const ledMat = material("#fff6df", { emissive: 0xffd27a, emissiveIntensity: 1.0, transparent: true, opacity: 0.92 });
+  const led = new THREE.Group();
+  const flange = cyl(2.9, 27.6, 28.6, "#fff6df");
+  flange.material = ledMat;
+  const dome = cyl(2.5, 28.6, 33.1, "#fff6df");
+  dome.material = ledMat;
+  const cap = new THREE.Mesh(new THREE.SphereGeometry(2.5, 28, 14, 0, Math.PI * 2, 0, Math.PI / 2), ledMat);
+  cap.rotation.x = Math.PI / 2;
+  cap.position.z = 33.1;
+  led.add(flange, dome, cap);
+  const beamGeo = new THREE.CylinderGeometry(12.5, 3, 5.6, 48, 1, true);
+  beamGeo.rotateX(Math.PI / 2);
+  const beam = new THREE.Mesh(beamGeo, new THREE.MeshBasicMaterial({ color: 0xffd98a, transparent: true, opacity: 0.32, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+  beam.position.z = 38.4;
+  const glow = new THREE.PointLight(0xffe0a0, 0.45, 95, 1.8);
+  glow.position.z = 33;
+  led.add(beam, glow);
+
+  const battery = new THREE.Mesh(new THREE.BoxGeometry(48.5, 26.5, 17.5), material("#3b4757"));
+  battery.position.set(0, 38, 8.75);
+  battery.castShadow = true;
+  addEdges(battery);
+  const board = new THREE.Mesh(new THREE.BoxGeometry(60, 25, 1.6), material("#1f7a4f"));
+  board.position.set(0, 38, 6.8);
+  board.castShadow = true;
+  addEdges(board);
+
+  const lidGroup = new THREE.Group();
+  const refGroups = { pregoscopio, slide, led, battery, board };
+
+  [parts.body1, parts.body2, parts.clamp, parts.diffuser, pregoscopio, slide, lidGroup].forEach((o) => root.add(o));
+  lidGroup.add(parts.lid1, parts.lid2, led, battery, board);
+
+  // ---- layers panel ----
+  const layerDefs = [
+    { id: "body", label: "Caixa, coluna e braço", color: "#b6c0cb", get: () => [version === "v1" ? parts.body1 : parts.body2] },
+    { id: "clamp", label: "Abraçadeira do tubo", color: "#e8872b", get: () => [parts.clamp] },
+    { id: "lid", label: "Tampa de fundo", color: "#7a8796", get: () => [version === "v1" ? parts.lid1 : parts.lid2] },
+    { id: "diffuser", label: "Difusor", color: "#f3efe4", get: () => [parts.diffuser] },
+    { id: "pregoscopio", label: "Pregoscópio", color: "#47515f", ghost: true, get: () => [pregoscopio] },
+    { id: "slide", label: "Lâmina", color: "#8fd0ff", ghost: true, get: () => [slide] },
+    { id: "led", label: "LED 5 mm", color: "#ffd27a", ghost: true, get: () => [led] },
+    { id: "power", label: "Pilha 9 V", color: "#3b4757", ghost: true, get: () => [version === "v1" ? battery : board] },
+  ];
+  const state = {};
+  const layersBox = $("#layers");
+  layerDefs.forEach((d) => {
+    state[d.id] = true;
+    const label = document.createElement("label");
+    label.innerHTML = `<input type="checkbox" checked><span class="sw${d.ghost ? " ghost" : ""}" style="background:${d.color}"></span><span></span>`;
+    label.lastChild.textContent = d.label;
+    label.firstChild.addEventListener("change", (e) => { state[d.id] = e.target.checked; refresh(); });
+    d.labelEl = label.lastChild;
+    layersBox.appendChild(label);
+  });
+
+  let version = "v1";
+  const dimsBox = $("#dims");
+  const DIMS = {
+    v1: [["Altura total", "210,2 mm"], ["Base da caixa", "90 × 115 × 40 mm"], ["Coluna em C", "44 × 30 mm"], ["Lente até a lâmina", "0,8 mm"], ["Anel da abraçadeira", "⌀ 33,7 × 22 mm"], ["Pilha 9 V", "48,5 × 26,5 × 17,5 mm"], ["Corrente do LED", "≈ 17,9 mA"]],
+    v2: [["Altura total", "210,2 mm"], ["Base da caixa", "90 × 115 × 40 mm"], ["Coluna em C", "44 × 30 mm"], ["Lente até a lâmina", "0,8 mm"], ["Anel da abraçadeira", "⌀ 33,7 × 22 mm"], ["Placa do dimmer", "60 × 25 mm, 4 × M3"], ["Corrente do LED", "4,7 a 26,6 mA"]],
+  };
+
+  function refresh() {
+    parts.body1.visible = parts.body2.visible = parts.lid1.visible = parts.lid2.visible = false;
+    layerDefs.forEach((d) => {
+      d.labelEl.textContent = d.id === "power" ? (version === "v1" ? "Pilha 9 V" : "Placa do dimmer") : d.label;
+      const on = state[d.id];
+      if (d.id === "body") parts.body1.visible = parts.body2.visible = false;
+      d.get().forEach((o) => { o.visible = on; });
+    });
+    battery.visible = state.power && version === "v1";
+    board.visible = state.power && version === "v2";
+    dimsBox.innerHTML = DIMS[version].map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
+    applyLight();
+  }
+  document.querySelectorAll('input[name="ver"]').forEach((r) => r.addEventListener("change", (e) => { version = e.target.value; refresh(); }));
+
+  // ---- explode, cut, light ----
+  const explode = $("#explode");
+  function applyExplode() {
+    const e = Number(explode.value);
+    $("#explodeV").textContent = e + " mm";
+    lidGroup.position.z = -e;
+    parts.clamp.position.y = -e * 0.9;
+    parts.diffuser.position.z = 37.8 + e * 0.8;
+    slide.position.z = 39.9 + e * 1.1;
+    pregoscopio.position.z = e * 1.5;
+  }
+  explode.addEventListener("input", applyExplode);
+
+  const cut = $("#cut");
+  function applyCut() {
+    const c = Number(cut.value);
+    const off = c <= -50;
+    $("#cutV").textContent = off ? "desligado" : "y = " + c + " mm";
+    plane.constant = off ? 1000 : -c;
+    const list = off ? [] : [plane];
+    surfaces.forEach((m) => { m.clippingPlanes = list; });
+    edges.forEach((m) => { m.clippingPlanes = list; });
+    beam.material.clippingPlanes = list;
+  }
+  cut.addEventListener("input", applyCut);
+
+  const lightBtn = $("#light");
+  let lightOn = true;
+  function applyLight() {
+    ledMat.emissiveIntensity = lightOn ? 1.0 : 0;
+    ledMat.color.set(lightOn ? "#fff6df" : "#cfd3d9");
+    beam.visible = lightOn && state.led;
+    glow.visible = lightOn;
+    const dm = parts.diffuser.material;
+    dm.emissive.set(lightOn ? 0xffd27a : 0x000000);
+    dm.emissiveIntensity = lightOn ? 0.55 : 0;
+    lightBtn.setAttribute("aria-pressed", String(lightOn));
+    lightBtn.textContent = lightOn ? "Luz ligada" : "Luz desligada";
+  }
+  lightBtn.addEventListener("click", () => { lightOn = !lightOn; applyLight(); });
+
+  // ---- camera ----
+  const VIEWS = {
+    iso: [330, 250, 420],
+    front: [0, 125, 700],
+    side: [700, 125, 0],
+    top: [0, 760, 80],
+    inside: [70, 120, 250],
+  };
+  function view(name) {
+    const v = VIEWS[name];
+    camera.position.set(v[0], v[1], v[2]);
+    controls.target.set(0, name === "top" ? 0 : name === "inside" ? 22 : 118, name === "inside" ? -30 : -8);
+    if (name === "inside" && Number(cut.value) <= -50) { cut.value = 0; applyCut(); }
+    controls.update();
+  }
+  document.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => view(b.dataset.view)));
+
+  function resize() {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(stage);
+
+  function theme() {
+    const c = css("--edge-color") || "#1b2430";
+    edges.forEach((m) => m.color.set(c));
+  }
+  new MutationObserver(theme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", theme);
+
+  // optional start state for local checks: #v=v2&explode=40&cut=0&view=front&light=0
+  const start = new URLSearchParams(location.hash.slice(1));
+  if (start.get("v") === "v2") { version = "v2"; $("#ver2").checked = true; }
+  if (start.has("explode")) explode.value = start.get("explode");
+  if (start.has("cut")) cut.value = start.get("cut");
+  if (start.get("light") === "0") lightOn = false;
+  refresh();
+  applyExplode();
+  applyCut();
+  theme();
+  resize();
+  view(start.get("view") || "iso");
+  (function loop() {
+    controls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(loop);
+  })();
+})();
+</script>
