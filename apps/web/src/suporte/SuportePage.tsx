@@ -3,9 +3,10 @@ import {
   bom, bomCsv, EVIDENCE_LABEL, partFile, testPlan, v1Light, v2Light, LED_VF, BATTERY_MAH, R1_OHMS, RHEOSTAT_OHMS, DIODE_DROP_V,
   type PartKind, type SuportePart, type SuporteVersion,
 } from "@simiot/adapter-cad";
+import { Manual, StepShot, StepViewer } from "./Manual.tsx";
 import { ASSETS, HEAD_Z, JigPreview, NOMINAL_RETRACT, OBJECTIVE_LENGTH, SLEEVE_DEPTH, SLIDE_Z, SuporteScene, type Layer } from "./Scene.tsx";
 
-type Tab = "3d" | "eletronica" | "calibracao";
+type Tab = "3d" | "manual" | "eletronica" | "calibracao";
 const KIND_LABEL: Record<PartKind, string> = { impressa: "Peças impressas", referencia: "Pregoscópio (STEP V1)", comprada: "Peças compradas", calibracao: "Gabaritos" };
 const KIND_ORDER: PartKind[] = ["impressa", "referencia", "comprada", "calibracao"];
 const LAYER_LABEL: Record<Layer, string> = { impressa: "Impressas", pregoscopio: "Pregoscópio", eletronica: "Eletrônica", parafusos: "Parafusos", lamina: "Lâmina", fios: "Fios e cola" };
@@ -22,9 +23,9 @@ class Guard extends Component<{ children: ReactNode }, { failed: boolean }> {
 }
 
 /** #suporte, #suporte/eletronica, #suporte/calibracao/v2 ... so each view has its own link. */
-function fromHash(): { tab: Tab; version: SuporteVersion; view: string } {
-  const [, tab, version, view] = location.hash.split("/");
-  return { tab: tab === "eletronica" || tab === "calibracao" ? tab : "3d", version: version === "v2" ? "v2" : "v1", view: view ?? "iso" };
+function fromHash(): { tab: Tab; version: SuporteVersion; view: string; shot: boolean } {
+  const [, tab, version, view, mode] = location.hash.split("/");
+  return { tab: tab === "eletronica" || tab === "calibracao" || tab === "manual" ? tab : "3d", version: version === "v2" ? "v2" : "v1", view: view ?? "iso", shot: mode === "shot" };
 }
 
 export function SuportePage() {
@@ -33,8 +34,9 @@ export function SuportePage() {
   const [tab, setTab] = useState<Tab>(start.tab);
   const [selected, setSelected] = useState<string | null>(null);
   useEffect(() => {
+    if (start.shot) return;
     history.replaceState(null, "", `${location.pathname}${location.search}#suporte/${tab}/${version}`);
-  }, [tab, version]);
+  }, [tab, version, start.shot]);
   // a link to another view of this page (#suporte/calibracao/v2) while it is already open
   useEffect(() => {
     const onHash = () => {
@@ -46,6 +48,7 @@ export function SuportePage() {
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
+  if (start.shot) return <StepShot version={start.version} n={Number(start.view) || 1} />;
   return (
     <div className="suporte">
       <header className="suporte-top">
@@ -59,12 +62,23 @@ export function SuportePage() {
           ))}
         </div>
         <nav className="tabs suporte-tabs" role="tablist">
-          {([["3d", "3D e peças"], ["eletronica", "Eletrônica"], ["calibracao", "Calibração"]] as const).map(([id, label]) => (
+          {([["3d", "3D e peças"], ["manual", "Manual de construção"], ["eletronica", "Eletrônica"], ["calibracao", "Calibração"]] as const).map(([id, label]) => (
             <button key={id} role="tab" aria-selected={tab === id} className={tab === id ? "active" : ""} onClick={() => setTab(id)}>{label}</button>
           ))}
         </nav>
       </header>
       {tab === "3d" && <ThreeD version={version} selected={selected} setSelected={setSelected} startView={start.view} />}
+      {tab === "manual" && (
+        <div className="manual-page">
+          <div className="no-print manual-intro">
+            <h2>Manual de construção · 制造与装配手册</h2>
+            <p className="small">Planta-mãe com todas as peças juntas, posição de cada uma, lista de materiais com medidas padrão e montagem passo a passo, em português e chinês. Escolha a versão acima. Para gerar o PDF, use o botão e escolha “Salvar como PDF”.</p>
+            <div className="row"><button className="primary" onClick={() => window.print()}>Imprimir / salvar PDF</button></div>
+            <Guard><StepViewer key={version} version={version} start={Number(start.view) || 1} /></Guard>
+          </div>
+          <Manual version={version} />
+        </div>
+      )}
       {tab === "eletronica" && <Eletronica version={version} selected={selected} setSelected={setSelected} />}
       {tab === "calibracao" && <Calibracao />}
     </div>

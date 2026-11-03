@@ -250,3 +250,69 @@ h3 small { color: var(--muted); font-weight: normal; }
 .plan { width: 100%; border-collapse: collapse; font-size: 13px; }
 .plan th, .plan td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
 .plan th { color: var(--muted); font-weight: 500; }
+
+/* ---- Suporte: manual de construção ---- */
+.manual-page { padding: 16px; overflow: auto; }
+.manual-intro { max-width: 1100px; margin: 0 auto 20px; }
+.manual-intro h2 { margin: 0 0 6px; }
+.step-viewer { margin-top: 12px; }
+.step-viewer .suporte-stage, .step-shot .suporte-stage { height: 460px; }
+.step-bar { display: flex; gap: 10px; align-items: center; padding: 8px 0; }
+.step-bar input[type=range] { flex: 1; }
+.step-text { padding: 4px 2px 12px; }
+.step-n { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 13px; background: #ff8a00; color: #1b1b1b; font-weight: 700; font-size: 14px; }
+.step-shot { position: fixed; inset: 0; background: #1b2230; }
+.step-shot .suporte-stage { height: 100vh; }
+
+.manual-doc { max-width: 1100px; margin: 0 auto; display: grid; gap: 18px; color: #15181d; }
+.manual-doc .sheet { background: #fff; border-radius: 6px; padding: 28px 32px; box-shadow: 0 2px 14px rgba(0,0,0,.35); }
+.manual-doc h2, .manual-doc h3, .manual-doc h4 { color: #0f1b2d; margin: 0 0 10px; }
+.manual-doc .cover h2 { font-size: 30px; margin: 4px 0; }
+.manual-doc .eyebrow { margin: 0; font-size: 12px; letter-spacing: .08em; color: #4b5666; }
+.manual-doc .bi { display: block; }
+.manual-doc .bi .zh { display: block; font-size: .92em; color: #35507a; }
+.manual-doc td .bi .zh, .manual-doc li .bi .zh { font-size: .88em; }
+.manual-doc .muted, .manual-doc .small { color: #4b5666; }
+.manual-doc table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; font-size: 13px; }
+.manual-doc th, .manual-doc td { border: 1px solid #c4ccd8; padding: 5px 8px; text-align: left; vertical-align: top; }
+.manual-doc th { background: #e9eef6; color: #0f1b2d; }
+.manual-doc .titleblock th { width: 170px; }
+.manual-doc .mini { width: auto; min-width: 60%; }
+.manual-doc .mono { font-family: ui-monospace, Consolas, monospace; white-space: nowrap; }
+.manual-doc .tools { padding-left: 18px; margin: 0 0 12px; }
+.manual-doc .step-fig { margin: 0 0 12px; background: #1b2230; border-radius: 4px; min-height: 40px; }
+.manual-doc .step-fig img { display: block; width: 100%; border-radius: 4px; }
+.manual-doc .check-note { margin: 8px 0; padding: 6px 10px; background: #e8f5ea; border-left: 3px solid #2e9e4f; }
+.manual-doc .step-n { color: #1b1b1b; }
+.plant-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.plant-pair figure { margin: 0; text-align: center; font-size: 12px; color: #4b5666; }
+.planta { width: 100%; height: auto; max-height: 720px; background: #fbfcfe; border: 1px solid #c4ccd8; }
+.planta text { font: 3.4px sans-serif; fill: #15181d; }
+.planta .pl-out { fill: none; stroke: #15181d; stroke-width: .5; }
+.planta .pl-soft { fill: #eef1f6; }
+.planta .pl-hid { fill: none; stroke: #6b7585; stroke-width: .35; stroke-dasharray: 2 1.4; }
+.planta .pl-glass { fill: #cfe9fb; stroke: #4a90c2; stroke-width: .3; opacity: .8; }
+.planta .pl-board { fill: #bfe3cf; stroke: #1f7a4f; stroke-width: .4; opacity: .85; }
+.planta .pl-batt { fill: #d6dbe3; stroke: #3b4757; stroke-width: .4; }
+.planta .pl-hole { fill: #fff; stroke: #15181d; stroke-width: .3; }
+.planta .pl-cut { fill: #ffe9c9; stroke: #d9362b; stroke-width: .4; }
+.planta .pl-tube { fill: #dde3ec; stroke: #15181d; stroke-width: .4; }
+.planta .pl-obj { fill: #f3d9a8; stroke: #8a5a00; stroke-width: .4; }
+.planta .pl-lid { fill: #9aa5b5; stroke: #15181d; stroke-width: .3; }
+.planta .pl-ghost { fill: none; stroke: #6b7585; stroke-width: .35; stroke-dasharray: 1 1.6; }
+.planta .pl-dim line { stroke: #1a56b8; stroke-width: .3; }
+.planta .pl-dim text { fill: #1a56b8; font-size: 3.2px; }
+.planta .pl-balloons line { stroke: #d9362b; stroke-width: .3; }
+.planta .pl-balloons circle { fill: #fff; stroke: #d9362b; stroke-width: .45; }
+.planta .pl-balloons .pl-dot { fill: #d9362b; stroke: none; }
+.planta .pl-balloons text { fill: #d9362b; font-weight: 700; font-size: 3.6px; }
+
+@media print {
+  @page { size: A4; margin: 10mm; }
+  body, .suporte { background: #fff !important; }
+  .suporte-top, .no-print, .suporte-back { display: none !important; }
+  .manual-page { padding: 0; overflow: visible; }
+  .manual-doc { max-width: none; gap: 0; }
+  .manual-doc .sheet { box-shadow: none; border-radius: 0; padding: 0; break-after: page; break-inside: avoid; }
+  .manual-doc .step-fig { background: transparent; }
+}

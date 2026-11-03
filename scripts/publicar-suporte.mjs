@@ -14,4 +14,6 @@ for (const [source, target] of [
   mkdirSync(new URL("eletronica/", to), { recursive: true });
   cpSync(new URL(source, from), new URL(target, to));
 }
+rmSync(new URL("manual/", to), { recursive: true, force: true });
+cpSync(new URL("manual/", from), new URL("manual/", to), { recursive: true });
 console.log("publicado em apps/web/public/suporte");

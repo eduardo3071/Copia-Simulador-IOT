@@ -3,16 +3,21 @@ import { api, type ProjectSummary } from "../api.ts";
 import { useApp } from "../store.ts";
 
 const FIXTURE_LABELS: Record<string, string> = {
-  blink: "Blink — Arduino + LED + resistor na protoboard",
-  "button-led": "Botão + LED — entrada com pull-up interno",
-  "pot-adc": "Potenciômetro + ADC — leitura analógica no serial",
-  "sensores-lcd": "DHT22 + LCD 16x2 — temperatura e umidade no display",
-  "ultrassom-servo": "HC-SR04 + servo + buzzer — radar de distância",
-  "luz-rgb": "Sensor de luz + LED RGB + potenciômetro deslizante",
-  "contador-7seg": "Contador no display de 7 segmentos e barra de LEDs",
-  "suporte-v1": "SUPORTE do PREGOSCÓPIO v1 — pilha 9 V, interruptor, resistor e LED (sem programação)",
-  "suporte-v2": "SUPORTE do PREGOSCÓPIO v2 — fonte 12 V, LM317 e reostato (sem programação)",
+  "suporte-v1": "v1 — pilha 9 V, interruptor, resistor e LED (sem programação)",
+  "suporte-v2": "v2 — fonte 12 V, LM317 e reostato de brilho (sem programação)",
+  blink: "1. Blink — Arduino + LED + resistor na protoboard",
+  "button-led": "2. Botão + LED — entrada com pull-up interno",
+  "pot-adc": "3. Potenciômetro + ADC — leitura analógica no serial",
+  "luz-rgb": "4. Sensor de luz + LED RGB + potenciômetro deslizante",
+  "contador-7seg": "5. Contador no display de 7 segmentos e barra de LEDs",
+  "sensores-lcd": "6. DHT22 + LCD 16x2 — temperatura e umidade no display",
+  "ultrassom-servo": "7. HC-SR04 + servo + buzzer — radar de distância",
 };
+
+const GROUPS: { title: string; names: string[] }[] = [
+  { title: "Suporte do Pregoscópio (circuito da luz)", names: ["suporte-v1", "suporte-v2"] },
+  { title: "Aprender com Arduino (do mais simples ao mais completo)", names: ["blink", "button-led", "pot-adc", "luz-rgb", "contador-7seg", "sensores-lcd", "ultrassom-servo"] },
+];
 
 export function ProjectDialog({ onClose }: { onClose?: () => void }) {
   const open = useApp((s) => s.open);
@@ -58,19 +63,39 @@ export function ProjectDialog({ onClose }: { onClose?: () => void }) {
           </form>
         </section>
         <section>
-          <h3>Suporte do Pregoscópio</h3>
-          <p className="small"><a href="#suporte">Abrir o 3D, a lista de peças com identificadores, a eletrônica e os gabaritos de calibração</a></p>
-          <h3>Exemplos de referência</h3>
-          {fixtures.map((name) => (
-            <button key={name} className="list-item" onClick={() => void go({ fixture: name })}>
-              {FIXTURE_LABELS[name] ?? name}
-            </button>
-          ))}
+          <h3>Suporte do Pregoscópio — 3D, manual e eletrônica</h3>
+          <p className="small"><a href="#suporte">Abrir o 3D, o manual de montagem, a lista de peças com identificadores, a eletrônica e os gabaritos de calibração</a></p>
         </section>
+        {GROUPS.map((g) => {
+          const names = g.names.filter((n) => fixtures.includes(n));
+          if (names.length === 0) return null;
+          return (
+            <section key={g.title}>
+              <h3>{g.title}</h3>
+              {names.map((name) => (
+                <button key={name} className="list-item" onClick={() => void go({ fixture: name })}>
+                  {FIXTURE_LABELS[name] ?? name}
+                </button>
+              ))}
+            </section>
+          );
+        })}
+        {fixtures.some((n) => !GROUPS.some((g) => g.names.includes(n))) && (
+          <section>
+            <h3>Outros exemplos</h3>
+            {fixtures
+              .filter((n) => !GROUPS.some((g) => g.names.includes(n)))
+              .map((name) => (
+                <button key={name} className="list-item" onClick={() => void go({ fixture: name })}>
+                  {FIXTURE_LABELS[name] ?? name}
+                </button>
+              ))}
+          </section>
+        )}
         <section>
           <h3>Abrir</h3>
           {projects.length === 0 && <p className="muted">Nenhum projeto salvo ainda.</p>}
-          {projects.map((p) => (
+          {[...projects].sort((x, y) => y.updatedAt.localeCompare(x.updatedAt)).map((p) => (
             <button
               key={p.id}
               className="list-item"

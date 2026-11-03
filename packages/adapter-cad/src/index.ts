@@ -6,3 +6,4 @@ export * from "./suporte-catalog.ts";
 export * from "./layout.ts";
 export * from "./protocol.ts";
 export * from "./stl.ts";
+export * from "./suporte-manual.ts";

@@ -52,12 +52,24 @@ export interface SceneOptions {
   lightOn: boolean;
   selected: string | null;
   layers: Record<Layer, boolean>;
+  /** Assembly steps: only these parts are drawn (null draws all), and `highlight` ones glow. */
+  only?: Set<string> | null;
+  highlight?: Set<string>;
+  /** How far the lid and what rides on it are pulled away from the box; defaults to `explode`. */
+  lidDrop?: number;
   onPick(id: string | null): void;
 }
 export type Layer = "impressa" | "pregoscopio" | "eletronica" | "parafusos" | "lamina" | "fios";
 
 /** Registry the badges read: each part reports its object and the point its label hangs from. */
 export type Registry = MutableRefObject<Map<string, { object: Object3D; local: Vector3 }>>;
+
+/** False when the layer is off or the assembly step has not reached the part yet. */
+function shown(options: SceneOptions, id: string, layer: Layer, needs?: string) {
+  if (!options.layers[layer]) return false;
+  if (options.only && (!options.only.has(id) || (needs && !options.only.has(needs)))) return false;
+  return true;
+}
 
 const COLORS = {
   body: "#aab5c1", lid: "#7d8999", clamp: "#e8872b", diffuser: "#f3efe4",
@@ -75,7 +87,7 @@ interface PartProps {
 
 function useMaterialProps(props: PartProps, color: string, extra: { opacity?: number; emissive?: string } = {}) {
   const { options, id, plane } = props;
-  const selected = options.selected === id;
+  const selected = options.selected === id || (options.highlight?.has(id) ?? false);
   const clipping = options.cut > -50 ? [plane] : [];
   return {
     color,
@@ -114,7 +126,7 @@ function StlPart(props: PartProps & { url: string; color: string; opacity?: numb
     register(props, ref.current, center);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geometry]);
-  if (!geometry || !props.options.layers[props.layer]) return <group ref={ref} />;
+  if (!geometry || !shown(props.options, props.id, props.layer)) return <group ref={ref} />;
   return (
     <group ref={ref} position={props.position}>
       <mesh geometry={geometry} onClick={(e: ThreeEvent<MouseEvent>) => { e.stopPropagation(); props.options.onPick(props.id); }}>
@@ -133,7 +145,7 @@ function Primitive(props: PartProps & { shape: Shape; color: string; position: V
   useEffect(() => register(props, ref.current), [props.id]); // eslint-disable-line react-hooks/exhaustive-deps
   const { shape } = props;
   const rotation: Vec3 = shape.kind === "cyl" ? (shape.axis === "z" ? [Math.PI / 2, 0, 0] : shape.axis === "x" ? [0, 0, Math.PI / 2] : [0, 0, 0]) : [0, 0, 0];
-  if (!props.options.layers[props.layer]) return <group ref={ref} position={props.position} />;
+  if (!shown(props.options, props.id, props.layer)) return <group ref={ref} position={props.position} />;
   return (
     <group ref={ref} position={props.position}>
       <mesh rotation={rotation} onClick={(e: ThreeEvent<MouseEvent>) => { e.stopPropagation(); props.options.onPick(props.id); }}>
@@ -197,14 +209,14 @@ function Segment({ a, b, r, color, material }: { a: Vec3; b: Vec3; r: number; co
 }
 
 /** A wire (or a sleeve over one) along a polyline; the label hangs from the middle of the first segment. */
-function Wire(props: PartProps & { points: Vec3[]; color: string; r?: number; opacity?: number; label?: boolean }) {
+function Wire(props: PartProps & { points: Vec3[]; color: string; r?: number; opacity?: number; label?: boolean; needs?: string }) {
   const ref = useRef<Group>(null);
   const material = useMaterialProps(props, props.color, { opacity: props.opacity });
   useEffect(() => {
     if (props.label) register(props, ref.current, new Vector3(...props.points[0]!).add(new Vector3(...props.points[1]!)).multiplyScalar(0.5));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.id, props.label]);
-  if (!props.options.layers[props.layer]) return <group ref={ref} />;
+  if (!shown(props.options, props.id, props.layer, props.needs)) return <group ref={ref} />;
   return (
     <group ref={ref} onClick={(e: ThreeEvent<MouseEvent>) => { e.stopPropagation(); props.options.onPick(props.id); }}>
       {props.points.slice(0, -1).map((p, i) => (
@@ -220,7 +232,7 @@ function GlueRing(props: Omit<PartProps, "id" | "layer"> & { position: Vec3 }) {
   const full: PartProps = { ...props, id: "W3", layer: "fios" };
   const material = useMaterialProps(full, "#fff0b8", { opacity: 0.7 });
   useEffect(() => register(full, ref.current, new Vector3(13.2, 0, 0.4)), []); // eslint-disable-line react-hooks/exhaustive-deps
-  if (!props.options.layers.fios) return <group ref={ref} />;
+  if (!shown(props.options, "W3", "fios")) return <group ref={ref} />;
   return (
     <group ref={ref} position={props.position}>
       <mesh position={[0, 0, 0.4]} onClick={(e: ThreeEvent<MouseEvent>) => { e.stopPropagation(); props.options.onPick("W3"); }}>
@@ -241,7 +253,7 @@ function Assembly({ options, registry }: { options: SceneOptions; registry: Regi
   const base = { options, registry, plane };
   const stl = (name: string) => `${ASSETS}mecanica/${name}`;
   const pre = (n: number) => `${ASSETS}pregoscopio/pregoscopio-${n}.stl`;
-  const lidZ = -e;
+  const lidZ = -(options.lidDrop ?? e);
   const headZ = HEAD_Z + e * 1.5;
   const collarBottom = -SLEEVE_DEPTH + retract;
 
@@ -260,11 +272,11 @@ function Assembly({ options, registry }: { options: SceneOptions; registry: Regi
         <Primitive {...base} id="D1" layer="eletronica" shape={{ kind: "dome" }} color={COLORS.led} emissive={options.lightOn ? "#ffd27a" : undefined} position={[0, 0, 33.1]} />
         {/* wires of the electronics, from each part to the driver board; the LED ones leave by the slot at the foot of its post */}
         {wires.map((w, i) => (
-          <Wire key={i} {...base} id="W1" layer="fios" points={w.points} color={w.color} label={i === 0} />
+          <Wire key={i} {...base} id="W1" layer="fios" points={w.points} color={w.color} label={i === 0} needs={i < 2 ? "D1" : "PCB1"} />
         ))}
         {/* heat-shrink over the two LED wires, and the glue ring that holds the diffuser */}
         {wires.slice(0, 2).map((w, i) => (
-          <Wire key={`sleeve${i}`} {...base} id="W2" layer="fios" points={[w.points[0]!, w.points[1]!]} color="#ffc400" r={1.3} opacity={0.55} label={i === 0} />
+          <Wire key={`sleeve${i}`} {...base} id="W2" layer="fios" points={[w.points[0]!, w.points[1]!]} color="#ffc400" r={1.3} opacity={0.55} label={i === 0} needs="D1" />
         ))}
         {version === "v1" && (
           <>
@@ -360,11 +372,11 @@ function Controls({ target, view }: { target: Vec3; view: { name: string; n: num
     };
   }, [camera, gl, invalidate, target]);
   useEffect(() => {
-    const presets: Record<string, Vec3> = { iso: [340, -420, 330], front: [0, -740, 125], side: [740, 0, 125], top: [0, -80, 780], inside: [80, -250, 120] };
+    const presets: Record<string, Vec3> = { iso: [340, -420, 330], front: [0, -740, 125], side: [740, 0, 125], top: [0, -80, 780], inside: [80, -250, 120], lid: [200, -230, 30] };
     const p = presets[view.name];
     if (!p || !controls.current) return;
     camera.position.set(...p);
-    controls.current.target.set(0, view.name === "top" ? 20 : 0, view.name === "inside" ? 22 : 118);
+    controls.current.target.set(0, view.name === "top" ? 20 : 0, view.name === "inside" ? 22 : view.name === "lid" ? -22 : 118);
     controls.current.update();
     invalidate();
   }, [view, camera, invalidate]);
@@ -372,7 +384,7 @@ function Controls({ target, view }: { target: Vec3; view: { name: string; n: num
 }
 
 /** Pushes overlapping labels apart (screen space, a few passes) so every ID stays readable. */
-function spreadLabels(labels: { x: number; y: number }[], width = 34, height = 19) {
+export function spreadLabels(labels: { x: number; y: number }[], width = 34, height = 19) {
   for (let pass = 0; pass < 12; pass++) {
     let moved = false;
     for (let i = 0; i < labels.length; i++) {
@@ -428,7 +440,7 @@ function Projector({ registry, nodes, cut }: { registry: Registry; nodes: Mutabl
   return null;
 }
 
-export function SuporteScene({ options, ids, view }: { options: SceneOptions; ids: string[]; view: { name: string; n: number } }) {
+export function SuporteScene({ options, ids, view, hint = true }: { options: SceneOptions; ids: string[]; view: { name: string; n: number }; hint?: boolean }) {
   const registry: Registry = useRef(new Map());
   const nodes = useRef(new Map<string, HTMLElement>());
   const target = useMemo<Vec3>(() => [0, 0, 118], []);
@@ -464,7 +476,7 @@ export function SuporteScene({ options, ids, view }: { options: SceneOptions; id
           </button>
         ))}
       </div>
-      <span className="suporte-hint">arrastar: girar · rolar: zoom · botão direito: mover · clique numa peça ou ID para selecionar</span>
+      {hint && <span className="suporte-hint">arrastar: girar · rolar: zoom · botão direito: mover · clique numa peça ou ID para selecionar</span>}
     </div>
   );
 }
