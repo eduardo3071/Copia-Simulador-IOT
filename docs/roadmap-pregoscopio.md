@@ -8,7 +8,7 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | Decisão | Valor | Quem decidiu |
 |---|---|---|
 | LEDs | 1 LED branco de 5 mm | usuário |
-| Versão 1 | pilha 9 V, interruptor, LM317 com R1 de 68 Ω (corrente constante) | premissa minha da pilha (confirmar) |
+| Versão 1 | pilha 9 V, interruptor, LM317 com R1 de 68 Ω (corrente constante) | usuário (9 V confirmada em 03/11/2026) |
 | Versão 2 | fonte 12 V, interruptor, brilho ajustável por corrente constante (LM317) | usuário pediu brilho ajustável; o LM317 é escolha minha |
 | Impressora | mesa de 30 cm | usuário |
 | Pregoscópio | impresso à parte; o escopo é o suporte e a luz | usuário |
@@ -24,7 +24,7 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | 0.2 | Quantidade de LEDs e versões | ✅ | — |
 | 0.3 | Mesa da impressora | ✅ | peças em orientação que cabe em 300 mm |
 | 0.4 | Ler o demo do João | ✅ | é demo de teste, tubo genérico |
-| 0.5 | Confirmar a pilha de 9 V | ⏳ | decisão do usuário; com o LM317 a pilha vale de 9 V até 6,35 V |
+| 0.5 | Confirmar a pilha de 9 V | ✅ | confirmada pelo usuário em 03/11/2026; com o LM317 a pilha vale de 9 V até 6,35 V |
 | 0.6 | Calibrar a lâmina (largura) | 🟡 | gabarito gerado (`calibracao-pecas.stl`); falta imprimir e provar; a espessura de 1 mm é padrão |
 | 0.7 | Calibrar o furo do interruptor (KCD1-101, 21,2 × 15,0 mm pelo guia da LCSC) e do conector DC-022B (7,8 mm pelos anúncios) | 🟡 | séries `interruptor` e `conector-dc` do gabarito; falta imprimir e provar |
 | 0.8 | Calibrar o tubo externo | 🟡 | gabarito `calibracao-tubo.stl`; falta imprimir e provar |
