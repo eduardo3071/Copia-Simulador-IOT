@@ -4,6 +4,7 @@ import {
   type PartKind, type SuportePart, type SuporteVersion,
 } from "@simiot/adapter-cad";
 import { JIGS } from "./jigs.ts";
+import { DrawingCheck } from "./Desenhos.tsx";
 import { Manual, pdfUrl, StepShot, StepViewer } from "./Manual.tsx";
 import { ASSETS, HEAD_Z, JigPreview, NOMINAL_RETRACT, OBJECTIVE_LENGTH, SLEEVE_DEPTH, SLIDE_Z, SuporteScene, type Layer } from "./Scene.tsx";
 
@@ -24,22 +25,23 @@ class Guard extends Component<{ children: ReactNode }, { failed: boolean }> {
 }
 
 /** #suporte, #suporte/eletronica, #suporte/calibracao/v2 ... so each view has its own link. */
-function fromHash(): { tab: Tab; version: SuporteVersion; view: string; shot: boolean } {
+function fromHash(): { tab: Tab; version: SuporteVersion; view: string; shot: boolean; check: boolean } {
   const [, tab, version, view, mode] = location.hash.split("/");
-  return { tab: tab === "eletronica" || tab === "calibracao" || tab === "manual" ? tab : "3d", version: version === "v2" ? "v2" : "v1", view: view ?? "iso", shot: mode === "shot" };
+  return { tab: tab === "eletronica" || tab === "calibracao" || tab === "manual" ? tab : "3d", version: version === "v2" ? "v2" : "v1", view: view ?? "iso", shot: mode === "shot", check: mode === "check" };
 }
 
 export function SuportePage() {
   const start = useMemo(fromHash, []);
   const [version, setVersion] = useState<SuporteVersion>(start.version);
   const [tab, setTab] = useState<Tab>(start.tab);
+  const [step, setStep] = useState(Number(start.view) || 1);
   const [selected, setSelected] = useState<string | null>(null);
   useEffect(() => {
     if (start.shot) return;
     const names: Record<Tab, string> = { "3d": "3D e peças", manual: "Manual de construção", eletronica: "Eletrônica", calibracao: "Calibração" };
     document.title = `${names[tab]} (${version}) · Suporte do Pregoscópio`;
-    history.replaceState(null, "", `${location.pathname}${location.search}#suporte/${tab}/${version}`);
-  }, [tab, version, start.shot]);
+    history.replaceState(null, "", `${location.pathname}${location.search}#suporte/${tab}/${version}${tab === "manual" ? `/${step}` : ""}`);
+  }, [tab, version, step, start.shot]);
   // a link to another view of this page (#suporte/calibracao/v2) while it is already open
   useEffect(() => {
     const onHash = () => {
@@ -51,6 +53,7 @@ export function SuportePage() {
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
+  if (start.check) return <DrawingCheck version={start.version} />;
   if (start.shot) return <StepShot version={start.version} n={Number(start.view) || 1} />;
   return (
     <div className="suporte">
@@ -80,7 +83,7 @@ export function SuportePage() {
               <a className="button primary" href={pdfUrl(version)} download>Baixar o PDF da {version === "v1" ? "versão 1 (pilha)" : "versão 2 (fonte e dimmer)"}</a>
               <button onClick={() => window.print()}>Imprimir esta página</button>
             </div>
-            <StepViewer key={version} version={version} start={Number(start.view) || 1} />
+            <StepViewer key={version} version={version} start={step} onStep={setStep} />
           </div>
           <Manual version={version} />
         </div>

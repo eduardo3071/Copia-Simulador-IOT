@@ -194,25 +194,37 @@ export function Balloon({ v, at, dx, dy, id }: { v: V; at: [number, number]; dx:
   );
 }
 
-/** Section marker: letter plates at both ends of the cutting line, arrows pointing the way of view. */
+/**
+ * Section marker: short thick strokes at both ends of the cutting line, a thin chain line between them and an arrow with the
+ * letter at each end. `dir` is the way of view as seen on paper (x right, y up).
+ */
 export function CutMark({ v, a, b, letter, dir }: { v: V; a: [number, number]; b: [number, number]; letter: string; dir: [number, number] }) {
-  const pts = [a, b];
+  const A: [number, number] = [px(v, a[0]), py(v, a[1])];
+  const B: [number, number] = [px(v, b[0]), py(v, b[1])];
+  const len = Math.hypot(B[0] - A[0], B[1] - A[1]) || 1;
+  const ux = (B[0] - A[0]) / len;
+  const uy = (B[1] - A[1]) / len;
+  const dx = dir[0];
+  const dy = -dir[1];
+  const end = (p: [number, number], sign: 1 | -1) => {
+    const sx = p[0] + sign * ux * 7;
+    const sy = p[1] + sign * uy * 7;
+    const ax = p[0] + dx * 6;
+    const ay = p[1] + dy * 6;
+    return (
+      <g>
+        <line x1={p[0]} y1={p[1]} x2={sx} y2={sy} />
+        <line x1={p[0]} y1={p[1]} x2={ax} y2={ay} />
+        <path d={`M${ax} ${ay} l${-dx * 2.4 - dy * 1.1} ${-dy * 2.4 + dx * 1.1} l${dy * 2.2} ${-dx * 2.2} z`} />
+        <text x={ax + dx * 3.4} y={ay + dy * 3.4 + 1.2} textAnchor="middle">{letter}</text>
+      </g>
+    );
+  };
   return (
     <g className="dt-cut">
-      <line x1={px(v, a[0])} y1={py(v, a[1])} x2={px(v, b[0])} y2={py(v, b[1])} />
-      {pts.map((p, i) => {
-        const x = px(v, p[0]);
-        const y = py(v, p[1]);
-        const ax = x + dir[0] * 7;
-        const ay = y - dir[1] * 7;
-        return (
-          <g key={i}>
-            <line x1={x} y1={y} x2={ax} y2={ay} />
-            <path d={`M${ax} ${ay} l${-dir[1] * 1.2 - dir[0] * 2.4} ${-dir[0] * 1.2 + dir[1] * 2.4} l${dir[1] * 2.4} ${dir[0] * 2.4} z`} />
-            <text x={ax + dir[0] * 3.2} y={ay - dir[1] * 3.2 + 1} textAnchor="middle">{letter}</text>
-          </g>
-        );
-      })}
+      <line className="dt-ctr" x1={A[0]} y1={A[1]} x2={B[0]} y2={B[1]} style={{ stroke: "#111", strokeWidth: 0.15 }} />
+      {end(A, 1)}
+      {end(B, -1)}
     </g>
   );
 }

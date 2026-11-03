@@ -95,11 +95,22 @@ function fitFor(version: SuporteVersion, step: ManualStep, only: Set<string>): F
   return { center, radius: Math.max(radius * (full ? 1.22 : 0.95), 40), dir: step.view === "lid" ? [0.55, -0.7, 0.22] : [0.55, -0.68, 0.45] };
 }
 
+/** Arrows that show the movement of the step: the lid going up, the switch pushed in, the diffuser put down. */
+function arrowsFor(step: ManualStep): { from: [number, number, number]; to: [number, number, number] }[] {
+  const t = step.title.pt;
+  if (t.startsWith("Fechar")) return [[-36, 52], [36, 52], [-36, -34], [36, -34]].map(([x, y]) => ({ from: [x!, y!, -step.lidDrop + 40], to: [x!, y!, -4] }));
+  if (t.startsWith("Instalar o interruptor")) return [{ from: [-25, -92, 20], to: [-25, -56, 20] }];
+  if (t.startsWith("Colar o difusor")) return [{ from: [0, 0, 78], to: [0, 0, 46] }];
+  return [];
+}
+
 function sceneFor(version: SuporteVersion, step: ManualStep) {
   const only = partsUpToStep(version, step.n);
+  const qty: Record<string, number> = {};
+  for (const l of manualBom(version)) qty[l.id] = l.qty;
   const highlight = new Set([...step.adds, ...(step.also ?? [])]);
   const ids = [...highlight].filter((id) => only.has(id) && !id.startsWith("G"));
-  return { only, highlight, ids, fit: fitFor(version, step, only) };
+  return { only, highlight, ids, qty, fit: fitFor(version, step, only), arrows: arrowsFor(step) };
 }
 
 const kindLabel = (kind: string): Bilingual =>
@@ -290,13 +301,13 @@ class Boundary extends Component<{ children: ReactNode; fallback: ReactNode }, {
 }
 
 /** Interactive assembly: a slider through the steps, parts glow when they are added. */
-export function StepViewer({ version, start }: { version: SuporteVersion; start: number; onStep?(n: number): void }) {
+export function StepViewer({ version, start, onStep }: { version: SuporteVersion; start: number; onStep?(n: number): void }) {
   const steps = useMemo(() => manualSteps(version), [version]);
   const [n, setN] = useState(Math.min(Math.max(start, 1), steps.length));
   const step = steps[n - 1]!;
   const scene = useMemo(() => sceneFor(version, step), [version, step]);
   const [tick, setTick] = useState(0);
-  const pick = (m: number) => { setN(Math.min(Math.max(m, 1), steps.length)); setTick((t) => t + 1); };
+  const pick = (m: number) => { const k = Math.min(Math.max(m, 1), steps.length); setN(k); setTick((t) => t + 1); onStep?.(k); };
   const view = useMemo(() => ({ name: step.view as string, n: tick, fit: scene.fit }), [step.view, tick, scene.fit]);
   const picture = <img className="step-still" src={stepImage(version, n)} alt={step.title.pt} />;
 
@@ -307,7 +318,8 @@ export function StepViewer({ version, start }: { version: SuporteVersion; start:
           paper
           view={view}
           ids={scene.ids}
-          options={{ version, explode: 0, lidDrop: step.lidDrop, retract: Math.round(NOMINAL_RETRACT * 10) / 10, cut: -50, lightOn: step.lightOn ?? true, selected: null, layers: ALL_LAYERS, only: scene.only, highlight: scene.highlight, onPick: () => {} }}
+          options={{ version, explode: 0, lidDrop: step.lidDrop, retract: Math.round(NOMINAL_RETRACT * 10) / 10, cut: -50, lightOn: step.lightOn ?? true, selected: null, layers: ALL_LAYERS, only: scene.only, highlight: scene.highlight, arrows: scene.arrows, onPick: () => {} }}
+          qty={scene.qty}
         />
       </Boundary>
       <div className="step-bar">
@@ -336,7 +348,8 @@ export function StepShot({ version, n }: { version: SuporteVersion; n: number })
         view={{ name: step.view, n: 0, fit: scene.fit }}
         ids={scene.ids}
         hint={false}
-        options={{ version, explode: 0, lidDrop: step.lidDrop, retract: Math.round(NOMINAL_RETRACT * 10) / 10, cut: -50, lightOn: step.lightOn ?? true, selected: null, layers: ALL_LAYERS, only: scene.only, highlight: scene.highlight, onPick: () => {} }}
+        options={{ version, explode: 0, lidDrop: step.lidDrop, retract: Math.round(NOMINAL_RETRACT * 10) / 10, cut: -50, lightOn: step.lightOn ?? true, selected: null, layers: ALL_LAYERS, only: scene.only, highlight: scene.highlight, arrows: scene.arrows, onPick: () => {} }}
+        qty={scene.qty}
       />
     </div>
   );

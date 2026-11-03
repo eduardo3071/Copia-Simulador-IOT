@@ -254,7 +254,7 @@ export function manualSteps(version: SuporteVersion): ManualStep[] {
         "Suba a tampa até a caixa sem prender nenhum fio e aperte os 4 parafusos M3 × 10 (H1) nos cantos. Aperte aos poucos, em cruz, sem forçar o plástico.",
         "把底盖托到灯箱下方，确保不夹住任何导线，在四角拧入 4 颗 M3 × 10 螺钉 (H1)。分次交叉拧紧，不要过度用力。",
       ),
-      adds: ["H1"], lidDrop: 0, view: "iso", lightOn: true,
+      adds: ["H1"], lidDrop: 40, view: "lid", lightOn: true,
     },
     {
       title: bi("Encaixar o pregoscópio (M2, H2, P1 a P10)", "装入显微镜 (M2, H2, P1~P10)"),

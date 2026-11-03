@@ -57,6 +57,8 @@ export interface SceneOptions {
   highlight?: Set<string>;
   /** How far the lid and what rides on it are pulled away from the box; defaults to `explode`. */
   lidDrop?: number;
+  /** Assembly arrows: from, to (the head is at `to`). */
+  arrows?: { from: Vec3; to: Vec3 }[];
   onPick(id: string | null): void;
 }
 export type Layer = "impressa" | "pregoscopio" | "eletronica" | "parafusos" | "lamina" | "fios";
@@ -226,6 +228,28 @@ function Wire(props: PartProps & { points: Vec3[]; color: string; r?: number; op
   );
 }
 
+/** An orange arrow that shows where a part goes in an assembly step. */
+function ArrowGuide({ from, to, material }: { from: Vec3; to: Vec3; material: Record<string, unknown> }) {
+  const a = new Vector3(...from);
+  const b = new Vector3(...to);
+  const dir = b.clone().sub(a);
+  const length = dir.length();
+  const unit = dir.clone().normalize();
+  const head = Math.min(9, length * 0.4);
+  const neck = b.clone().sub(unit.clone().multiplyScalar(head));
+  const quaternion = new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), unit);
+  const middle = b.clone().sub(unit.clone().multiplyScalar(head / 2));
+  return (
+    <group>
+      <Segment a={from} b={[neck.x, neck.y, neck.z]} r={1.6} color="#ff8a00" material={material} />
+      <mesh position={middle} quaternion={quaternion}>
+        <coneGeometry args={[4.2, head, 20]} />
+        <meshStandardMaterial {...material} color="#ff8a00" />
+      </mesh>
+    </group>
+  );
+}
+
 /** The bead of hot glue that holds the diffuser in its seat. */
 function GlueRing(props: Omit<PartProps, "id" | "layer"> & { position: Vec3 }) {
   const ref = useRef<Group>(null);
@@ -264,6 +288,9 @@ function Assembly({ options, registry }: { options: SceneOptions; registry: Regi
       <StlPart {...base} id="M2" layer="impressa" url={stl("comum/abracadeira-tubo.stl")} color={COLORS.clamp} position={[0, -e * 0.9, 0]} />
       <StlPart {...base} id="M4" layer="impressa" url={stl("comum/difusor.stl")} color={COLORS.diffuser} opacity={0.8} position={[0, 0, 37.8 + e * 0.8]} />
       <GlueRing {...base} position={[0, 0, 37.8 + e * 0.8]} />
+      {options.arrows?.map((arrow, i) => (
+        <ArrowGuide key={i} from={arrow.from} to={arrow.to} material={{ roughness: 0.5, metalness: 0, emissive: new Color("#ff8a00"), emissiveIntensity: 0.25, clippingPlanes: [] }} />
+      ))}
 
       {/* everything that rides on the lid */}
       <group position={[0, 0, lidZ]}>
@@ -462,7 +489,7 @@ function Projector({ registry, nodes, cut }: { registry: Registry; nodes: Mutabl
   return null;
 }
 
-export function SuporteScene({ options, ids, view, hint = true, paper = false }: { options: SceneOptions; ids: string[]; view: SceneView; hint?: boolean; paper?: boolean }) {
+export function SuporteScene({ options, ids, view, hint = true, paper = false, qty }: { options: SceneOptions; ids: string[]; view: SceneView; hint?: boolean; paper?: boolean; qty?: Record<string, number> }) {
   const registry: Registry = useRef(new Map());
   const nodes = useRef(new Map<string, HTMLElement>());
   const target = useMemo<Vec3>(() => [0, 0, 118], []);
@@ -494,7 +521,7 @@ export function SuporteScene({ options, ids, view, hint = true, paper = false }:
             onClick={() => onPick(id)}
             title={id}
           >
-            {id}
+            {qty && (qty[id] ?? 1) > 1 ? `${id} ×${qty[id]}` : id}
           </button>
         ))}
       </div>

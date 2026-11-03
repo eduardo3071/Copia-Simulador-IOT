@@ -424,3 +424,4 @@ a.button.primary { background: #2b6fe0; border-color: #2b6fe0; color: #fff; }
   .manual-doc .cover th, .manual-doc .cover td { padding: 3px 8px; }
   .manual-doc .cover .status-box { margin: 6px 0; padding: 6px 12px; }
 }
+.suporte-stage.paper .badge-id { font-size: 14px; padding: 2px 9px; border-radius: 12px; }

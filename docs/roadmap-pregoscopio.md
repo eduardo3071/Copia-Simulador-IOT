@@ -94,6 +94,8 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | 5.11 | Lista de projetos do simulador reorganizada: suporte v1 e v2 primeiro, depois os exemplos de Arduino numerados do mais simples ao mais completo; projetos salvos do mais recente ao mais antigo | ✅ | |
 | 5.12 | Manual de construção (aba "Manual de construção"): planta-mãe com vistas superior, frontal e lateral e cotas, posição X/Y/Z de cada peça e de cada parafuso, lista de materiais com medidas padrão, montagem passo a passo com imagem 3D (peças aparecem na ordem de montagem), teste elétrico; português e chinês | ✅ | uma versão por pilha (v1) e uma por fonte e dimmer (v2); texto em chinês escrito sem tradutor técnico, pedir revisão de um falante nativo |
 | 5.13 | PDF do manual de cada versão para enviar ao fabricante (`pacote-montagem/MANUAL-v1.pdf`, `MANUAL-v2.pdf`) | ✅ | gerado por `scripts/render-manual.ts` |
+| 5.14 | Desenhos técnicos refeitos (9 folhas por versão, primeiro diedro) com verificador automático de colisões de texto e balões (`npx tsx scripts/check-desenhos.ts`): 0 colisões nas duas versões | ✅ | o verificador não pega linhas que cruzam texto nem erro de geometria: continua precisando de olho humano |
+| 5.15 | Imagens dos passos com setas de encaixe, quantidade nos parafusos e rótulos maiores; o endereço guarda o passo (`#suporte/manual/v2/9`) | ✅ | |
 | 5.2 | API acessível pelo site | 🟡 | só funciona com o PC ligado, Docker e `ngrok http 7860` rodando |
 | 5.3 | API permanente e gratuita | ❓ | Hugging Face exige PRO; Google Cloud Run pede cartão |
 | 5.4 | Código no GitHub | 🟡 | `main` publicada; falta commitar o pacote atualizado |
