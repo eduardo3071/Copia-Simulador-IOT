@@ -353,7 +353,19 @@ function Assembly({ options, registry }: { options: SceneOptions; registry: Regi
   );
 }
 
-function Controls({ target, view }: { target: Vec3; view: { name: string; n: number } }) {
+/** A camera that frames a sphere from a direction: used by the assembly steps so each picture fills the frame. */
+export interface Fit {
+  center: Vec3;
+  radius: number;
+  dir: Vec3;
+}
+export interface SceneView {
+  name: string;
+  n: number;
+  fit?: Fit;
+}
+
+function Controls({ target, view }: { target: Vec3; view: SceneView }) {
   const camera = useThree((s) => s.camera);
   const gl = useThree((s) => s.gl);
   const invalidate = useThree((s) => s.invalidate);
@@ -372,6 +384,16 @@ function Controls({ target, view }: { target: Vec3; view: { name: string; n: num
     };
   }, [camera, gl, invalidate, target]);
   useEffect(() => {
+    if (view.fit && controls.current) {
+      const { center, radius, dir } = view.fit;
+      const distance = (radius / Math.sin((32 / 2) * (Math.PI / 180))) * 1.08;
+      const d = new Vector3(...dir).normalize().multiplyScalar(distance);
+      camera.position.set(center[0] + d.x, center[1] + d.y, center[2] + d.z);
+      controls.current.target.set(...center);
+      controls.current.update();
+      invalidate();
+      return;
+    }
     const presets: Record<string, Vec3> = { iso: [340, -420, 330], front: [0, -740, 125], side: [740, 0, 125], top: [0, -80, 780], inside: [80, -250, 120], lid: [200, -230, 30] };
     const p = presets[view.name];
     if (!p || !controls.current) return;
@@ -440,14 +462,14 @@ function Projector({ registry, nodes, cut }: { registry: Registry; nodes: Mutabl
   return null;
 }
 
-export function SuporteScene({ options, ids, view, hint = true }: { options: SceneOptions; ids: string[]; view: { name: string; n: number }; hint?: boolean }) {
+export function SuporteScene({ options, ids, view, hint = true, paper = false }: { options: SceneOptions; ids: string[]; view: SceneView; hint?: boolean; paper?: boolean }) {
   const registry: Registry = useRef(new Map());
   const nodes = useRef(new Map<string, HTMLElement>());
   const target = useMemo<Vec3>(() => [0, 0, 118], []);
   const key = options.version;
   const { onPick } = options;
   return (
-    <div className="suporte-stage">
+    <div className={`suporte-stage${paper ? " paper" : ""}`}>
       <Canvas
         frameloop="demand"
         key={key}

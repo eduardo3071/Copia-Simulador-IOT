@@ -16,4 +16,11 @@ for (const [source, target] of [
 }
 rmSync(new URL("manual/", to), { recursive: true, force: true });
 cpSync(new URL("manual/", from), new URL("manual/", to), { recursive: true });
+for (const v of ["v1", "v2"]) {
+  try {
+    cpSync(new URL(`MANUAL-${v}.pdf`, from), new URL(`MANUAL-${v}.pdf`, to));
+  } catch {
+    console.log(`MANUAL-${v}.pdf ainda não foi gerado (npx tsx scripts/render-manual.ts --pdf)`);
+  }
+}
 console.log("publicado em apps/web/public/suporte");

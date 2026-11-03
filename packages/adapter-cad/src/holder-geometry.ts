@@ -68,7 +68,7 @@ export function buildHolderBody(layout: HolderLayout): Shape3D {
   body = body.cut(makeCylinder(ring.boreDiameter / 2, ringHeight + 2, [0, 0, ring.bottom - 1]));
   for (const ear of ears) {
     // Blind pilot hole for a self-tapping M3, 8 mm deep from the split plane.
-    body = body.cut(makeCylinder(p.pilotHole / 2, 8, [ear.x, 1, ear.z], AXIS.y));
+    body = body.cut(makeCylinder(p.pilotHole / 2, 8.5, [ear.x, -0.5, ear.z], AXIS.y));
   }
   for (const post of layout.posts) {
     body = body.cut(makeCylinder(post.pilotDiameter / 2, post.top - post.bottom - 3, [post.x, post.y, post.bottom - 1]));

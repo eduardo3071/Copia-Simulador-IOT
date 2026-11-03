@@ -24,6 +24,8 @@ export interface ManualStep {
   view: "iso" | "lid" | "front";
   lightOn?: boolean;
   check?: Bilingual;
+  minutes?: number;
+  warn?: Bilingual;
 }
 
 /** Chinese names, so the manufacturer's engineers can match the drawing to the parts. */
@@ -95,7 +97,7 @@ export function masterPlan(version: SuporteVersion): PlacedPart[] {
     put("M1", 0, (box.yMin + box.yMax) / 2, layout.totalHeight / 2, [box.xMax - box.xMin, box.yMax - box.yMin, layout.totalHeight], { pt: "apoiado na mesa", zh: "放置于桌面" }),
     put("M3", 0, (box.yMin + box.yMax) / 2, -p.wall / 2, [box.xMax - box.xMin, box.yMax - box.yMin, p.wall], { pt: "4 parafusos H1 nos cantos", zh: "四角 4 颗 H1 螺钉" }, true),
     put("M4", 0, 0, layout.cavity.top + 0.6, [p.diffuserDiameter, p.diffuserDiameter, p.diffuserThickness], { pt: "cola quente (W3) no encaixe do teto", zh: "用热熔胶（W3）粘在顶部凹槽" }, true),
-    put("M2", 0, 0, (ring.bottom + ring.top) / 2, [ring.outerRadius * 2 + 20, ring.outerRadius * 2, ring.top - ring.bottom], { pt: "2 parafusos H2 nas orelhas", zh: "耳部 2 颗 H2 螺钉" }),
+    put("M2", 0, -(ring.outerRadius + ring.gap) / 2, (ring.bottom + ring.top) / 2, [2 * (layout.ears[1]!.x + layout.ears[1]!.width / 2), ring.outerRadius - ring.gap, ring.top - ring.bottom], { pt: "2 parafusos H2 nas orelhas", zh: "耳部 2 颗 H2 螺钉" }),
     put("L1", 0, 0, layout.samplePlane - 0.5, [76, 26, 1], { pt: "deslizada no canal, de lado", zh: "从侧面滑入槽道" }),
     put("D1", ledPost.x, ledPost.y, ledPost.ledTop - 4.3, [5.8, 5.8, 8.6], { pt: "sede do porta-LED da tampa", zh: "插入盖板 LED 座" }, true),
     put("PCB1", bx, by, board.standoffHeight + 0.8, [bw, board.yMax - board.yMin, 1.6], { pt: "4 parafusos H3 nos suportes de 6 mm", zh: "4 颗 H3 螺钉固定在 6 mm 立柱上" }, true),
@@ -275,7 +277,73 @@ export function manualSteps(version: SuporteVersion): ManualStep[] {
       adds: v1 ? [] : ["PS1"], also: ["L1"], lidDrop: 0, view: "iso", lightOn: true,
     },
   );
-  return steps.map((s, i) => ({ ...s, n: i + 1 }));
+  return steps.map((s, i) => ({ ...s, n: i + 1, ...extras(s.title.pt) }));
+}
+
+const WARN_HOT: Bilingual = { pt: "Ferro de soldar a 300 °C: apoie-o no suporte e não toque na ponta. Solde em local ventilado.", zh: "烙铁温度约 300 °C：使用后放回烙铁架，勿触碰烙铁头。请在通风处焊接。" };
+const WARN_PLASTIC: Bilingual = { pt: "Não aperte demais: o PLA racha. Pare quando o parafuso encostar.", zh: "不要拧得过紧：PLA 会开裂。螺钉贴合即停。" };
+const WARN_POLARITY: Bilingual = { pt: "Confira a polaridade antes de ligar: LED (perna longa +), diodo (faixa = cátodo), plugue de centro positivo.", zh: "通电前核对极性：LED 长脚为 +，二极管色环端为阴极，插头中心为正极。" };
+
+/** Time and safety notes by step; matched on the Portuguese title so the step list above stays readable. */
+function extras(title: string): { minutes: number; warn?: Bilingual } {
+  if (title.startsWith("Preparar")) return { minutes: 20 };
+  if (title.startsWith("Colar o difusor")) return { minutes: 10, warn: bi("A cola quente queima: use a ponta do bastão e deixe esfriar 1 minuto.", "热熔胶会烫伤：用胶枪头操作，冷却 1 分钟后再碰。") };
+  if (title.startsWith("Provar")) return { minutes: 5 };
+  if (title.startsWith("Instalar")) return { minutes: 5 };
+  if (title.startsWith("Tampa: montar o LED")) return { minutes: 20, warn: bi(`Solde por menos de 3 segundos por perna para não queimar o LED. ${WARN_HOT.pt}`, `每个引脚焊接不超过 3 秒，避免烧坏 LED。${WARN_HOT.zh}`) };
+  if (title.startsWith("Tampa: placa")) return { minutes: 40, warn: WARN_HOT };
+  if (title.startsWith("Tampa: pilha")) return { minutes: 10, warn: WARN_POLARITY };
+  if (title.startsWith("Ligar os fios")) return { minutes: 30, warn: WARN_HOT };
+  if (title.startsWith("Teste")) return { minutes: 15, warn: WARN_POLARITY };
+  if (title.startsWith("Fechar")) return { minutes: 10, warn: WARN_PLASTIC };
+  if (title.startsWith("Encaixar")) return { minutes: 15, warn: WARN_PLASTIC };
+  return { minutes: 10 };
+}
+
+export interface FileEntry {
+  file: string;
+  pt: string;
+  zh: string;
+}
+
+/** The files that go with the manual, so the manufacturer knows what to ask for and what to expect. */
+export function manualFiles(version: SuporteVersion): FileEntry[] {
+  const dir = version === "v1" ? "v1-pilha" : "v2-fonte";
+  const ele = version === "v1" ? "v1-pilha" : "v2-fonte-dimmer";
+  return [
+    { file: `mecanica/${dir}/suporte-base-coluna-impressao.stl`, pt: "M1 suporte, na orientação de impressão", zh: "M1 支架（打印方向）" },
+    { file: `mecanica/${dir}/suporte-base-coluna.stl`, pt: "M1 suporte, na posição de montagem", zh: "M1 支架（装配位置）" },
+    { file: "mecanica/comum/abracadeira-tubo-impressao.stl", pt: "M2 abraçadeira, na orientação de impressão", zh: "M2 抱箍（打印方向）" },
+    { file: `mecanica/${dir}/tampa-fundo.stl`, pt: "M3 tampa de fundo", zh: "M3 底盖" },
+    { file: "mecanica/comum/difusor.stl", pt: "M4 difusor", zh: "M4 扩散片" },
+    { file: `eletronica/${ele}/esquematico.svg`, pt: "Esquemático do circuito", zh: "电路原理图" },
+    { file: `eletronica/${ele}/gerber/`, pt: "Gerbers da placa PCB1 (fabricação)", zh: "PCB1 板 Gerber 文件（制板）" },
+    { file: `eletronica/${ele}/bom.csv`, pt: "Lista de componentes da placa", zh: "电路板元件清单" },
+    { file: `eletronica/${ele}/pick-and-place.csv`, pt: "Coordenadas de montagem dos componentes", zh: "元件贴装坐标" },
+    { file: `lista-de-compras-${version}.csv`, pt: "Lista de compras (preço a preencher)", zh: "采购清单（价格待填）" },
+    { file: "mecanica/calibracao/", pt: "Gabaritos G1 a G3 (imprimir primeiro)", zh: "校准件 G1~G3（请先打印）" },
+  ];
+}
+
+/** Wiring order of the driver board, the same steps the Eletrônica tab shows. */
+export function wiringOrder(version: SuporteVersion): Bilingual[] {
+  return version === "v1"
+    ? [
+        bi("Fio vermelho do clipe BT1 ao terminal 1 do interruptor SW1.", "电池扣红线接开关 SW1 的端子 1。"),
+        bi("Terminal 2 do SW1 ao pino IN do U1 (LM317T de frente, letras para você: ADJ, OUT, IN da esquerda para a direita).", "SW1 端子 2 接 U1 的 IN 脚（LM317T 正面朝向自己，从左到右依次为 ADJ、OUT、IN）。"),
+        bi("C1 (100 nF) entre o pino IN do U1 e o GND, soldado perto do U1.", "C1 (100 nF) 接在 U1 的 IN 脚与地之间，靠近 U1 焊接。"),
+        bi("Pino OUT do U1 a uma ponta de R1 (68 Ω).", "U1 的 OUT 脚接 R1 (68 Ω) 的一端。"),
+        bi("Outra ponta de R1 ao pino ADJ do U1 e ao ânodo (perna longa) do D1: os três no mesmo ponto.", "R1 另一端、U1 的 ADJ 脚和 D1 阳极（长脚）接在同一点。"),
+        bi("Cátodo (perna curta) do D1 ao fio preto do clipe BT1 (GND). O outro terminal do C1 também vai ao GND.", "D1 阴极（短脚）接电池扣黑线（地）。C1 的另一端也接地。"),
+      ]
+    : [
+        bi("Fonte PS1 (12 V) no conector J1. Confirme com o multímetro que o centro do plugue é positivo.", "12 V 电源 PS1 接插座 J1。用万用表确认插头中心为正极。"),
+        bi("Positivo do J1 ao ânodo do D2 (1N5819, lado sem faixa). Cátodo do D2 (lado da faixa) ao terminal 1 do SW1.", "J1 正极接 D2 (1N5819) 阳极（无色环端）。D2 阴极（色环端）接 SW1 端子 1。"),
+        bi("Terminal 2 do SW1 ao pino IN do U1. C1 (100 nF) entre IN e GND, perto do U1.", "SW1 端子 2 接 U1 的 IN 脚。C1 (100 nF) 接在 IN 与地之间，靠近 U1。"),
+        bi("Pino OUT do U1 a R1 (68 Ω); R1 ao terminal 1 do RV1; terminais 2 e 3 do RV1 ligados entre si.", "U1 的 OUT 脚接 R1 (68 Ω)；R1 接 RV1 端子 1；RV1 的端子 2 和 3 短接。"),
+        bi("Terminais 2 e 3 do RV1 ao pino ADJ do U1 e ao ânodo do D1.", "RV1 端子 2、3 接 U1 的 ADJ 脚和 D1 阳极。"),
+        bi("Cátodo do D1 ao GND do J1. O outro terminal do C1 também vai ao GND.", "D1 阴极接 J1 的地。C1 的另一端也接地。"),
+      ];
 }
 
 /** Parts present up to and including step `n` (1-based). */
@@ -285,9 +353,9 @@ export function partsUpToStep(version: SuporteVersion, n: number): Set<string> {
   return out;
 }
 
-/** Bill of materials rows of the manual: the purchased and printed parts, with Chinese name and catalogue size. */
+/** Bill of materials rows of the manual: printed, purchased and customer-supplied parts, with Chinese name and catalogue size. */
 export function manualBom(version: SuporteVersion) {
   return bom(version)
-    .filter((l) => l.part.kind !== "calibracao" && l.part.kind !== "referencia")
+    .filter((l) => l.part.kind !== "calibracao")
     .map((l) => ({ id: l.part.id, name: l.part.name, zh: ZH_NAMES[l.part.id] ?? "", qty: l.qty, kind: l.part.kind, spec: l.part.spec, standard: STANDARD_SIZE[l.part.id] }));
 }

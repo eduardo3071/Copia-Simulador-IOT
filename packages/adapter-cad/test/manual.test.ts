@@ -32,7 +32,7 @@ describe("manual de montagem", () => {
 
     it(`${v}: the master plan places every printed and purchased part inside a sensible envelope`, () => {
       const plan = masterPlan(v);
-      const ids = manualBom(v).map((l) => l.id).filter((id) => !["W1", "W2", "W3"].includes(id));
+      const ids = manualBom(v).filter((l) => l.kind !== "referencia").map((l) => l.id).filter((id) => !["W1", "W2", "W3"].includes(id));
       for (const id of ids) expect(plan.find((p) => p.id === id), id).toBeTruthy();
       for (const p of plan) {
         if (["PS1", "P1", "P2", "P9"].includes(p.id)) continue;
@@ -56,5 +56,15 @@ describe("manual de montagem", () => {
     const only = (a: "v1" | "v2", b: "v1" | "v2") => manualSteps(a).map((s) => s.title.pt).filter((t) => !manualSteps(b).some((s) => s.title.pt === t));
     expect(only("v2", "v1").some((t) => t.includes("J1"))).toBe(true);
     expect(only("v1", "v2").some((t) => t.includes("BT1"))).toBe(true);
+  });
+});
+
+describe("manual: conteúdo de apoio", () => {
+  it("every step has a time estimate and the bill of materials names the customer-supplied pregoscopio parts", () => {
+    for (const v of ["v1", "v2"] as const) {
+      for (const s of manualSteps(v)) expect(s.minutes, s.title.pt).toBeGreaterThan(0);
+      const referencia = manualBom(v).filter((l) => l.kind === "referencia").map((l) => l.id);
+      expect(referencia).toEqual(expect.arrayContaining(["P1", "P2", "P3"]));
+    }
   });
 });

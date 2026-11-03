@@ -3,7 +3,8 @@ import {
   bom, bomCsv, EVIDENCE_LABEL, partFile, testPlan, v1Light, v2Light, LED_VF, BATTERY_MAH, R1_OHMS, RHEOSTAT_OHMS, DIODE_DROP_V,
   type PartKind, type SuportePart, type SuporteVersion,
 } from "@simiot/adapter-cad";
-import { Manual, StepShot, StepViewer } from "./Manual.tsx";
+import { JIGS } from "./jigs.ts";
+import { Manual, pdfUrl, StepShot, StepViewer } from "./Manual.tsx";
 import { ASSETS, HEAD_Z, JigPreview, NOMINAL_RETRACT, OBJECTIVE_LENGTH, SLEEVE_DEPTH, SLIDE_Z, SuporteScene, type Layer } from "./Scene.tsx";
 
 type Tab = "3d" | "manual" | "eletronica" | "calibracao";
@@ -35,6 +36,8 @@ export function SuportePage() {
   const [selected, setSelected] = useState<string | null>(null);
   useEffect(() => {
     if (start.shot) return;
+    const names: Record<Tab, string> = { "3d": "3D e peças", manual: "Manual de construção", eletronica: "Eletrônica", calibracao: "Calibração" };
+    document.title = `${names[tab]} (${version}) · Suporte do Pregoscópio`;
     history.replaceState(null, "", `${location.pathname}${location.search}#suporte/${tab}/${version}`);
   }, [tab, version, start.shot]);
   // a link to another view of this page (#suporte/calibracao/v2) while it is already open
@@ -73,8 +76,11 @@ export function SuportePage() {
           <div className="no-print manual-intro">
             <h2>Manual de construção · 制造与装配手册</h2>
             <p className="small">Planta-mãe com todas as peças juntas, posição de cada uma, lista de materiais com medidas padrão e montagem passo a passo, em português e chinês. Escolha a versão acima. Para gerar o PDF, use o botão e escolha “Salvar como PDF”.</p>
-            <div className="row"><button className="primary" onClick={() => window.print()}>Imprimir / salvar PDF</button></div>
-            <Guard><StepViewer key={version} version={version} start={Number(start.view) || 1} /></Guard>
+            <div className="row">
+              <a className="button primary" href={pdfUrl(version)} download>Baixar o PDF da {version === "v1" ? "versão 1 (pilha)" : "versão 2 (fonte e dimmer)"}</a>
+              <button onClick={() => window.print()}>Imprimir esta página</button>
+            </div>
+            <StepViewer key={version} version={version} start={Number(start.view) || 1} />
           </div>
           <Manual version={version} />
         </div>
@@ -344,24 +350,6 @@ function Calculator({ version }: { version: SuporteVersion }) {
     </section>
   );
 }
-
-interface Series { name: string; id: string; sizes: string[]; param: string }
-const JIGS: { id: string; file: string; title: string; series: Series[] }[] = [
-  { id: "G1", file: "calibracao-tubo.stl", title: "Gabarito do tubo", series: [
-    { name: "Tubo externo", id: "P2", sizes: ["30,2", "33,0", "33,4", "33,8", "34,2", "34,6", "36,4"], param: "tubeDiameter = valor escolhido − 0,2" },
-  ] },
-  { id: "G2", file: "calibracao-pecas.stl", title: "Gabarito das peças", series: [
-    { name: "Lâmina (rebaixo de 1,2 mm)", id: "L1", sizes: ["26,2", "26,4", "26,6", "26,8", "27,0"], param: "slideWidth = valor escolhido − 0,6" },
-    { name: "Interruptor KCD1-101", id: "SW1", sizes: ["20,8×14,6", "21,0×14,8", "21,2×15,0", "21,4×15,2", "21,6×15,4"], param: "switchCutout (largura e altura)" },
-    { name: "Flange do LED", id: "D1", sizes: ["5,8", "6,0", "6,2", "6,4", "6,6"], param: "ledFlange = valor escolhido − 0,4" },
-    { name: "Furo-piloto M3", id: "H1", sizes: ["2,4", "2,6", "2,8"], param: "pilotHole (entra apertado e rosqueia)" },
-    { name: "Conector DC-022B", id: "J1", sizes: ["7,6", "7,8", "8,0", "8,2"], param: "jackDiameter" },
-    { name: "Rosca M7 do reostato", id: "RV1", sizes: ["7,0", "7,3", "7,5", "7,8"], param: "knobDiameter" },
-  ] },
-  { id: "G3", file: "calibracao-bateria.stl", title: "Gabarito da bateria", series: [
-    { name: "Bateria 9 V", id: "BT1", sizes: ["48,6×26,6", "49,1×27,1", "49,6×27,6", "50,1×28,1"], param: "batteryFit = valor escolhido − medida da bateria" },
-  ] },
-];
 
 function Calibracao() {
   const [jig, setJig] = useState(JIGS[0]!);

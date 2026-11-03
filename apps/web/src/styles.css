@@ -261,7 +261,7 @@ h3 small { color: var(--muted); font-weight: normal; }
 .step-bar input[type=range] { flex: 1; }
 .step-text { padding: 4px 2px 12px; }
 .step-n { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 13px; background: #ff8a00; color: #1b1b1b; font-weight: 700; font-size: 14px; }
-.step-shot { position: fixed; inset: 0; background: #1b2230; }
+.step-shot { position: fixed; inset: 0; background: #fff; }
 .step-shot .suporte-stage { height: 100vh; }
 
 .manual-doc { max-width: 1100px; margin: 0 auto; display: grid; gap: 18px; color: #15181d; }
@@ -280,7 +280,7 @@ h3 small { color: var(--muted); font-weight: normal; }
 .manual-doc .mini { width: auto; min-width: 60%; }
 .manual-doc .mono { font-family: ui-monospace, Consolas, monospace; white-space: nowrap; }
 .manual-doc .tools { padding-left: 18px; margin: 0 0 12px; }
-.manual-doc .step-fig { margin: 0 0 12px; background: #1b2230; border-radius: 4px; min-height: 40px; }
+.manual-doc .step-fig { margin: 0 0 12px; background: #fff; border: 1px solid #c4ccd8; border-radius: 4px; min-height: 40px; }
 .manual-doc .step-fig img { display: block; width: 100%; border-radius: 4px; }
 .manual-doc .check-note { margin: 8px 0; padding: 6px 10px; background: #e8f5ea; border-left: 3px solid #2e9e4f; }
 .manual-doc .step-n { color: #1b1b1b; }
@@ -321,3 +321,106 @@ h3 small { color: var(--muted); font-weight: normal; }
 .dialog details { margin: 12px 0; }
 .dialog summary { cursor: pointer; font-weight: 600; margin-bottom: 8px; }
 .dialog a.list-item { display: block; text-decoration: none; color: inherit; margin-bottom: 4px; }
+
+/* ---- Desenhos técnicos (primeiro diedro) ---- */
+.manual-doc .sheet.drawing { padding: 0; background: #fff; }
+.dt-sheet { display: block; width: 100%; height: auto; background: #fff; }
+.dt-sheet .dt-frame { fill: none; stroke: #111; stroke-width: .7; }
+.dt-sheet .dt-vis { fill: none; stroke: #111; stroke-width: .35; stroke-linejoin: round; }
+.dt-sheet .dt-hid { fill: none; stroke: #444; stroke-width: .2; stroke-dasharray: 1.8 1; }
+.dt-sheet .dt-ctr { fill: none; stroke: #b3261e; stroke-width: .15; stroke-dasharray: 6 1 1 1; }
+.dt-sheet .dt-thin { fill: none; stroke: #111; stroke-width: .15; }
+.dt-sheet .dt-dim { stroke: #0b4fa8; stroke-width: .15; fill: none; }
+.dt-sheet .dt-t { font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #111; font-size: 2.6px; }
+.dt-sheet .dt-tdim { fill: #0b4fa8; font-size: 2.5px; }
+.dt-sheet .dt-tview { font-size: 3.6px; font-weight: 700; }
+.dt-sheet .dt-tscale { font-size: 2.8px; fill: #444; }
+.dt-sheet .dt-tn { font-size: 2.4px; }
+.dt-sheet .dt-tnh { font-size: 3px; font-weight: 700; }
+.dt-sheet .dt-tzh { fill: #35507a; }
+.dt-sheet .dt-tl { font-size: 1.9px; fill: #555; }
+.dt-sheet .dt-tv { font-size: 2.5px; }
+.dt-sheet .dt-tb { font-size: 3.4px; font-weight: 700; }
+.dt-sheet .dt-tbz { font-size: 2.8px; fill: #35507a; }
+.dt-sheet .dt-title rect, .dt-sheet .dt-title line { stroke: #111; stroke-width: .35; fill: none; }
+.dt-sheet .dt-sym path, .dt-sheet .dt-sym circle { fill: none; stroke: #111; stroke-width: .25; }
+.dt-sheet .dt-balloon line { stroke: #b3261e; stroke-width: .2; }
+.dt-sheet .dt-balloon circle { fill: #fff; stroke: #b3261e; stroke-width: .3; }
+.dt-sheet .dt-balloon .dt-bdot { fill: #b3261e; stroke: none; }
+.dt-sheet .dt-balloon text { fill: #b3261e; font-weight: 700; font-size: 2.7px; font-family: "Segoe UI", Arial, sans-serif; }
+.dt-sheet .dt-cut line { stroke: #111; stroke-width: .5; }
+.dt-sheet .dt-cut path { fill: #111; }
+.dt-sheet .dt-cut text { font-size: 3.4px; font-weight: 700; fill: #111; font-family: Arial, sans-serif; }
+@media print {
+  @page drawing { size: A4 landscape; margin: 6mm; }
+  .manual-doc .sheet.drawing { page: drawing; }
+}
+
+.suporte-stage.paper { background: #fff; border-color: #c4ccd8; }
+
+/* manual: conteúdo novo */
+a.button { display: inline-block; padding: 6px 12px; border: 1px solid var(--border); border-radius: var(--radius); text-decoration: none; color: inherit; background: var(--panel); }
+a.button.primary { background: #2b6fe0; border-color: #2b6fe0; color: #fff; }
+.step-still { width: 100%; display: block; border-radius: var(--radius); }
+.manual-doc .status-box { margin: 12px 0; padding: 10px 14px; background: #fff6e0; border-left: 4px solid #ff8a00; }
+.manual-doc .status-box ul { margin: 6px 0 0; padding-left: 18px; }
+.manual-doc .warn-note { margin: 8px 0; padding: 6px 10px; background: #fdecea; border-left: 3px solid #d9362b; }
+.manual-doc .step-min { float: right; font-size: 12px; font-weight: 400; color: #4b5666; }
+.manual-doc .schematic-fig { margin: 0 0 10px; }
+.manual-doc .schematic-fig img { width: 100%; display: block; border: 1px solid #c4ccd8; }
+.manual-doc .blank { min-width: 90px; height: 22px; }
+.manual-doc .chk { text-align: center; font-size: 16px; }
+.manual-doc .sign th { width: 110px; }
+.manual-doc .wiring-list { padding-left: 20px; }
+.manual-doc tr { break-inside: avoid; }
+.step-shot.paper-bg { background: #fff; }
+@media print {
+  @page { size: A4; margin: 10mm 10mm 14mm; @bottom-center { content: "Pregoscópio · Manual de construção · Rev. A · " counter(page) " / " counter(pages); font: 8px sans-serif; color: #555; } }
+  .manual-doc .sheet.step { break-after: auto; padding: 0 0 8mm; border-bottom: 1px solid #c4ccd8; margin-bottom: 4mm; }
+  .manual-doc .sheet.step .step-fig img { max-height: 105mm; width: auto; margin: 0 auto; }
+  .manual-doc .step-fig { text-align: center; }
+}
+@media print {
+  .manual-doc .sheet.drawing, .manual-doc .sheet.drawing .dt-sheet { width: 285mm; max-width: none; }
+}
+/* PDF em A4 paisagem: o Chrome calcula a largura do documento pela primeira página, então todas usam a mesma orientação */
+@media print {
+  @page { size: A4 landscape; margin: 5mm 6mm 9mm; @bottom-center { content: "Pregoscópio · Manual de construção · Rev. A · " counter(page) " / " counter(pages); font: 8px sans-serif; color: #555; } }
+  @page drawing { size: A4 landscape; margin: 5mm 6mm 9mm; }
+  .manual-doc .sheet { padding: 3mm 6mm; }
+  .manual-doc .sheet.drawing { padding: 0; }
+  .manual-doc .sheet.drawing, .manual-doc .sheet.drawing .dt-sheet { width: auto; }
+  .dt-sheet { height: 190mm; width: auto; margin: 0 auto; }
+  .manual-doc .sheet.step { display: grid; grid-template-columns: 1.35fr 1fr; gap: 3mm 8mm; align-content: start; break-after: page; border: none; margin: 0; padding: 3mm 6mm; }
+  .manual-doc .sheet.step h3 { grid-column: 1 / -1; }
+  .manual-doc .sheet.step .step-fig { grid-row: 2 / span 6; margin: 0; }
+  .manual-doc .sheet.step .step-fig img { max-height: 165mm; width: 100%; object-fit: contain; }
+}
+@media print {
+  .manual-doc .sheet { break-inside: auto; }
+  .manual-doc .sheet.drawing, .manual-doc .sheet.step { break-inside: avoid; }
+  .manual-doc .sheet.step .mini td, .manual-doc .sheet.step .mini th { padding: 2px 6px; font-size: 11px; }
+  .manual-doc .sheet.step .bi .zh { font-size: .9em; }
+  .manual-doc .sheet.step .step-fig img { max-height: 150mm; }
+}
+@media print {
+  .manual-doc .sheet.step { grid-template-columns: 1.3fr 1fr; align-items: start; }
+  .manual-doc .sheet.step h3 { grid-column: 1 / -1; }
+  .manual-doc .sheet.step .step-fig { grid-row: auto; grid-column: 1; }
+  .manual-doc .sheet.step .step-body { grid-column: 2; }
+  .manual-doc .sheet.step .step-fig img { max-height: 150mm; }
+  .manual-doc .schematic-fig img { max-height: 100mm; width: auto; margin: 0 auto; }
+  .manual-doc .step-body .mini { min-width: 0; width: 100%; }
+}
+@media print {
+  .manual-doc .sheet.step .step-fig img { max-height: 128mm; }
+  .manual-doc .sheet.step .mini td, .manual-doc .sheet.step .mini th { padding: 1px 5px; font-size: 10px; }
+  .manual-doc .sheet.step .mini .bi .zh { font-size: 9px; }
+}
+@media print {
+  .manual-doc .sheet.cover { padding-bottom: 0; }
+  .manual-doc .cover h2 { font-size: 24px; margin: 2px 0; }
+  .manual-doc .cover table { margin: 4px 0 8px; }
+  .manual-doc .cover th, .manual-doc .cover td { padding: 3px 8px; }
+  .manual-doc .cover .status-box { margin: 6px 0; padding: 6px 12px; }
+}
