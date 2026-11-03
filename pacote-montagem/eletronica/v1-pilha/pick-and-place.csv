@@ -1,0 +1,6 @@
+# Simulador-IOT | Luz do pregoscopio v1 (pilha 9 V) | revisão 1
+Designator,Mid X,Mid Y,Layer,Rotation
+BT1,-14.000,0.000,top,0
+SW1,-4.000,0.000,top,0
+R1,6.000,0.000,top,90
+D1,15.000,0.000,top,0

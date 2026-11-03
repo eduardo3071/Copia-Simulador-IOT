@@ -51,6 +51,8 @@ export function buildHolderBody(layout: HolderLayout): Shape3D {
     body = body.cut(makeCylinder(post.pilotDiameter / 2, post.top - post.bottom - 3, [post.x, post.y, post.bottom - 1]));
   }
   for (const c of layout.cutouts) body = body.cut(cutter(c));
+  const seat = layout.diffuserSeat;
+  body = body.cut(makeCylinder(seat.diameter / 2, seat.top - seat.bottom, [0, 0, seat.bottom]));
   return body;
 }
 
@@ -73,8 +75,23 @@ export function buildHolderClamp(layout: HolderLayout): Shape3D {
 
 /** Bottom plate of the light box (z from -wall to 0), with the four screw holes. */
 export function buildHolderLid(layout: HolderLayout): Shape3D {
-  const { box: b, lid, params: p } = layout;
+  const { box: b, lid, cradle, ledPost, params: p } = layout;
   let plate: Shape3D = box(b.xMin, b.xMax, b.yMin, b.yMax, lid.bottom, lid.top);
+  // Battery cradle: a low rectangular ring around the 9 V battery.
+  if (cradle) {
+    const rim = box(cradle.xMin, cradle.xMax, cradle.yMin, cradle.yMax, lid.top - EMBED, lid.top + cradle.height).cut(
+      box(cradle.xMin + p.cradleWall, cradle.xMax - p.cradleWall, cradle.yMin + p.cradleWall, cradle.yMax - p.cradleWall, lid.top - 1, lid.top + cradle.height + 1),
+    );
+    plate = plate.fuse(rim);
+  }
+  for (const post of layout.boardPosts) {
+    plate = plate.fuse(makeCylinder(post.outerDiameter / 2, post.top + EMBED, [post.x, post.y, lid.top - EMBED]));
+    plate = plate.cut(makeCylinder(p.pilotHole / 2, post.top - 1, [post.x, post.y, lid.top + 1]));
+  }
+  // LED post: a flange seat on top and a hole for the legs down through the lid.
+  plate = plate.fuse(makeCylinder(ledPost.diameter / 2, ledPost.top - lid.top + EMBED, [ledPost.x, ledPost.y, lid.top - EMBED]));
+  plate = plate.cut(makeCylinder(ledPost.seatDiameter / 2, ledPost.seatDepth + 1, [ledPost.x, ledPost.y, ledPost.top - ledPost.seatDepth]));
+  plate = plate.cut(makeCylinder(ledPost.legHole / 2, ledPost.top - lid.bottom + 2, [ledPost.x, ledPost.y, lid.bottom - 1]));
   for (const hole of lid.holes) {
     plate = plate.cut(makeCylinder(p.screwHole / 2, lid.top - lid.bottom + 2, [hole.x, hole.y, lid.bottom - 1]));
   }
@@ -100,12 +117,19 @@ export function holderOnBack(shape: Shape3D): Shape3D {
   return turned.translate(0, 0, -zMin);
 }
 
+/** Translucent disc that sits in the seat around the window (print in natural or white PLA, 0.4-0.8 mm). */
+export function buildHolderDiffuser(layout: HolderLayout): Shape3D {
+  const { diffuserSeat: d } = layout;
+  return makeCylinder(d.discDiameter / 2, d.discThickness, [0, 0, 0]);
+}
+
 export interface HolderShapes {
   body: Shape3D;
   clamp: Shape3D;
   lid: Shape3D;
+  diffuser: Shape3D;
 }
 
 export function buildHolder(layout: HolderLayout): HolderShapes {
-  return { body: buildHolderBody(layout), clamp: buildHolderClamp(layout), lid: buildHolderLid(layout) };
+  return { body: buildHolderBody(layout), clamp: buildHolderClamp(layout), lid: buildHolderLid(layout), diffuser: buildHolderDiffuser(layout) };
 }

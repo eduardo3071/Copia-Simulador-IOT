@@ -81,15 +81,49 @@ describe("holder (suporte do pregoscopio)", () => {
     expect(Math.max(...cap.size)).toBeLessThan(300);
   });
 
-  it("the lid is a plate with four holes", async () => {
-    const { lid } = buildHolder(layout);
+  it("the lid carries the battery cradle and the LED post, and fits the body", async () => {
+    const { body, lid, diffuser } = buildHolder(layout);
     const tri = await stl(lid);
     const { size } = stlBounds(tri);
     expect(size[0]).toBeCloseTo(p.boxWidth, 1);
-    expect(size[2]).toBeCloseTo(p.wall, 2);
-    const full = p.boxWidth * (p.boxDepthFront + p.boxDepthBack) * p.wall;
-    const holes = 4 * Math.PI * (p.screwHole / 2) ** 2 * p.wall;
-    expect(stlVolume(tri)).toBeGreaterThan(full - holes - 1);
-    expect(stlVolume(tri)).toBeLessThan(full - holes * 0.98);
+    expect(size[2]).toBeCloseTo(p.wall + layout.ledPost.top, 2); // the LED post is the tallest thing on the lid
+    // Lid + cradle + post never touch the body, and the 9 V battery fits its pocket with `batteryFit`.
+    for (const [name, part] of Object.entries({ lid, diffuser })) {
+      const overlap = body.clone().intersect(part.clone());
+      expect(overlap.mesh({ tolerance: 0.02, angularTolerance: 0.1 }).triangles.length, `body x ${name}`).toBe(0);
+    }
+    const cradle = layout.cradle!;
+    const pocketX = cradle.xMax - cradle.xMin - 2 * p.cradleWall;
+    expect(pocketX).toBeCloseTo(p.batteryLength + p.batteryFit, 6);
+    expect(cradle.height).toBeLessThan(layout.cavity.top);
+  });
+
+  it("the LED tip stays below the diffuser and the diffuser disc fits its seat", async () => {
+    expect(layout.ledPost.ledTop).toBeCloseTo(layout.cavity.top - p.ledToCeiling, 6);
+    expect(layout.ledPost.seatDiameter).toBeGreaterThan(p.ledFlange);
+    expect(layout.diffuserSeat.diameter).toBeGreaterThan(layout.diffuserSeat.discDiameter);
+    expect(layout.diffuserSeat.discDiameter).toBeGreaterThan(p.ledWindowDiameter);
+    const disc = stlBounds(await stl(buildHolder(layout).diffuser));
+    expect(disc.size[0]).toBeCloseTo(p.diffuserDiameter, 1);
+    expect(disc.size[2]).toBeCloseTo(p.diffuserThickness, 3);
+    const bodyAbove = layout.box.height - p.channelDepth - layout.diffuserSeat.top;
+    expect(bodyAbove).toBeGreaterThanOrEqual(0.4);
+  });
+
+  it("the 'fonte' variant swaps the battery for the dimmer board, a DC jack and a knob", async () => {
+    const v2 = holderLayout({ ...p, variant: "fonte" });
+    expect(v2.issues.filter((i) => i.severity === "error")).toEqual([]);
+    expect(v2.cradle).toBeNull();
+    expect(v2.cutouts.map((c) => c.id).sort()).toEqual(["jack", "knob", "slide-channel", "switch", "window"]);
+    expect(layout.cutouts.map((c) => c.id).sort()).toEqual(["slide-channel", "switch", "window"]);
+    // four standoffs on the 53 x 18 mm hole pattern of the 60 x 25 mm board
+    expect(v2.boardPosts).toHaveLength(4);
+    const xs = v2.boardPosts.map((q) => q.x);
+    expect(Math.max(...xs) - Math.min(...xs)).toBeCloseTo(p.dimmerBoard.width - 2 * p.dimmerBoard.holeInset, 6);
+    const { body, lid } = buildHolder(v2);
+    const overlap = body.clone().intersect(lid.clone());
+    expect(overlap.mesh({ tolerance: 0.02, angularTolerance: 0.1 }).triangles.length).toBe(0);
+    const tri = await stl(lid);
+    expect(stlBounds(tri).size[2]).toBeCloseTo(p.wall + v2.ledPost.top, 2);
   });
 });

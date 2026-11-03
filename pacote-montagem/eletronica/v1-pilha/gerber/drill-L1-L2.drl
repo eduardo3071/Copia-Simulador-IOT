@@ -1,0 +1,31 @@
+M48
+; Simulador-IOT | Luz do pregoscopio v1 (pilha 9 V) | revisão 1
+; DRILL file {tscircuit} date 2026-11-03T00:03:45.159Z
+; FORMAT={-:-/ absolute / metric / decimal}
+; #@! TF.CreationDate,2026-11-03T00:03:45.159Z
+; #@! TF.GenerationSoftware,tscircuit
+; #@! TF.FileFunction,Plated,1,2,PTH
+FMAT,2
+METRIC
+; #@! TA.AperFunction,Plated,PTH,ComponentDrill
+T10C1.000000
+; #@! TA.AperFunction,Plated,PTH,ComponentDrill
+T11C0.700000
+; #@! TA.AperFunction,Plated,PTH,ViaDrill
+T12C0.200000
+%
+G90
+G05
+T10
+X-15.2700Y0.0000
+X-12.7300Y0.0000
+X-5.2700Y0.0000
+X-2.7300Y0.0000
+X13.7300Y0.0000
+X16.2700Y0.0000
+T11
+X6.0000Y-5.0800
+X6.0000Y5.0800
+T12
+X3.1880Y-1.5160
+M30
