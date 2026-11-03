@@ -282,7 +282,7 @@ function spreadLabels(labels: { x: number; y: number }[], width = 34, height = 1
 }
 
 /** Moves the ID labels over the canvas after each frame. */
-function Projector({ registry, nodes }: { registry: Registry; nodes: MutableRefObject<Map<string, HTMLElement>> }) {
+function Projector({ registry, nodes, cut }: { registry: Registry; nodes: MutableRefObject<Map<string, HTMLElement>>; cut: number }) {
   const camera = useThree((s) => s.camera);
   const size = useThree((s) => s.size);
   const point = useMemo(() => new Vector3(), []);
@@ -293,8 +293,10 @@ function Projector({ registry, nodes }: { registry: Registry; nodes: MutableRefO
       if (!node) continue;
       point.copy(entry.local);
       entry.object.localToWorld(point);
+      // a label whose part the section plane removed would float in empty space
+      const clipped = cut > -50 && point.y < cut;
       point.project(camera);
-      const visible = point.z < 1 && entry.object.visible && entry.object.children.length > 0;
+      const visible = !clipped && point.z < 1 && entry.object.visible && entry.object.children.length > 0;
       node.style.display = visible ? "" : "none";
       if (visible) labels.push({ id, node, x: (point.x * 0.5 + 0.5) * size.width, y: (-point.y * 0.5 + 0.5) * size.height });
     }
@@ -325,7 +327,7 @@ export function SuporteScene({ options, ids, view }: { options: SceneOptions; id
         {options.lightOn && <pointLight position={[0, 0, 33 - options.explode]} intensity={900} distance={120} color="#ffe0a0" />}
         <Assembly options={options} registry={registry} />
         <Controls target={target} view={view} />
-        <Projector registry={registry} nodes={nodes} />
+        <Projector registry={registry} nodes={nodes} cut={options.cut} />
       </Canvas>
       <div className="suporte-badges" aria-hidden={false}>
         {ids.map((id) => (

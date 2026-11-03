@@ -22,9 +22,9 @@ class Guard extends Component<{ children: ReactNode }, { failed: boolean }> {
 }
 
 /** #suporte, #suporte/eletronica, #suporte/calibracao/v2 ... so each view has its own link. */
-function fromHash(): { tab: Tab; version: SuporteVersion } {
-  const [, tab, version] = location.hash.split("/");
-  return { tab: tab === "eletronica" || tab === "calibracao" ? tab : "3d", version: version === "v2" ? "v2" : "v1" };
+function fromHash(): { tab: Tab; version: SuporteVersion; view: string } {
+  const [, tab, version, view] = location.hash.split("/");
+  return { tab: tab === "eletronica" || tab === "calibracao" ? tab : "3d", version: version === "v2" ? "v2" : "v1", view: view ?? "iso" };
 }
 
 export function SuportePage() {
@@ -64,7 +64,7 @@ export function SuportePage() {
           ))}
         </nav>
       </header>
-      {tab === "3d" && <ThreeD version={version} selected={selected} setSelected={setSelected} />}
+      {tab === "3d" && <ThreeD version={version} selected={selected} setSelected={setSelected} startView={start.view} />}
       {tab === "eletronica" && <Eletronica version={version} selected={selected} setSelected={setSelected} />}
       {tab === "calibracao" && <Calibracao />}
     </div>
@@ -99,13 +99,14 @@ function PartCard({ part, version }: { part: SuportePart; version: SuporteVersio
   );
 }
 
-function ThreeD({ version, selected, setSelected }: { version: SuporteVersion; selected: string | null; setSelected(id: string | null): void }) {
+/** startView: "iso", "front", "side", "top" or "inside" (the cutaway of the light box), from #suporte/3d/v2/inside. */
+function ThreeD({ version, selected, setSelected, startView }: { version: SuporteVersion; selected: string | null; setSelected(id: string | null): void; startView: string }) {
   const [explode, setExplode] = useState(0);
   const [retract, setRetract] = useState(Math.round(NOMINAL_RETRACT * 10) / 10);
-  const [cut, setCut] = useState(-50);
+  const [cut, setCut] = useState(startView === "inside" ? 0 : -50);
   const [lightOn, setLightOn] = useState(true);
   const [labels, setLabels] = useState(true);
-  const [view, setView] = useState({ name: "iso", n: 0 });
+  const [view, setView] = useState({ name: ["iso", "front", "side", "top", "inside"].includes(startView) ? startView : "iso", n: 0 });
   const [layers, setLayers] = useState<Record<Layer, boolean>>({ impressa: true, pregoscopio: true, eletronica: true, parafusos: true, lamina: true });
   const lines = useMemo(() => bom(version), [version]);
   const ids = useMemo(() => (labels ? lines.map((l) => l.part.id).filter((id) => !id.startsWith("C")) : []), [lines, labels]);
