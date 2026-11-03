@@ -24,11 +24,11 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | 0.2 | Quantidade de LEDs e versões | ✅ | — |
 | 0.3 | Mesa da impressora | ✅ | peças em orientação que cabe em 300 mm |
 | 0.4 | Ler o demo do João | ✅ | é demo de teste, tubo genérico |
-| 0.5 | Confirmar pilha 9 V e a premissa de 330 Ω | ⏳ | usuário confirma ou troca a pilha |
-| 0.6 | Medir a lâmina (largura e espessura) | ⏳ | paquímetro; atualizar `slideWidth` e `slideThickness` |
-| 0.7 | Medir o furo do interruptor real | ⏳ | atualizar `switchCutout` |
-| 0.8 | Medir o tubo externo em 2 pontos e 2 direções | ⏳ | atualizar `tubeDiameter` |
-| 0.9 | Medir o quanto a objetiva sai do tubo interno recolhido | ⏳ | atualizar `sleeveLength` e `objectiveLength` |
+| 0.5 | Confirmar pilha 9 V e a premissa de 330 Ω | ⏳ | decisão do usuário, não se mede nem se calcula por código |
+| 0.6 | Calibrar a lâmina (largura) | 🟡 | gabarito gerado (`calibracao-pecas.stl`); falta imprimir e provar; a espessura de 1 mm é padrão |
+| 0.7 | Calibrar o furo do interruptor | 🟡 | série `interruptor` do gabarito; falta imprimir e provar |
+| 0.8 | Calibrar o tubo externo | 🟡 | gabarito `calibracao-tubo.stl`; falta imprimir e provar |
+| 0.9 | Medir o quanto a objetiva sai do tubo interno recolhido | ⏳ | só com régua ou paquímetro; não cabe no gabarito |
 
 ## Fase 1 — Elétrica
 | # | Tarefa | Status | Critério de pronto |

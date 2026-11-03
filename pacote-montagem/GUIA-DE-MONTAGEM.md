@@ -2,7 +2,7 @@
 
 Revisão 1 (02/11/2026). Gerado por `scripts/build-suporte.ts` e `scripts/build-eletronica.ts`; os parâmetros estão em `packages/adapter-cad/src/holder.ts`.
 
-> **Status: projeto digital completo, nada impresso nem montado ainda.** Tudo o que não foi medido ou testado na bancada está na seção "O que ainda não foi verificado". Imprima o teste de encaixe antes das peças grandes.
+> **Status: projeto digital completo, nada impresso nem montado ainda.** Tudo o que não foi medido ou testado na bancada está na seção "O que ainda não foi verificado". Imprima antes os gabaritos de `CALIBRACAO.md` e depois a abraçadeira, antes das peças grandes.
 
 ## 1. O que é
 Um suporte em C que segura o pregoscópio na vertical, com uma caixa luminosa na base. A lâmina desliza num canal no topo da caixa, sob a objetiva, e um LED branco ilumina por baixo. O pregoscópio (tubo telescópico com objetiva) é impresso à parte.
@@ -18,6 +18,7 @@ pacote-montagem/
     comum/        abracadeira-tubo.stl, difusor.stl (+ versão em posição de impressão)
     v1-pilha/     suporte-base-coluna.stl, tampa-fundo.stl (+ -impressao.stl)
     v2-fonte/     suporte-base-coluna.stl, tampa-fundo.stl (+ -impressao.stl)
+    calibracao/   calibracao-tubo.stl, calibracao-pecas.stl (ver CALIBRACAO.md)
     preview.png, preview-tampa.png
   eletronica/
     v1-pilha/         esquematico.svg, bom.csv, pick-and-place.csv, gerber/

@@ -1,0 +1,81 @@
+[
+  {
+    "name": "tubo",
+    "kind": "round",
+    "sizes": [
+      33.4,
+      33.6,
+      33.8,
+      34,
+      34.2,
+      34.4,
+      34.6
+    ],
+    "uses": "tubo externo do pregoscópio (o menor furo em que ele desliza sem folga)"
+  },
+  {
+    "name": "lamina",
+    "kind": "slot",
+    "sizes": [
+      26.2,
+      26.4,
+      26.6,
+      26.8,
+      27
+    ],
+    "uses": "lâmina de microscopia deitada no rebaixo (a largura que a deixa deslizar sem folga; profundidade 1,2 mm)"
+  },
+  {
+    "name": "interruptor",
+    "kind": "rect",
+    "sizes": [
+      "19x13",
+      "20x14",
+      "21x15",
+      "22x16"
+    ],
+    "uses": "corpo do interruptor de balancim, de frente"
+  },
+  {
+    "name": "led",
+    "kind": "round",
+    "sizes": [
+      5.8,
+      6,
+      6.2,
+      6.4,
+      6.6
+    ],
+    "uses": "flange do LED de 5 mm (sede do porta-LED)"
+  },
+  {
+    "name": "parafuso-m3",
+    "kind": "round",
+    "sizes": [
+      2.4,
+      2.6,
+      2.8
+    ],
+    "uses": "parafuso M3 autoatarraxante (furo-piloto)"
+  },
+  {
+    "name": "conector-p4",
+    "kind": "round",
+    "sizes": [
+      10,
+      11,
+      12
+    ],
+    "uses": "rosca do conector P4 de painel (v2)"
+  },
+  {
+    "name": "eixo-reostato",
+    "kind": "round",
+    "sizes": [
+      7,
+      7.5,
+      8
+    ],
+    "uses": "eixo do reostato (v2)"
+  }
+]
