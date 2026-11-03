@@ -56,12 +56,41 @@ export function ProjectDialog({ onClose }: { onClose?: () => void }) {
     }
   };
 
+  const example = (name: string) =>
+    fixtures.includes(name) && (
+      <button key={name} className="list-item" onClick={() => void go({ fixture: name })}>
+        {FIXTURE_LABELS[name] ?? name}
+      </button>
+    );
+  const arduino = GROUPS[1]!.names.filter((n) => fixtures.includes(n));
+
   return (
     <div className="dialog-backdrop" onClick={onClose}>
       <div className="dialog" onClick={(e) => e.stopPropagation()} role="dialog" aria-label="Projetos">
         <h2>Projetos</h2>
         <section>
-          <h3>Novo</h3>
+          <h3>Vai construir o suporte do Pregoscópio?</h3>
+          <p className="small">Comece pelo manual: planta com todas as peças, lista de compras, montagem passo a passo e PDF para o fabricante (português e chinês).</p>
+          <div className="row">
+            <a className="list-item" href="#suporte/manual/v1" onClick={onClose}>Manual da versão 1 — pilha de 9 V</a>
+            <a className="list-item" href="#suporte/manual/v2" onClick={onClose}>Manual da versão 2 — fonte 12 V e dimmer</a>
+          </div>
+          <p className="small"><a href="#suporte/3d/v1" onClick={onClose}>Ver o 3D e as peças</a> · <a href="#suporte/eletronica/v1" onClick={onClose}>Eletrônica e teste com o multímetro</a> · <a href="#suporte/calibracao/v1" onClick={onClose}>Gabaritos de calibração</a></p>
+        </section>
+        <section>
+          <h3>Simular o circuito da luz</h3>
+          <p className="small">Abre o circuito do suporte no simulador: ligue o interruptor, gire o reostato e veja a corrente do LED.</p>
+          {example("suporte-v1")}
+          {example("suporte-v2")}
+        </section>
+        {arduino.length > 0 && (
+          <details>
+            <summary>Aprender Arduino (exemplos do mais simples ao mais completo)</summary>
+            {arduino.map(example)}
+          </details>
+        )}
+        <details>
+          <summary>Criar um projeto vazio</summary>
           <form
             className="row"
             onSubmit={(e) => {
@@ -70,42 +99,15 @@ export function ProjectDialog({ onClose }: { onClose?: () => void }) {
             }}
           >
             <input value={title} onChange={(e) => setTitle(e.target.value)} aria-label="Título do novo projeto" />
-            <button type="submit">Criar projeto vazio</button>
+            <button type="submit">Criar</button>
           </form>
-        </section>
-        <section>
-          <h3>Suporte do Pregoscópio — 3D, manual e eletrônica</h3>
-          <p className="small"><a href="#suporte">Abrir o 3D, o manual de montagem, a lista de peças com identificadores, a eletrônica e os gabaritos de calibração</a></p>
-        </section>
-        {GROUPS.map((g) => {
-          const names = g.names.filter((n) => fixtures.includes(n));
-          if (names.length === 0) return null;
-          return (
-            <section key={g.title}>
-              <h3>{g.title}</h3>
-              {names.map((name) => (
-                <button key={name} className="list-item" onClick={() => void go({ fixture: name })}>
-                  {FIXTURE_LABELS[name] ?? name}
-                </button>
-              ))}
-            </section>
-          );
-        })}
-        {fixtures.some((n) => !GROUPS.some((g) => g.names.includes(n))) && (
-          <section>
-            <h3>Outros exemplos</h3>
-            {fixtures
-              .filter((n) => !GROUPS.some((g) => g.names.includes(n)))
-              .map((name) => (
-                <button key={name} className="list-item" onClick={() => void go({ fixture: name })}>
-                  {FIXTURE_LABELS[name] ?? name}
-                </button>
-              ))}
-          </section>
-        )}
-        <section>
-          <h3>Abrir</h3>
-          {projects.length === 0 && <p className="muted">Nenhum projeto salvo ainda.</p>}
+        </details>
+        <details>
+          <summary>Avançado: meus projetos salvos ({saved.length})</summary>
+          <p className="small muted">
+            Para quem já mexeu num exemplo e salvou. Cada projeto salvo é uma cópia sua, independente do modelo original, e serve para retomar o trabalho de onde parou. Não é um histórico de versões e não é necessário para construir o suporte.
+          </p>
+          {saved.length === 0 && <p className="muted small">Nenhum projeto salvo ainda.</p>}
           {saved.map(({ project: p, copies }) => (
             <button
               key={p.id}
@@ -121,7 +123,7 @@ export function ProjectDialog({ onClose }: { onClose?: () => void }) {
               </small>
             </button>
           ))}
-        </section>
+        </details>
         <p className="muted small">{toolchain}</p>
       </div>
     </div>

@@ -317,3 +317,7 @@ h3 small { color: var(--muted); font-weight: normal; }
   .manual-doc .sheet { box-shadow: none; border-radius: 0; padding: 0; break-after: page; break-inside: avoid; }
   .manual-doc .step-fig { background: transparent; }
 }
+
+.dialog details { margin: 12px 0; }
+.dialog summary { cursor: pointer; font-weight: 600; margin-bottom: 8px; }
+.dialog a.list-item { display: block; text-decoration: none; color: inherit; margin-bottom: 4px; }
