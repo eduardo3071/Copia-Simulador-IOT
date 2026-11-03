@@ -309,7 +309,8 @@ h3 small { color: var(--muted); font-weight: normal; }
 
 @media print {
   @page { size: A4; margin: 10mm; }
-  body, .suporte { background: #fff !important; }
+  html, body, #root { height: auto !important; overflow: visible !important; }
+  body, .suporte { background: #fff !important; display: block !important; min-height: 0 !important; }
   .suporte-top, .no-print, .suporte-back { display: none !important; }
   .manual-page { padding: 0; overflow: visible; }
   .manual-doc { max-width: none; gap: 0; }
