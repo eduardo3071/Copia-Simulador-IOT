@@ -121,7 +121,12 @@ export function buildHolderLid(layout: HolderLayout): Shape3D {
   // LED post: a flange seat on top and a hole for the legs down through the lid.
   plate = plate.fuse(makeCylinder(ledPost.diameter / 2, ledPost.top - lid.top + EMBED, [ledPost.x, ledPost.y, lid.top - EMBED]));
   plate = plate.cut(makeCylinder(ledPost.seatDiameter / 2, ledPost.seatDepth + 1, [ledPost.x, ledPost.y, ledPost.top - ledPost.seatDepth]));
-  plate = plate.cut(makeCylinder(ledPost.legHole / 2, ledPost.top - lid.bottom + 2, [ledPost.x, ledPost.y, lid.bottom - 1]));
+  // the legs go down a blind hole and leave sideways, toward the driver board, through a slot at the foot of the post
+  // (a hole through the lid would drop them outside the closed box)
+  plate = plate.cut(makeCylinder(ledPost.legHole / 2, ledPost.top - lid.top, [ledPost.x, ledPost.y, lid.top + 1]));
+  const reach = ledPost.diameter / 2 + 1;
+  const slotY0 = ledPost.slot.dir > 0 ? ledPost.y : ledPost.y - reach;
+  plate = plate.cut(box(ledPost.x - ledPost.legHole / 2, ledPost.x + ledPost.legHole / 2, slotY0, slotY0 + reach, lid.top, lid.top + ledPost.slot.height));
   for (const hole of lid.holes) {
     plate = plate.cut(makeCylinder(p.screwHole / 2, lid.top - lid.bottom + 2, [hole.x, hole.y, lid.bottom - 1]));
   }

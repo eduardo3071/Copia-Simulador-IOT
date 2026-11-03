@@ -217,7 +217,7 @@ export interface HolderLayout {
   /** Standoffs and outline of the driver board, on the lid. */
   boardPosts: { x: number; y: number; outerDiameter: number; top: number }[];
   board: { xMin: number; xMax: number; yMin: number; yMax: number; standoffHeight: number };
-  ledPost: { x: number; y: number; diameter: number; top: number; seatDiameter: number; seatDepth: number; legHole: number; ledTop: number };
+  ledPost: { x: number; y: number; diameter: number; top: number; seatDiameter: number; seatDepth: number; legHole: number; ledTop: number; slot: { dir: 1 | -1; height: number } };
   /** Seat cut into the ceiling around the window, from inside. */
   diffuserSeat: { diameter: number; bottom: number; top: number; discDiameter: number; discThickness: number };
   cutouts: HolderCutout[];
@@ -299,6 +299,8 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
     seatDiameter: p.ledFlange + p.ledFit,
     seatDepth: p.ledSeatDepth,
     legHole: 3.2,
+    // the legs leave sideways toward the driver board (v1 in front of the LED, v2 behind it)
+    slot: { dir: (p.variant === "pilha" ? -1 : 1) as 1 | -1, height: 8 },
     ledTop,
   };
   const seatDepth = p.diffuserThickness + p.diffuserFit;

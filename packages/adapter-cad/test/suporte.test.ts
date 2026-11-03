@@ -42,8 +42,8 @@ describe("lista de compras", () => {
   const lines = (v: "v1" | "v2") => bomCsv(v).trim().split("\r\n");
 
   it("has one line per purchased part, a header and no printed or reference parts", () => {
-    expect(lines("v1")).toHaveLength(1 + 12);
-    expect(lines("v2")).toHaveLength(1 + 15);
+    expect(lines("v1")).toHaveLength(1 + 15);
+    expect(lines("v2")).toHaveLength(1 + 18);
     for (const v of ["v1", "v2"] as const) {
       const csv = bomCsv(v);
       expect(csv.startsWith("﻿")).toBe(true);

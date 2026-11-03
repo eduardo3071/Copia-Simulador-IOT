@@ -117,6 +117,17 @@ export const SUPORTE_PARTS: SuportePart[] = [
   { id: "H3", name: "Parafuso M3 × 8 autoatarraxante", kind: "comprada", versions: both, qty: 4, evidence: "calculado",
     spec: "Cabeça panela", criterion: "Prendem a placa do driver nos suportes de 6 mm." },
 
+  // ---- consumables ---------------------------------------------------------------------------------
+  { id: "W1", name: "Fio flexível 24 AWG (vermelho, preto e mais uma cor)", kind: "comprada", versions: both, qty: 1, evidence: "calculado",
+    spec: "v1: 6 fios de 10 a 25 cm; v2: 9 fios de 10 a 45 cm; pontas estanhadas",
+    criterion: "Fio fino e flexível passa pelo furo do porta-LED e entre as peças sem forçar os terminais da placa. Vermelho no positivo, preto no GND e outra cor nos demais." },
+  { id: "W2", name: "Tubo termorretrátil ⌀ 2 a 3 mm", kind: "comprada", versions: both, qty: 1, evidence: "calculado",
+    spec: "10 cm, uma luva de 1 cm por emenda",
+    criterion: "Isola as soldas dos fios do LED, que passam rente ao porta-LED e à tampa." },
+  { id: "W3", name: "Cola quente e fita dupla face", kind: "comprada", versions: both, qty: 1, evidence: "calculado",
+    spec: "pontos de cola de 3 a 4 mm; fita de 12 mm",
+    criterion: "Cola o difusor no encaixe do teto da caixa por dentro e prende os fios soltos." },
+
   // ---- calibration jigs --------------------------------------------------------------------------
   { id: "G1", name: "Gabarito do tubo", kind: "calibracao", versions: both, qty: 1, evidence: "calculado",
     spec: "270 × 48 × 3,6 mm, 7 furos de 30,2 a 36,4 mm", criterion: "Cobre as medidas do STEP (30 e 36 mm) e do paquímetro (33 a 34 mm).", file: "mecanica/calibracao/calibracao-tubo.stl" },
@@ -159,6 +170,9 @@ const SEARCH: Record<string, string> = {
   H1: "parafuso M3 autoatarraxante 10mm cabeça panela",
   H2: "parafuso M3 autoatarraxante 16mm cabeça panela",
   H3: "parafuso M3 autoatarraxante 8mm cabeça panela",
+  W1: "fio flexível 24 AWG 3 cores (vermelho, preto e outra)",
+  W2: "tubo termorretrátil 2mm ou 3mm",
+  W3: "cola quente bastão fino e fita dupla face 12mm",
 };
 
 /**

@@ -58,7 +58,9 @@ A lista completa de compras, com o que digitar na loja e a confiança em cada n�
 | H1 | 4 | Parafuso M3 × 10 autoatarraxante (tampa de fundo) |
 | H2 | 2 | Parafuso M3 × 16 autoatarraxante (abraçadeira) |
 | H3 | 4 | Parafuso M3 × 8 autoatarraxante (placa do driver) |
-| — | — | Fio flexível fino, termorretrátil, fita dupla face ou cola quente |
+| W1 | 1 | Fio flexível 24 AWG: vermelho, preto e mais uma cor (v1: 6 fios de 10 a 25 cm; v2: 9 fios de 10 a 45 cm) |
+| W2 | 1 | Tubo termorretrátil ⌀ 2 a 3 mm, 10 cm (uma luva de 1 cm por emenda) |
+| W3 | 1 | Cola quente e fita dupla face (12 mm) |
 
 ### Só v1 (pilha)
 | ID | Qtd | Item |
@@ -136,11 +138,11 @@ Cor escura nas paredes ajuda a evitar luz espalhada. Imprima na ordem do roteiro
 
 ## 7. Montagem
 1. Imprima, remova suportes e limpe os furos com uma broca de 3 mm onde estiver rugoso.
-2. Cole o difusor no encaixe do teto da caixa, por dentro.
+2. Cole o difusor no encaixe do teto da caixa, por dentro, com um cordão fino de cola quente (W3).
 3. Instale o interruptor no recorte da frente. Mantenha a rosca livre.
 4. **v2:** instale o conector de força na lateral direita e o botão do reostato na frente.
 5. Monte o circuito (seção 5) na placa do driver. Solde e isole os fios.
-6. Encaixe o LED no porta-LED da tampa, com o flange na sede e as pernas pelo furo. Passe os fios pelo furo da tampa. Parafuse a placa do driver nos 4 suportes da tampa (M3 × 8). **v1:** coloque também a pilha no berço.
+6. Solde os dois fios do LED (laranja no ânodo, preto no cátodo) nas pernas, isole as emendas com o termorretrátil (W2) e encaixe o LED no porta-LED da tampa, com o flange na sede. Os fios descem pelo furo cego do porta-LED e saem pela **fenda lateral** no pé do porta-LED, voltada para a placa do driver (a tampa não tem furo para fora). Parafuse a placa do driver nos 4 suportes da tampa (M3 × 8). **v1:** coloque também a pilha no berço.
 7. Faça o plano de teste da seção 5 antes de fechar.
 8. Feche a tampa com 4 parafusos M3 × 10. Cuide para não prender fio.
 9. Encaixe o pregoscópio no anel da coluna: tire a metade da abraçadeira, encoste o tubo de lado, recoloque e aperte os 2 parafusos M3 × 16 sem forçar.

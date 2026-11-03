@@ -54,6 +54,7 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | 2.4 | Berço da pilha 9 V (v1) | ✅ | cabe na caixa e não encosta no porta-LED |
 | 2.5 | Porta-LED na tampa e difusor | ✅ | LED abaixo do difusor |
 | 2.6 | Variante v2 (conector de força, botão, placa de 70 × 25 mm em 4 suportes) | ✅ | — |
+| 2.13 | Pernas e fios do LED saem pela fenda lateral do porta-LED, voltada para a placa (antes o furo atravessava a tampa e deixava os fios fora da caixa fechada) | ✅ | teste confere o sentido da fenda em cada versão e que a tampa fica fechada por baixo |
 | 2.12 | Placa do driver da v1 (40 × 25 mm) em 4 suportes na tampa, na frente do LED | ✅ | verificado contra o porta-LED, o berço e o interruptor |
 | 2.7 | Testes automáticos | ✅ | 26 testes do pacote CAD |
 | 2.8 | Orientação de impressão para mesa de 30 cm | ✅ | arquivos `-impressao.stl` |
@@ -89,6 +90,7 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | 5.7 | Circuito simulado na aba Protoboard | ✅ | executa sem microcontrolador; o interruptor liga e desliga o LED e o reostato muda a corrente (painel Laboratório). É corrente contínua com fonte ideal, não SPICE |
 | 5.8 | Identificadores sem sobreposição no 3D e manopla esquerda (espelho da direita, porque o STEP só traz uma) | ✅ | P10 marcada como suposição |
 | 5.9 | Visualizador do claude.ai com o pregoscópio do STEP | ✅ | |
+| 5.10 | 3D com fios (W1), termorretrátil (W2), cola do difusor (W3) e detalhes das peças compradas (aleta e pernas do LM317, faixas do resistor, balancim e terminais do interruptor, porca e eixo do reostato, porca do conector, plugue e cabo da fonte, clipe da pilha) | ✅ | todas as peças compradas têm forma no 3D, algumas ainda simplificadas |
 | 5.2 | API acessível pelo site | 🟡 | só funciona com o PC ligado, Docker e `ngrok http 7860` rodando |
 | 5.3 | API permanente e gratuita | ❓ | Hugging Face exige PRO; Google Cloud Run pede cartão |
 | 5.4 | Código no GitHub | 🟡 | `main` publicada; falta commitar o pacote atualizado |

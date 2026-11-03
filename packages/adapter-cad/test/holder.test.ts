@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { beforeAll, describe, expect, it } from "vitest";
 import opencascade from "replicad-opencascadejs";
-import { setOC, type Shape3D } from "replicad";
+import { makeCylinder, setOC, type Shape3D } from "replicad";
 import { buildHolder, buildTubeProxy, holderOnBack } from "../src/holder-geometry.ts";
 import { stlOf } from "../src/geometry.ts";
 import { DEFAULT_HOLDER_PARAMS, holderLayout, readBinaryStl, stlBounds, stlVolume } from "../src/index.ts";
@@ -168,5 +168,17 @@ describe("holder (suporte do pregoscopio)", () => {
     // a board pushed onto the LED post is reported
     const crowded = holderLayout({ ...p, driverBoards: { ...p.driverBoards, pilha: { ...p.driverBoards.pilha, x: 0, y: 0 } } });
     expect(crowded.issues.some((i) => i.message.includes("porta-LED"))).toBe(true);
+  });
+
+  it("the LED legs leave sideways at the foot of the post, toward the driver board, and the lid stays closed underneath", () => {
+    expect(layout.ledPost.slot.dir).toBe(-1); // v1: the board is in front of the LED
+    expect(holderLayout({ ...p, variant: "fonte" }).ledPost.slot.dir).toBe(1); // v2: behind it
+    const { lid } = buildHolder(layout);
+    const solidUnder = lid.clone().intersect(makeCylinder(1, 2, [0, 0, -2.3]));
+    expect(solidUnder.mesh({ tolerance: 0.02, angularTolerance: 0.1 }).triangles.length).toBeGreaterThan(0);
+    // and the slot is open: a probe at its mouth (in front of the post, just above the lid) hits nothing
+    const reach = layout.ledPost.diameter / 2;
+    const mouth = lid.clone().intersect(makeCylinder(0.8, 3, [0, -reach, 1.5]));
+    expect(mouth.mesh({ tolerance: 0.02, angularTolerance: 0.1 }).triangles.length).toBe(0);
   });
 });

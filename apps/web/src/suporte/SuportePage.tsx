@@ -8,7 +8,7 @@ import { ASSETS, HEAD_Z, JigPreview, NOMINAL_RETRACT, OBJECTIVE_LENGTH, SLEEVE_D
 type Tab = "3d" | "eletronica" | "calibracao";
 const KIND_LABEL: Record<PartKind, string> = { impressa: "Peças impressas", referencia: "Pregoscópio (STEP V1)", comprada: "Peças compradas", calibracao: "Gabaritos" };
 const KIND_ORDER: PartKind[] = ["impressa", "referencia", "comprada", "calibracao"];
-const LAYER_LABEL: Record<Layer, string> = { impressa: "Impressas", pregoscopio: "Pregoscópio", eletronica: "Eletrônica", parafusos: "Parafusos", lamina: "Lâmina" };
+const LAYER_LABEL: Record<Layer, string> = { impressa: "Impressas", pregoscopio: "Pregoscópio", eletronica: "Eletrônica", parafusos: "Parafusos", lamina: "Lâmina", fios: "Fios e cola" };
 
 /** WebGL can be missing (old drivers, locked-down browsers): the lists and the electronics must keep working. */
 class Guard extends Component<{ children: ReactNode }, { failed: boolean }> {
@@ -107,7 +107,7 @@ function ThreeD({ version, selected, setSelected, startView }: { version: Suport
   const [lightOn, setLightOn] = useState(true);
   const [labels, setLabels] = useState(true);
   const [view, setView] = useState({ name: ["iso", "front", "side", "top", "inside"].includes(startView) ? startView : "iso", n: 0 });
-  const [layers, setLayers] = useState<Record<Layer, boolean>>({ impressa: true, pregoscopio: true, eletronica: true, parafusos: true, lamina: true });
+  const [layers, setLayers] = useState<Record<Layer, boolean>>({ impressa: true, pregoscopio: true, eletronica: true, parafusos: true, lamina: true, fios: true });
   const lines = useMemo(() => bom(version), [version]);
   const ids = useMemo(() => (labels ? lines.map((l) => l.part.id).filter((id) => !id.startsWith("G")) : []), [lines, labels]);
   const part = lines.find((l) => l.part.id === selected)?.part;
