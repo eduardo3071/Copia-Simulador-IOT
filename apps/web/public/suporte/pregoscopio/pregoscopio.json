@@ -91,8 +91,8 @@
   },
   {
     "index": 6,
-    "key": "manopla",
-    "name": "Manopla",
+    "key": "manopla-direita",
+    "name": "Manopla direita",
     "file": "pregoscopio-6.stl",
     "moving": false,
     "triangles": 10932,
@@ -141,6 +141,24 @@
       17.99,
       18.0,
       -136.5
+    ]
+  },
+  {
+    "index": 9,
+    "key": "manopla-esquerda",
+    "name": "Manopla esquerda (espelho da P6)",
+    "file": "pregoscopio-9.stl",
+    "moving": false,
+    "triangles": 10932,
+    "min": [
+      -85.0,
+      -16.89,
+      -9.42
+    ],
+    "max": [
+      -72.83,
+      16.95,
+      24.41
     ]
   }
 ]

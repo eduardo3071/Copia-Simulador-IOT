@@ -5,6 +5,7 @@ import { useApp, useProject } from "../store.ts";
 const CATEGORY: Record<string, string> = {
   board: "Placas",
   prototyping: "Montagem",
+  power: "Alimentação",
   passive: "Passivos",
   output: "Saídas",
   input: "Entradas",

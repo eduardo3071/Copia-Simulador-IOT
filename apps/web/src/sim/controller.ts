@@ -13,6 +13,8 @@ export interface SimSnapshot {
   deviceStates: Record<string, unknown>;
   /** Simulated environment per part (lux, temperature, distance...). */
   env: Record<string, Record<string, number>>;
+  /** Parts held down or latched closed (push buttons while pressed, rocker switches while on). */
+  pressed: string[];
   error?: string;
 }
 
@@ -38,7 +40,9 @@ export class SimulationController {
   private potPositions: Record<string, number> = {};
   private sentDigital = new Map<string, boolean | null>();
   private sentAnalog = new Map<number, number>();
-  private snapshot: SimSnapshot = { runState: "idle", timeMs: 0, realtimeRatio: 1, deviceStates: {}, env: {} };
+  private snapshot: SimSnapshot = { runState: "idle", timeMs: 0, realtimeRatio: 1, deviceStates: {}, env: {}, pressed: [] };
+  /** A circuit without a microcontroller: no worker, the lab is re-evaluated on every change. */
+  private circuitOnly = false;
   serial = "";
 
   constructor(private readonly onChange: (snapshot: SimSnapshot, serial: string) => void) {}
@@ -75,6 +79,17 @@ export class SimulationController {
     this.post({ v: 1, type: "run" });
   }
 
+  /** Runs a project that has no microcontroller: switches start closed, the lab answers every click. */
+  startCircuit(project: Project) {
+    this.stop(false);
+    this.components = project.components;
+    this.lab = compileLab(project);
+    this.circuitOnly = true;
+    this.pressed = new Set(project.components.filter((c) => getDefinition(c.definitionId)?.simulation.latching).map((c) => c.id));
+    this.update({ runState: "running", error: undefined, timeMs: 0, deviceStates: {}, pressed: [...this.pressed] });
+    this.reevaluate();
+  }
+
   pause() {
     this.post({ v: 1, type: "pause" });
   }
@@ -96,13 +111,20 @@ export class SimulationController {
       this.worker = undefined;
     }
     this.ports = undefined;
+    this.circuitOnly = false;
     if (notify) this.update({ runState: "stopped", lab: undefined, ports: undefined });
   }
 
   press(componentId: string, down: boolean) {
     if (down) this.pressed.add(componentId);
     else this.pressed.delete(componentId);
+    this.snapshot = { ...this.snapshot, pressed: [...this.pressed] };
     this.reevaluate();
+  }
+
+  /** Rocker switch: keeps its position until clicked again. */
+  toggle(componentId: string) {
+    this.press(componentId, !this.pressed.has(componentId));
   }
 
   setPot(componentId: string, position: number) {
@@ -164,7 +186,7 @@ export class SimulationController {
   }
 
   private reevaluate() {
-    if (!this.lab || !this.worker) return;
+    if (!this.lab || (!this.worker && !this.circuitOnly)) return;
     const ports = this.ports ?? { B: { ddr: 0, port: 0 }, C: { ddr: 0, port: 0 }, D: { ddr: 0, port: 0 } };
     const lab = evaluateLab(this.lab, {
       pins: drivesFromPorts(this.lab, ports, this.duty, this.pulses, this.freqs),

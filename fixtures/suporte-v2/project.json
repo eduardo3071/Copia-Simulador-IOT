@@ -1,0 +1,262 @@
+{
+  "id": "prj_fixture_suporte_do_pregoscopio_v2_fonte_e_dimmer_",
+  "schemaVersion": 2,
+  "revision": 15,
+  "title": "SUPORTE do PREGOSCOPIO v2 (fonte e dimmer)",
+  "createdAt": "2026-10-19T12:00:00.000Z",
+  "updatedAt": "2026-10-19T12:00:00.000Z",
+  "components": [
+    {
+      "id": "cmp_ps1",
+      "definitionId": "dc-supply",
+      "definitionVersion": 1,
+      "refDes": "PS1",
+      "params": {
+        "voltage": 12
+      }
+    },
+    {
+      "id": "cmp_sw1",
+      "definitionId": "rocker-switch",
+      "definitionVersion": 1,
+      "refDes": "SW1",
+      "params": {}
+    },
+    {
+      "id": "cmp_u1",
+      "definitionId": "lm317",
+      "definitionVersion": 1,
+      "refDes": "U1",
+      "params": {}
+    },
+    {
+      "id": "cmp_r1",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R1",
+      "params": {
+        "resistance": 47
+      }
+    },
+    {
+      "id": "cmp_rv1",
+      "definitionId": "potentiometer",
+      "definitionVersion": 1,
+      "refDes": "RV1",
+      "params": {
+        "resistance": 220
+      }
+    },
+    {
+      "id": "cmp_d1",
+      "definitionId": "led",
+      "definitionVersion": 1,
+      "refDes": "D1",
+      "params": {
+        "color": "white"
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn_ps_sw",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_ps1",
+        "pinId": "+"
+      },
+      "b": {
+        "componentId": "cmp_sw1",
+        "pinId": "1.l"
+      }
+    },
+    {
+      "id": "conn_sw_u1",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_sw1",
+        "pinId": "2.l"
+      },
+      "b": {
+        "componentId": "cmp_u1",
+        "pinId": "IN"
+      }
+    },
+    {
+      "id": "conn_u1_r1",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_u1",
+        "pinId": "OUT"
+      },
+      "b": {
+        "componentId": "cmp_r1",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_r1_rv1",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_r1",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_rv1",
+        "pinId": "GND"
+      }
+    },
+    {
+      "id": "conn_rv1_wiper",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rv1",
+        "pinId": "SIG"
+      },
+      "b": {
+        "componentId": "cmp_d1",
+        "pinId": "A"
+      }
+    },
+    {
+      "id": "conn_rv1_end",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_rv1",
+        "pinId": "VCC"
+      },
+      "b": {
+        "componentId": "cmp_d1",
+        "pinId": "A"
+      }
+    },
+    {
+      "id": "conn_u1_adj",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_u1",
+        "pinId": "ADJ"
+      },
+      "b": {
+        "componentId": "cmp_d1",
+        "pinId": "A"
+      }
+    },
+    {
+      "id": "conn_led_ps",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_d1",
+        "pinId": "C"
+      },
+      "b": {
+        "componentId": "cmp_ps1",
+        "pinId": "-"
+      }
+    }
+  ],
+  "breadboard": {
+    "unit": "css-px",
+    "placements": {
+      "cmp_ps1": {
+        "x": 40,
+        "y": 30,
+        "rotation": 0
+      },
+      "cmp_sw1": {
+        "x": 170,
+        "y": 60,
+        "rotation": 0
+      },
+      "cmp_u1": {
+        "x": 290,
+        "y": 50,
+        "rotation": 0
+      },
+      "cmp_r1": {
+        "x": 410,
+        "y": 130,
+        "rotation": 0
+      },
+      "cmp_rv1": {
+        "x": 560,
+        "y": 170,
+        "rotation": 0
+      },
+      "cmp_d1": {
+        "x": 720,
+        "y": 70,
+        "rotation": 0
+      }
+    },
+    "wires": {
+      "conn_ps_sw": {
+        "color": "red",
+        "points": []
+      },
+      "conn_sw_u1": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_u1_r1": {
+        "color": "yellow",
+        "points": []
+      },
+      "conn_r1_rv1": {
+        "color": "yellow",
+        "points": []
+      },
+      "conn_rv1_wiper": {
+        "color": "green",
+        "points": []
+      },
+      "conn_rv1_end": {
+        "color": "green",
+        "points": []
+      },
+      "conn_u1_adj": {
+        "color": "blue",
+        "points": []
+      },
+      "conn_led_ps": {
+        "color": "black",
+        "points": []
+      }
+    }
+  },
+  "schematic": {
+    "unit": "schematic-unit",
+    "placements": {}
+  },
+  "pcb": {
+    "unit": "mm",
+    "origin": "board-center",
+    "board": {
+      "width": 50,
+      "height": 40
+    },
+    "layers": 2,
+    "placements": {},
+    "mountingHoles": []
+  },
+  "firmware": {
+    "fqbn": "arduino:avr:uno",
+    "core": "arduino:avr@1.8.8",
+    "mainFile": "sketch.ino",
+    "files": [
+      {
+        "path": "sketch.ino",
+        "content": "// Circuito sem microcontrolador: o simulador avalia só as ligações.\nvoid setup() {}\nvoid loop() {}\n"
+      }
+    ],
+    "libraries": []
+  },
+  "simulation": {
+    "engine": "avr8js",
+    "engineVersion": "0.21.1",
+    "clockHz": 16000000,
+    "speed": 1
+  },
+  "enclosure": null,
+  "artifacts": {}
+}

@@ -203,6 +203,46 @@ export function contador7segProject(sketch: string): Project {
   });
   return b.project;
 }
+const NO_MCU_SKETCH = ["// Circuito sem microcontrolador: o simulador avalia só as ligações.", "void setup() {}", "void loop() {}", ""].join("\n");
+
+/** Electrical-only projects of the pregoscopio light (no microcontroller): v1 battery, v2 wall adapter with LM317 dimmer. */
+export function suporteV1Project(): Project {
+  const b = builder("SUPORTE do PREGOSCOPIO v1 (pilha)", NO_MCU_SKETCH);
+  b.add("battery-9v", "cmp_bt1", "BT1", { x: 60, y: 40 });
+  b.add("rocker-switch", "cmp_sw1", "SW1", { x: 210, y: 70 });
+  b.add("resistor", "cmp_r1", "R1", { x: 340, y: 100 }, { resistance: 330 });
+  b.add("led", "cmp_d1", "D1", { x: 520, y: 80 }, { color: "white" });
+  b.wire("conn_bt_sw", "cmp_bt1:+", "cmp_sw1:1.l", "red");
+  b.wire("conn_sw_r", "cmp_sw1:2.l", "cmp_r1:1", "orange");
+  b.wire("conn_r_led", "cmp_r1:2", "cmp_d1:A", "orange");
+  b.wire("conn_led_bt", "cmp_d1:C", "cmp_bt1:-", "black");
+  return b.project;
+}
+
+export function suporteV2Project(): Project {
+  const b = builder("SUPORTE do PREGOSCOPIO v2 (fonte e dimmer)", NO_MCU_SKETCH);
+  b.add("dc-supply", "cmp_ps1", "PS1", { x: 40, y: 30 });
+  b.add("rocker-switch", "cmp_sw1", "SW1", { x: 170, y: 60 });
+  b.add("lm317", "cmp_u1", "U1", { x: 290, y: 50 });
+  b.add("resistor", "cmp_r1", "R1", { x: 410, y: 130 }, { resistance: 47 });
+  b.add("potentiometer", "cmp_rv1", "RV1", { x: 560, y: 170 }, { resistance: 220 });
+  b.add("led", "cmp_d1", "D1", { x: 720, y: 70 }, { color: "white" });
+  b.wire("conn_ps_sw", "cmp_ps1:+", "cmp_sw1:1.l", "red");
+  b.wire("conn_sw_u1", "cmp_sw1:2.l", "cmp_u1:IN", "orange");
+  b.wire("conn_u1_r1", "cmp_u1:OUT", "cmp_r1:1", "yellow");
+  b.wire("conn_r1_rv1", "cmp_r1:2", "cmp_rv1:GND", "yellow");
+  b.wire("conn_rv1_wiper", "cmp_rv1:SIG", "cmp_d1:A", "green");
+  b.wire("conn_rv1_end", "cmp_rv1:VCC", "cmp_d1:A", "green");
+  b.wire("conn_u1_adj", "cmp_u1:ADJ", "cmp_d1:A", "blue");
+  b.wire("conn_led_ps", "cmp_d1:C", "cmp_ps1:-", "black");
+  return b.project;
+}
+
+export const FIXTURES_ELETRICOS = [
+  { name: "suporte-v1", build: suporteV1Project },
+  { name: "suporte-v2", build: suporteV2Project },
+] as const;
+
 export const FIXTURES = [
   { name: "blink", build: blinkProject },
   { name: "button-led", build: buttonLedProject },

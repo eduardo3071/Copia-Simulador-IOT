@@ -14,6 +14,10 @@ const data = {
   clamp: b64("comum/abracadeira-tubo.stl"),
   diffuser: b64("comum/difusor.stl"),
 };
+// pregoscopio parts converted from Pregoscopio V1.step (scripts/step-para-stl.py)
+for (let i = 1; i <= 9; i++) {
+  data["pre" + i] = readFileSync(new URL(`../apps/web/public/suporte/pregoscopio/pregoscopio-${i}.stl`, import.meta.url)).toString("base64");
+}
 const template = readFileSync(new URL("./visualizador-template.html", import.meta.url), "utf8");
 const fragment = template.replace("/*STL_DATA*/{}", JSON.stringify(data));
 const full = `<!doctype html>\n<html lang="pt-BR">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<style>:root{color-scheme:light}body{margin:0}</style>\n</head>\n<body>\n${fragment}\n</body>\n</html>\n`;

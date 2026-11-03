@@ -1,0 +1,172 @@
+{
+  "id": "prj_fixture_suporte_do_pregoscopio_v1_pilha_",
+  "schemaVersion": 2,
+  "revision": 9,
+  "title": "SUPORTE do PREGOSCOPIO v1 (pilha)",
+  "createdAt": "2026-10-19T12:00:00.000Z",
+  "updatedAt": "2026-10-19T12:00:00.000Z",
+  "components": [
+    {
+      "id": "cmp_bt1",
+      "definitionId": "battery-9v",
+      "definitionVersion": 1,
+      "refDes": "BT1",
+      "params": {
+        "voltage": 9
+      }
+    },
+    {
+      "id": "cmp_sw1",
+      "definitionId": "rocker-switch",
+      "definitionVersion": 1,
+      "refDes": "SW1",
+      "params": {}
+    },
+    {
+      "id": "cmp_r1",
+      "definitionId": "resistor",
+      "definitionVersion": 1,
+      "refDes": "R1",
+      "params": {
+        "resistance": 330
+      }
+    },
+    {
+      "id": "cmp_d1",
+      "definitionId": "led",
+      "definitionVersion": 1,
+      "refDes": "D1",
+      "params": {
+        "color": "white"
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn_bt_sw",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_bt1",
+        "pinId": "+"
+      },
+      "b": {
+        "componentId": "cmp_sw1",
+        "pinId": "1.l"
+      }
+    },
+    {
+      "id": "conn_sw_r",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_sw1",
+        "pinId": "2.l"
+      },
+      "b": {
+        "componentId": "cmp_r1",
+        "pinId": "1"
+      }
+    },
+    {
+      "id": "conn_r_led",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_r1",
+        "pinId": "2"
+      },
+      "b": {
+        "componentId": "cmp_d1",
+        "pinId": "A"
+      }
+    },
+    {
+      "id": "conn_led_bt",
+      "kind": "wire",
+      "a": {
+        "componentId": "cmp_d1",
+        "pinId": "C"
+      },
+      "b": {
+        "componentId": "cmp_bt1",
+        "pinId": "-"
+      }
+    }
+  ],
+  "breadboard": {
+    "unit": "css-px",
+    "placements": {
+      "cmp_bt1": {
+        "x": 60,
+        "y": 40,
+        "rotation": 0
+      },
+      "cmp_sw1": {
+        "x": 210,
+        "y": 70,
+        "rotation": 0
+      },
+      "cmp_r1": {
+        "x": 340,
+        "y": 100,
+        "rotation": 0
+      },
+      "cmp_d1": {
+        "x": 520,
+        "y": 80,
+        "rotation": 0
+      }
+    },
+    "wires": {
+      "conn_bt_sw": {
+        "color": "red",
+        "points": []
+      },
+      "conn_sw_r": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_r_led": {
+        "color": "orange",
+        "points": []
+      },
+      "conn_led_bt": {
+        "color": "black",
+        "points": []
+      }
+    }
+  },
+  "schematic": {
+    "unit": "schematic-unit",
+    "placements": {}
+  },
+  "pcb": {
+    "unit": "mm",
+    "origin": "board-center",
+    "board": {
+      "width": 50,
+      "height": 40
+    },
+    "layers": 2,
+    "placements": {},
+    "mountingHoles": []
+  },
+  "firmware": {
+    "fqbn": "arduino:avr:uno",
+    "core": "arduino:avr@1.8.8",
+    "mainFile": "sketch.ino",
+    "files": [
+      {
+        "path": "sketch.ino",
+        "content": "// Circuito sem microcontrolador: o simulador avalia só as ligações.\nvoid setup() {}\nvoid loop() {}\n"
+      }
+    ],
+    "libraries": []
+  },
+  "simulation": {
+    "engine": "avr8js",
+    "engineVersion": "0.21.1",
+    "clockHz": 16000000,
+    "speed": 1
+  },
+  "enclosure": null,
+  "artifacts": {}
+}

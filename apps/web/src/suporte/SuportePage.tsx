@@ -185,6 +185,14 @@ function Eletronica({ version, selected, setSelected }: { version: SuporteVersio
           </figcaption>
         </figure>
         <Calculator version={version} />
+        <section className="calc">
+          <h4>No simulador</h4>
+          <p className="small">
+            Em <b>Projetos → Exemplos de referência</b> há o circuito {version === "v1" ? "“SUPORTE do PREGOSCÓPIO v1”" : "“SUPORTE do PREGOSCÓPIO v2”"} montado com as mesmas peças e os mesmos identificadores. Clique em <b>Executar</b>
+            {version === "v1" ? " e no interruptor SW1 para ligar e desligar o LED." : ", clique no interruptor SW1 e gire o reostato RV1: o painel Laboratório mostra a corrente do LED de cerca de 5 a 26 mA."} Esses exemplos usam a API do simulador.
+          </p>
+          <p className="small muted">O simulador avalia só corrente contínua, com fonte ideal e LED por limiar; não substitui a medição com multímetro.</p>
+        </section>
         <section className="wiring">
           <h4>Ordem das ligações</h4>
           {version === "v1" ? (

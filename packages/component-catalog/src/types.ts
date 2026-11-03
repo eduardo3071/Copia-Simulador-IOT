@@ -53,7 +53,11 @@ export type SimulationModel =
   | "dht22"
   | "hc-sr04"
   | "lcd1602"
-  | "capacitor";
+  | "capacitor"
+  /** Ideal DC source: pin "+" at the `voltage` parameter, pin "-" at 0 V (battery, wall adapter). */
+  | "source"
+  /** LM317-style adjustable regulator in its constant-current topology (IN, OUT, ADJ). */
+  | "regulator";
 
 /** One light-emitting junction inside a part (a LED, a segment, a bar). */
 export interface LedSegment {
@@ -91,7 +95,7 @@ export interface ComponentDefinition {
   id: string;
   version: number;
   name: string;
-  category: "board" | "passive" | "output" | "input" | "prototyping";
+  category: "board" | "passive" | "output" | "input" | "prototyping" | "power";
   refDesPrefix: string;
   /** Breadboard-view size in CSS px (unrotated). */
   size: { width: number; height: number };
@@ -99,9 +103,9 @@ export interface ComponentDefinition {
   params: ParamDef[];
   /** Groups of pins connected inside the part (breadboard strips, button legs). */
   internalNets: string[][];
-  visual: { kind: "wokwi"; tag: string } | { kind: "breadboard" } | { kind: "capacitor" };
+  visual: { kind: "wokwi"; tag: string } | { kind: "breadboard" } | { kind: "capacitor" } | { kind: "generic"; shape: "battery" | "switch" | "regulator" | "supply" };
   eda: { kind: EdaKind; footprints: string[] };
-  simulation: { model: SimulationModel; leds?: LedSegment[]; env?: EnvDef[]; note?: string };
+  simulation: { model: SimulationModel; leds?: LedSegment[]; env?: EnvDef[]; note?: string; /** A switch that keeps its position after a click (rocker), unlike a push button. */ latching?: boolean };
   capabilities: Capabilities;
   provenance: { visual: string; footprint: string; license: string };
 }

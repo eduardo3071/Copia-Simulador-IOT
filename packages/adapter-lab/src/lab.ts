@@ -18,6 +18,14 @@ const LDR_RL10 = 50_000;
 const LDR_GAMMA = 0.7;
 const LDR_FIXED_OHMS = 10_000;
 
+/** LM317: reference between OUT and ADJ, and the input-to-output dropout at these currents. */
+export const LM317_VREF = 1.25;
+export const LM317_DROPOUT = 2;
+/** Below this load current the LM317 may not regulate (datasheet: 3.5 mA typical, 10 mA maximum). */
+export const LM317_MIN_LOAD_A = 0.0035;
+/** Current that counts as full brightness for a white indicator LED. */
+const LED_FULL_AMPS = 0.025;
+
 const LED_FORWARD_VOLTAGE: Record<string, number> = { red: 1.8, yellow: 2.0, green: 2.1, blue: 3.0, white: 3.0 };
 
 export interface McuPinBinding extends AvrPin {
@@ -50,6 +58,7 @@ export interface LabCircuit {
   leds: { componentId: string; segments: { forwardVoltage: number; anode?: string; cathode?: string }[] }[];
   switches: { componentId: string; a?: string; b?: string }[];
   pots: { componentId: string; ohms: number; endA?: string; wiper?: string; endB?: string }[];
+  regulators: { componentId: string; in?: string; out?: string; adj?: string }[];
   buzzers: { componentId: string; plus?: string; minus?: string }[];
   servos: ({ componentId: string; signal?: string } & Powered)[];
   ldrModules: ({ componentId: string; ao?: string; do?: string } & Powered)[];
@@ -88,6 +97,8 @@ export interface LabInputs {
 export interface LedState {
   lit: boolean;
   brightness: number;
+  /** Current through the LED when the circuit sets it (regulator), in mA. */
+  currentMa?: number;
   warning?: string;
 }
 
@@ -126,6 +137,7 @@ export function compileLab(
     leds: [],
     switches: [],
     pots: [],
+    regulators: [],
     buzzers: [],
     servos: [],
     ldrModules: [],
@@ -188,6 +200,17 @@ export function compileLab(
           ...opt("wiper", net(id, "SIG")),
           ...opt("endB", net(id, "VCC")),
         });
+        break;
+      case "source": {
+        const volts = numberParam(component.params.voltage, 9);
+        const plus = net(id, "+");
+        const minus = net(id, "-");
+        if (plus) lab.sources.set(plus, volts);
+        if (minus) lab.sources.set(minus, 0);
+        break;
+      }
+      case "regulator":
+        lab.regulators.push({ componentId: id, ...opt("in", net(id, "IN")), ...opt("out", net(id, "OUT")), ...opt("adj", net(id, "ADJ")) });
         break;
       case "buzzer":
         lab.buzzers.push({ componentId: id, ...opt("plus", net(id, "2")), ...opt("minus", net(id, "1")) });
@@ -341,6 +364,40 @@ export function evaluateLab(lab: LabCircuit, inputs: LabInputs): LabState {
     }
   }
 
+  // LM317 as a current source: OUT sits 1.25 V above ADJ, so the resistance between them sets the current,
+  // and the LED hanging from ADJ drops its own forward voltage. Below the dropout the LED stays dark.
+  const regulatorAmps = new Map<string, number>();
+  for (const reg of lab.regulators) {
+    if (!reg.in || !reg.out || !reg.adj) {
+      issues.push("LM317 com pino sem ligação (IN, OUT e ADJ precisam estar ligados).");
+      continue;
+    }
+    const vin = voltage.get(reg.in);
+    if (vin === undefined) {
+      issues.push("LM317 sem tensão em IN (confira a fonte e o interruptor).");
+      continue;
+    }
+    const sub = solveDc(new Map([[reg.out, LM317_VREF], [reg.adj, 0]]), resistances);
+    let amps = 0;
+    resistances.forEach((r, k) => {
+      if (r.a === reg.out) amps += sub.currents[k]!;
+      else if (r.b === reg.out) amps -= sub.currents[k]!;
+    });
+    const vf = lab.leds.flatMap((l) => l.segments).find((s) => s.anode === reg.adj)?.forwardVoltage ?? 0;
+    if (amps <= 0) {
+      issues.push("LM317 sem resistor entre OUT e ADJ: o LED ficaria sem corrente definida.");
+      continue;
+    }
+    if (vin < vf + LM317_VREF + LM317_DROPOUT) {
+      issues.push(`LM317 fora de regulação: IN em ${vin.toFixed(1)} V, precisa de pelo menos ${(vf + LM317_VREF + LM317_DROPOUT).toFixed(1)} V.`);
+      continue;
+    }
+    voltage.set(reg.adj, vf);
+    voltage.set(reg.out, vf + LM317_VREF);
+    regulatorAmps.set(reg.adj, amps);
+    if (amps < LM317_MIN_LOAD_A) issues.push(`LM317 com ${(amps * 1000).toFixed(1)} mA: abaixo da carga mínima de 3,5 mA, pode oscilar.`);
+  }
+
   const netVoltage: Record<string, number> = {};
   for (const [net, v] of voltage) if (!net.startsWith("__")) netVoltage[net] = round(v);
 
@@ -353,6 +410,10 @@ export function evaluateLab(lab: LabCircuit, inputs: LabInputs): LabState {
     let warning: string | undefined;
     if (fixed.has(seg.anode!) && fixed.has(seg.cathode!)) {
       warning = "LED sem resistor limitador: no circuito real a corrente excederia o limite.";
+    }
+    const amps = seg.anode ? regulatorAmps.get(seg.anode) : undefined;
+    if (amps !== undefined) {
+      return { lit, brightness: Math.min(1, Math.max(0.05, amps / LED_FULL_AMPS)), currentMa: Math.round(amps * 10_000) / 10 };
     }
     const anodeDriver = driverNear(seg.anode!, outputNets, resistances);
     const cathodeDriver = driverNear(seg.cathode!, outputNets, resistances);

@@ -26,6 +26,7 @@ export function BreadboardView() {
   const simState = useApp((s) => s.sim);
   const press = useApp((s) => s.press);
   const setPot = useApp((s) => s.setPot);
+  const toggle = useApp((s) => s.toggle);
   const running = simState.runState === "running" || simState.runState === "paused" || simState.runState === "loaded";
   const lab = running ? simState.lab : undefined;
   const led13 = !!simState.ports && (simState.ports.B.port & (1 << 5)) !== 0;
@@ -236,10 +237,12 @@ export function BreadboardView() {
                         ...(lab?.ldrModules[c.id] ? { ldr: lab.ldrModules[c.id] } : {}),
                         device: simState.deviceStates[c.id],
                         powered: lab?.devicePower[c.id] ?? false,
+                        closed: simState.pressed.includes(c.id),
                       }}
                       led13={led13}
                       onPress={(down) => press(c.id, down)}
                       onPot={(pos) => setPot(c.id, pos)}
+                      onToggle={() => toggle(c.id)}
                     />
                     {led?.warning && <div className="part-warning" title={led.warning}>!</div>}
                   </div>

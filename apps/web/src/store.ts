@@ -16,6 +16,7 @@ import {
   type HistoryState,
   type Project,
 } from "@simiot/project-model";
+import { getDefinition } from "@simiot/component-catalog";
 import { ApiError, api, type Diagnostic, type EdaResult } from "./api.ts";
 import { SimulationController, type SimSnapshot } from "./sim/controller.ts";
 import { CadClient, enclosureGeometryKey, type BuiltEnclosure } from "./cad/client.ts";
@@ -75,6 +76,7 @@ interface AppState {
   stopSim(): void;
   press(componentId: string, down: boolean): void;
   setPot(componentId: string, position: number): void;
+  toggle(componentId: string): void;
   sendSerial(text: string): void;
   clearSerial(): void;
   refreshEda(): Promise<void>;
@@ -227,6 +229,11 @@ export const useApp = create<AppState>((set, get) => ({
   async run() {
     let project = get().history?.present;
     if (!project) return;
+    // electrical circuit without a microcontroller: nothing to compile
+    if (!project.components.some((c) => getDefinition(c.definitionId)?.simulation.model === "mcu-avr")) {
+      sim.startCircuit(project);
+      return;
+    }
     if (isStale(project.artifacts.firmware, firmwareInputsKey(project))) {
       const ok = await get().compileFirmware();
       if (!ok) {
@@ -257,6 +264,7 @@ export const useApp = create<AppState>((set, get) => ({
   stopSim: () => sim.stop(),
   press: (id, down) => sim.press(id, down),
   setPot: (id, position) => sim.setPot(id, position),
+  toggle: (id) => sim.toggle(id),
   sendSerial: (text) => sim.sendSerial(text),
   clearSerial() {
     sim.serial = "";

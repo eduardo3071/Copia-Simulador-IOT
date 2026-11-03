@@ -2,7 +2,7 @@
 
 Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou provisório · ⏳ falta · ❓ depende de decisão.
 
-**Resumo:** o projeto digital das duas versões está completo (mecânica, esquemáticos, cálculos, guia e pacote). Nada foi impresso, medido na bancada ou montado. Tudo o que falta é físico: medir, imprimir, soldar, testar e ajustar.
+**Resumo:** o projeto digital das duas versões está completo (mecânica, esquemáticos, cálculos, simulação no simulador, página do site, guia e pacote). Nada foi impresso, medido na bancada ou montado. O que falta é físico (medir, imprimir, soldar, testar e ajustar) e três decisões: a pilha, a diferença entre o STEP e o paquímetro no tubo e onde hospedar a API de forma permanente.
 
 ## Decisões tomadas
 | Decisão | Valor | Quem decidiu |
@@ -36,11 +36,11 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | 1.1 | Esquemático e cálculo da v1 (9 V → chave → 330 Ω → LED, ≈ 17,9 mA) | ✅ | `eletronica/v1-pilha/` |
 | 1.2 | Esquemático e cálculo da v2 (LM317, 4,7 a 26,6 mA) | ✅ | `eletronica/v2-fonte-dimmer/` |
 | 1.3 | PCB e Gerbers da v1 e da v2 (opcionais) | 🟡 | gerados pelo autorroteador; **não conferidos** |
-| 1.4 | Conferir os Gerbers no KiCad GerbView | ⏳ | sem erro visível; obrigatório antes de fabricar |
+| 1.4 | Conferir os Gerbers com ferramenta independente | 🟡 | `scripts/verificar-gerber.py` (gerbonara): contorno, furos dentro da placa, furos de montagem em (±26,5; ±9) mm e cobre a 1,75 mm da borda ou mais, nas duas placas. Falta abrir no KiCad GerbView para conferir trilhas e máscara |
 | 1.5 | Montar a v1 na protoboard e medir a corrente do LED | ⏳ | 15 a 20 mA com multímetro |
 | 1.6 | Montar a v2 e medir o intervalo de corrente | ⏳ | ≈ 5 a 26 mA sem o LED piscar no mínimo |
 | 1.7 | Conferir se o brilho ajustável não gera faixas na câmera | ⏳ | imagem estável em vídeo no celular |
-| 1.8 | Simular no site | ❓ | o site do João tem pilha; esta cópia não tem pilha nem LM317 |
+| 1.8 | Simular no site | ✅ | peças novas (pilha 9 V, fonte 12 V, interruptor de balancim, LM317) e exemplos "SUPORTE do PREGOSCÓPIO v1 e v2"; 7 testes do laboratório |
 
 ## Fase 2 — Mecânica
 | # | Tarefa | Status | Critério de pronto |
@@ -82,7 +82,9 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | 5.1 | Site publicado na Vercel | ✅ | `copia-simulador-iot.vercel.app` |
 | 5.5 | Página "Suporte do Pregoscópio" no site (`#suporte`): 3D com identificador por peça, lista com o motivo de cada escolha, eletrônica com calculadora e gabaritos | ✅ | estática: não depende da API |
 | 5.6 | Pregoscópio no 3D com a geometria do STEP V1 (8 sólidos, tubo interno móvel) | ✅ | cabeça, garras, manopla e tubos do STEP; o tubo externo do STEP (30 mm) difere do paquímetro (33,5 mm) |
-| 5.7 | Circuito simulado na aba Protoboard | ❓ | esta cópia do simulador não tem pilha, interruptor nem LM317 como peças; a eletrônica aparece só no esquemático e na calculadora |
+| 5.7 | Circuito simulado na aba Protoboard | ✅ | executa sem microcontrolador; o interruptor liga e desliga o LED e o reostato muda a corrente (painel Laboratório). É corrente contínua com fonte ideal, não SPICE |
+| 5.8 | Identificadores sem sobreposição no 3D e manopla esquerda (espelho da direita, porque o STEP só traz uma) | ✅ | P10 marcada como suposição |
+| 5.9 | Visualizador do claude.ai com o pregoscópio do STEP | ✅ | |
 | 5.2 | API acessível pelo site | 🟡 | só funciona com o PC ligado, Docker e `ngrok http 7860` rodando |
 | 5.3 | API permanente e gratuita | ❓ | Hugging Face exige PRO; Google Cloud Run pede cartão |
 | 5.4 | Código no GitHub | 🟡 | `main` publicada; falta commitar o pacote atualizado |

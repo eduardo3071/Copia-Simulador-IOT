@@ -45,7 +45,7 @@ npm run build:fixtures   # recompila fixtures/*/firmware.hex e project.json
 ## O que é (e não é) simulado
 
 - Firmware: ATmega328P real (avr8js) — GPIO, timers, PWM, USART, ADC. Sem SPI/I²C/EEPROM.
-- Componentes (17): Uno, protoboard, resistor, capacitor, LED, LED RGB, 7 segmentos, barra de LEDs, buzzer, servo, LCD 16x2, botão, potenciômetros (rotativo e deslizante), módulo LDR, DHT22 e HC-SR04. DHT22, HC-SR04 e LCD têm o protocolo emulado (ADR-005).
+- Componentes (21): Uno, protoboard, resistor, capacitor, LED, LED RGB, 7 segmentos, barra de LEDs, buzzer, servo, LCD 16x2, botão, potenciômetros (rotativo e deslizante), módulo LDR, DHT22 e HC-SR04, mais bateria 9 V, fonte 12 V, interruptor de balancim e LM317 (circuitos sem microcontrolador, como os exemplos do suporte do pregoscópio). DHT22, HC-SR04 e LCD têm o protocolo emulado (ADR-005).
 - Circuito: **avaliação lógica/resistiva simplificada** (resistores lineares, fontes ideais, LED como indicador de limiar). Não é SPICE; isso é a fase 3 do plano.
 - PCB: autorroteamento do tscircuit, sem paridade de DRC com KiCad. Inspecione os Gerbers num visualizador independente antes de fabricar.
 - Gabinete: só contorno retangular; recortes posicionados à mão (nada é inferido da aparência das peças); alturas das peças não são conferidas. Imprima uma peça de teste antes.

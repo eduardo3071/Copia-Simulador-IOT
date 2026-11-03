@@ -225,6 +225,13 @@ export function Properties() {
                 </li>
               ))}
           </ul>
+          {Object.entries(lab.leds)
+            .filter(([, led]) => led.currentMa !== undefined)
+            .map(([id, led]) => (
+              <p key={id} className="small">
+                Corrente do LED {project.components.find((c) => c.id === id)?.refDes ?? id}: <b>{led.currentMa!.toFixed(1)} mA</b>
+              </p>
+            ))}
           {lab.issues.map((i) => (
             <p key={i} className="issue">{i}</p>
           ))}

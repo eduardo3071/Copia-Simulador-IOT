@@ -5,6 +5,7 @@ import type { LcdState } from "@simiot/emulator-avr";
 import type { ComponentInstance } from "@simiot/project-model";
 import { BreadboardSvg } from "./BreadboardSvg.tsx";
 import { CapacitorSvg } from "./CapacitorSvg.tsx";
+import { GenericSvg } from "./GenericSvg.tsx";
 
 /** Everything the simulation knows about one part, for drawing it. */
 export interface PartSimState {
@@ -14,6 +15,8 @@ export interface PartSimState {
   ldr?: LabState["ldrModules"][string];
   device?: unknown;
   powered?: boolean;
+  /** Latching switch is closed. */
+  closed?: boolean;
 }
 
 interface Props {
@@ -25,11 +28,12 @@ interface Props {
   led13?: boolean;
   onPress?: (down: boolean) => void;
   onPot?: (position: number) => void;
+  onToggle?: () => void;
 }
 
 const level = (s: { lit: boolean; brightness: number } | undefined) => (s?.lit ? Math.max(0.15, s.brightness) : 0);
 
-export function PartVisual({ component, def, running, sim, led13, onPress, onPot }: Props) {
+export function PartVisual({ component, def, running, sim, led13, onPress, onPot, onToggle }: Props) {
   const ref = useRef<HTMLElement>(null);
   const handlers = useRef({ onPress, onPot });
   handlers.current = { onPress, onPot };
@@ -59,6 +63,10 @@ export function PartVisual({ component, def, running, sim, led13, onPress, onPot
   }, []);
 
   if (def.visual.kind === "breadboard") return <BreadboardSvg />;
+  if (def.visual.kind === "generic") {
+    const volts = component.params.voltage;
+    return <GenericSvg shape={def.visual.shape} {...(volts !== undefined ? { label: `${volts} V` } : {})} closed={!!sim.closed} {...(onToggle ? { onToggle } : {})} />;
+  }
   if (def.visual.kind === "capacitor") return <CapacitorSvg label={`${component.params.capacitance ?? 100}n`} />;
 
   const props: Record<string, unknown> = { ref };

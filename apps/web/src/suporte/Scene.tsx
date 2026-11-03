@@ -94,7 +94,7 @@ function useMaterialProps(props: PartProps, color: string, extra: { opacity?: nu
 /** Where each label hangs, in the part's own frame, so labels do not pile up in the middle of the model. */
 const LABEL_AT: Record<string, Vec3> = {
   M1: [0, 60, 115], M2: [0, -21, 199], M3: [-38, -42, -1], M4: [13, 0, 38],
-  P1: [-30, 0, 8], P2: [0, -15, -70], P3: [0, -11.7, -140], P4: [-60, 0, 34], P5: [60, 0, 34], P6: [79, 17, 10], P7: [13.7, 0, -145], P8: [18, 0, -148],
+  P1: [-30, 0, 8], P2: [0, -15, -70], P3: [0, -11.7, -140], P4: [-60, 0, 34], P5: [60, 0, 34], P6: [79, 17, 10], P10: [-79, 17, 10], P7: [13.7, 0, -145], P8: [18, 0, -148],
 };
 
 function register(props: PartProps, object: Object3D | null, local = new Vector3()) {
@@ -207,6 +207,7 @@ function Assembly({ options, registry }: { options: SceneOptions; registry: Regi
         <StlPart {...base} id="P4" layer="pregoscopio" url={pre(4)} color={COLORS.hook} />
         <StlPart {...base} id="P5" layer="pregoscopio" url={pre(5)} color={COLORS.hook} />
         <StlPart {...base} id="P6" layer="pregoscopio" url={pre(6)} color={COLORS.knob} />
+        <StlPart {...base} id="P10" layer="pregoscopio" url={pre(9)} color={COLORS.knob} />
         <group position={[0, 0, retract]}>
           <StlPart {...base} id="P3" layer="pregoscopio" url={pre(3)} color={COLORS.inner} />
           <StlPart {...base} id="P7" layer="pregoscopio" url={pre(7)} color={COLORS.ring} />
@@ -248,13 +249,46 @@ function Controls({ target, view }: { target: Vec3; view: { name: string; n: num
   return null;
 }
 
+/** Pushes overlapping labels apart (screen space, a few passes) so every ID stays readable. */
+function spreadLabels(labels: { x: number; y: number }[], width = 34, height = 19) {
+  for (let pass = 0; pass < 12; pass++) {
+    let moved = false;
+    for (let i = 0; i < labels.length; i++) {
+      for (let j = i + 1; j < labels.length; j++) {
+        const a = labels[i]!;
+        const b = labels[j]!;
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        if (Math.abs(dx) >= width || Math.abs(dy) >= height) continue;
+        // separate along the axis with the smaller overlap; a tie goes vertical
+        const overlapX = width - Math.abs(dx);
+        const overlapY = height - Math.abs(dy);
+        if (overlapY <= overlapX) {
+          const push = overlapY / 2 + 0.5;
+          const dir = dy >= 0 ? 1 : -1;
+          a.y -= dir * push;
+          b.y += dir * push;
+        } else {
+          const push = overlapX / 2 + 0.5;
+          const dir = dx >= 0 ? 1 : -1;
+          a.x -= dir * push;
+          b.x += dir * push;
+        }
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+}
+
 /** Moves the ID labels over the canvas after each frame. */
 function Projector({ registry, nodes }: { registry: Registry; nodes: MutableRefObject<Map<string, HTMLElement>> }) {
   const camera = useThree((s) => s.camera);
   const size = useThree((s) => s.size);
   const point = useMemo(() => new Vector3(), []);
   useFrame(() => {
-    for (const [id, entry] of registry.current) {
+    const labels: { id: string; node: HTMLElement; x: number; y: number }[] = [];
+    for (const [id, entry] of [...registry.current].sort(([a], [b]) => a.localeCompare(b))) {
       const node = nodes.current.get(id);
       if (!node) continue;
       point.copy(entry.local);
@@ -262,8 +296,10 @@ function Projector({ registry, nodes }: { registry: Registry; nodes: MutableRefO
       point.project(camera);
       const visible = point.z < 1 && entry.object.visible && entry.object.children.length > 0;
       node.style.display = visible ? "" : "none";
-      node.style.transform = `translate(${((point.x * 0.5 + 0.5) * size.width).toFixed(1)}px, ${((-point.y * 0.5 + 0.5) * size.height).toFixed(1)}px) translate(-50%, -50%)`;
+      if (visible) labels.push({ id, node, x: (point.x * 0.5 + 0.5) * size.width, y: (-point.y * 0.5 + 0.5) * size.height });
     }
+    spreadLabels(labels);
+    for (const l of labels) l.node.style.transform = `translate(${l.x.toFixed(1)}px, ${l.y.toFixed(1)}px) translate(-50%, -50%)`;
   });
   return null;
 }

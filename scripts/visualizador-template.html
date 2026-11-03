@@ -97,7 +97,7 @@ dd { margin: 0; font-family: var(--font-mono); font-size: 12.5px; text-align: ri
       <section class="panel" aria-labelledby="h-camadas">
         <h2 id="h-camadas">Peças</h2>
         <div class="checks" id="layers"></div>
-        <p class="note">Sólido: peça impressa, gerada pelo código. Tracejado: referência aproximada.</p>
+        <p class="note">Sólido: peça impressa, gerada pelo código. Tracejado: referência aproximada. O pregoscópio vem do STEP V1.</p>
       </section>
 
       <section class="panel" aria-labelledby="h-vista">
@@ -266,22 +266,22 @@ const STL = /*STL_DATA*/{};
   parts.diffuser.position.z = 37.8;
   parts.diffuser.castShadow = false;
 
-  // ---- references (approximate) ----
+  // ---- the pregoscopio, from Pregoscopio V1.step (head, hooks, knobs, tubes); the objective is a reference ----
+  // Plate underside sits on the clamp ring (z = 210.2); the inner tube, its ring and sleeve slide (retraction 22.5 mm = lens 0.8 mm above the slide).
   const pregoscopio = new THREE.Group();
-  const tube = cyl(16.75, 95.2, 210.2, "#47515f", ghost(0x47515f, 0.55));
-  const sleeve = cyl(11.25, 76.2, 95.2, "#8c96a3", ghost(0x8c96a3, 0.8));
-  const objective = cyl(10, 41.2, 76.2, "#d5dae0", { metalness: 0.25, roughness: 0.35 });
-  const head = new THREE.Mesh(new THREE.BoxGeometry(54, 50, 17), material("#47515f", ghost(0x47515f, 0.55)));
-  head.position.z = 210.2 + 8.5;
-  const bar = cyl(7, -106, 106, "#47515f", ghost(0x47515f, 0.55), "x");
-  bar.position.z = 218.7;
-  const hooks = [-68, 68].map((x) => {
-    const h = new THREE.Mesh(new THREE.BoxGeometry(22, 34, 46), material("#47515f", ghost(0x47515f, 0.55)));
-    h.position.set(x, 0, 222);
-    return h;
-  });
-  pregoscopio.add(tube, sleeve, objective, head, bar, ...hooks);
-  pregoscopio.userData.ghost = true;
+  const inner = new THREE.Group();
+  const stepColors = { 1: "#4a5463", 2: "#566073", 3: "#8b95a3", 4: "#3d4654", 5: "#3d4654", 6: "#2f3744", 7: "#c5ccd5", 8: "#69748a", 9: "#2f3744" };
+  for (let i = 1; i <= 9; i++) {
+    const mesh = solid(stlGeometry(STL["pre" + i]), stepColors[i]);
+    (i === 3 || i === 7 || i === 8 ? inner : pregoscopio).add(mesh);
+  }
+  const RETRACT = 22.5;
+  inner.position.z = RETRACT;
+  const objective = cyl(10, -156.5 - 35, -156.5, "#d5dae0", { metalness: 0.25, roughness: 0.35 });
+  objective.position.z += RETRACT;
+  pregoscopio.add(inner, objective);
+  pregoscopio.position.z = 210.2;
+  pregoscopio.userData.baseZ = 210.2;
 
   const slide = new THREE.Mesh(new THREE.BoxGeometry(76, 26, 1), material("#8fd0ff", ghost(0x8fd0ff, 0.4)));
   slide.position.z = 39.9;
@@ -374,7 +374,7 @@ const STL = /*STL_DATA*/{};
     parts.clamp.position.y = -e * 0.9;
     parts.diffuser.position.z = 37.8 + e * 0.8;
     slide.position.z = 39.9 + e * 1.1;
-    pregoscopio.position.z = e * 1.5;
+    pregoscopio.position.z = pregoscopio.userData.baseZ + e * 1.5;
   }
   explode.addEventListener("input", applyExplode);
 

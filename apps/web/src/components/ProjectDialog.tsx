@@ -10,6 +10,8 @@ const FIXTURE_LABELS: Record<string, string> = {
   "ultrassom-servo": "HC-SR04 + servo + buzzer — radar de distância",
   "luz-rgb": "Sensor de luz + LED RGB + potenciômetro deslizante",
   "contador-7seg": "Contador no display de 7 segmentos e barra de LEDs",
+  "suporte-v1": "SUPORTE do PREGOSCÓPIO v1 — pilha 9 V, interruptor, resistor e LED (sem programação)",
+  "suporte-v2": "SUPORTE do PREGOSCÓPIO v2 — fonte 12 V, LM317 e reostato (sem programação)",
 };
 
 export function ProjectDialog({ onClose }: { onClose?: () => void }) {
