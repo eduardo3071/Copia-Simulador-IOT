@@ -35,6 +35,16 @@ export function SuportePage() {
   useEffect(() => {
     history.replaceState(null, "", `${location.pathname}${location.search}#suporte/${tab}/${version}`);
   }, [tab, version]);
+  // a link to another view of this page (#suporte/calibracao/v2) while it is already open
+  useEffect(() => {
+    const onHash = () => {
+      const next = fromHash();
+      setTab(next.tab);
+      setVersion(next.version);
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
 
   return (
     <div className="suporte">

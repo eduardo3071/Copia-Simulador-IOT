@@ -42,3 +42,14 @@ Na senha, use o token. O build leva vários minutos (instala as dependências e 
 ## Problemas comuns
 - Exemplos não carregam: o `destination` do `vercel.json` está errado ou o Space está dormindo.
 - Compilar código dá erro: confira `/api/health`; se `available` for `false`, o `setup:arduino` falhou no build do Space (veja os logs).
+
+## Atualizar a API depois de mudar o código ou os exemplos
+A imagem copia o repositório inteiro, então mudar o catálogo de peças, o laboratório ou os `fixtures/` exige uma imagem nova (o `Dockerfile` copia já com o dono certo, o que deixa o build bem mais rápido):
+
+```bash
+docker build -t simiot-api .
+docker rm -f simiot-api
+docker run -d --name simiot-api --restart unless-stopped -p 7860:7860 simiot-api
+```
+
+Só para um exemplo novo, sem o catálogo, basta `docker cp fixtures/NOME simiot-api:/app/fixtures/` com o contêiner rodando. O esquemático e a PCB desse exemplo precisam da imagem nova se ele usa peças que a imagem antiga não conhece.
