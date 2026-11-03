@@ -1,4 +1,4 @@
-import { makeBox, makeCylinder, type Shape3D } from "replicad";
+import { draw, drawRoundedRectangle, makeBox, makeCylinder, type Shape3D } from "replicad";
 import { EMBED, type Vec3 } from "./layout.ts";
 import type { HolderCutout, HolderLayout } from "./holder.ts";
 
@@ -8,6 +8,30 @@ const AXIS: Record<HolderCutout["axis"], Vec3> = { x: [1, 0, 0], y: [0, 1, 0], z
 
 function box(x0: number, x1: number, y0: number, y1: number, z0: number, z1: number): Shape3D {
   return makeBox([x0, y0, z0], [x1, y1, z1]);
+}
+
+/** Box with rounded vertical corners and, optionally, a rounded top perimeter. */
+function roundedBox(x0: number, x1: number, y0: number, y1: number, z0: number, z1: number, corner: number, topEdge = 0): Shape3D {
+  let shape = box(x0, x1, y0, y1, z0, z1);
+  if (corner > 0) shape = shape.fillet(corner, (e) => e.inDirection("Z"));
+  if (topEdge > 0) shape = shape.fillet(topEdge, (e) => e.inPlane("XY", z1));
+  return shape;
+}
+
+/** Column and arm as one extruded side profile (YZ), with a rounded outer corner and a rounded inner corner under the arm. */
+function columnAndArm(layout: HolderLayout): Shape3D {
+  const { column, arm, params: p } = layout;
+  const r = p.columnRound;
+  let pen = draw([column.yMax, column.bottom]).lineTo([column.yMax, column.top]);
+  if (r > 0) pen = pen.customCorner(r);
+  pen = pen.lineTo([arm.yMin, column.top]).lineTo([arm.yMin, arm.bottom]).lineTo([column.yMin, arm.bottom]);
+  if (r > 0) pen = pen.customCorner(r);
+  return pen
+    .lineTo([column.yMin, column.bottom])
+    .close()
+    .sketchOnPlane("YZ")
+    .extrude(column.xMax - column.xMin)
+    .translate(column.xMin, 0, 0) as Shape3D;
 }
 
 function cutter(c: HolderCutout): Shape3D {
@@ -24,15 +48,14 @@ function cutter(c: HolderCutout): Shape3D {
 
 /** Light box, column, arm and the fixed half of the clamp, in one piece. Open at the bottom. */
 export function buildHolderBody(layout: HolderLayout): Shape3D {
-  const { box: b, cavity, column, arm, ring, ears, params: p } = layout;
-  let body: Shape3D = box(b.xMin, b.xMax, b.yMin, b.yMax, 0, b.height).cut(
-    box(cavity.xMin, cavity.xMax, cavity.yMin, cavity.yMax, -1, cavity.top),
+  const { box: b, cavity, column, ring, ears, params: p } = layout;
+  let body: Shape3D = roundedBox(b.xMin, b.xMax, b.yMin, b.yMax, 0, b.height, p.cornerRadius, p.edgeRound).cut(
+    roundedBox(cavity.xMin, cavity.xMax, cavity.yMin, cavity.yMax, -1, cavity.top, Math.max(p.cornerRadius - p.wall, 0)),
   );
   for (const post of layout.posts) {
     body = body.fuse(makeCylinder(post.outerDiameter / 2, post.top - post.bottom, [post.x, post.y, post.bottom]));
   }
-  body = body.fuse(box(column.xMin, column.xMax, column.yMin, column.yMax, column.bottom, column.top));
-  body = body.fuse(box(arm.xMin, arm.xMax, arm.yMin, arm.yMax, arm.bottom, arm.top));
+  body = body.fuse(columnAndArm(layout));
 
   const ringHeight = ring.top - ring.bottom;
   const halfRing = makeCylinder(ring.outerRadius, ringHeight, [0, 0, ring.bottom]).intersect(
@@ -51,6 +74,13 @@ export function buildHolderBody(layout: HolderLayout): Shape3D {
     body = body.cut(makeCylinder(post.pilotDiameter / 2, post.top - post.bottom - 3, [post.x, post.y, post.bottom - 1]));
   }
   for (const c of layout.cutouts) body = body.cut(cutter(c));
+  const win = layout.columnWindow;
+  if (win) {
+    // stadium window through the column along Y; the sketch plane XZ extrudes toward -Y
+    const length = win.zMax - win.zMin;
+    const hole = drawRoundedRectangle(win.width, length, win.width / 2 - 0.01).sketchOnPlane("XZ").extrude(win.yMax - win.yMin + 4) as Shape3D;
+    body = body.cut(hole.translate(0, win.yMax + 2, (win.zMin + win.zMax) / 2));
+  }
   const seat = layout.diffuserSeat;
   body = body.cut(makeCylinder(seat.diameter / 2, seat.top - seat.bottom, [0, 0, seat.bottom]));
   return body;
@@ -76,7 +106,7 @@ export function buildHolderClamp(layout: HolderLayout): Shape3D {
 /** Bottom plate of the light box (z from -wall to 0), with the four screw holes. */
 export function buildHolderLid(layout: HolderLayout): Shape3D {
   const { box: b, lid, cradle, ledPost, params: p } = layout;
-  let plate: Shape3D = box(b.xMin, b.xMax, b.yMin, b.yMax, lid.bottom, lid.top);
+  let plate: Shape3D = roundedBox(b.xMin, b.xMax, b.yMin, b.yMax, lid.bottom, lid.top, p.cornerRadius);
   // Battery cradle: a low rectangular ring around the 9 V battery.
   if (cradle) {
     const rim = box(cradle.xMin, cradle.xMax, cradle.yMin, cradle.yMax, lid.top - EMBED, lid.top + cradle.height).cut(

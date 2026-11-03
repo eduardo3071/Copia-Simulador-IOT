@@ -51,9 +51,10 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | 2.4 | Berço da pilha 9 V (v1) | ✅ | cabe na caixa e não encosta no porta-LED |
 | 2.5 | Porta-LED na tampa e difusor | ✅ | LED abaixo do difusor |
 | 2.6 | Variante v2 (conector de força, botão, 4 suportes da placa) | ✅ | — |
-| 2.7 | Testes automáticos | ✅ | 22 testes do pacote CAD |
+| 2.7 | Testes automáticos | ✅ | 26 testes do pacote CAD |
 | 2.8 | Orientação de impressão para mesa de 30 cm | ✅ | arquivos `-impressao.stl` |
-| 2.9 | Esvaziar a coluna para economizar material | ⏳ | opcional |
+| 2.9 | Esvaziar a coluna para economizar material | ✅ | janela em estádio de 30 mm atravessando a coluna (saída vertical ao imprimir deitado) |
+| 2.11 | Cantos arredondados, perfil da coluna com raios e arredondamento da borda superior | ✅ | cantos de 6 mm, borda de 2 mm, raios de 8 mm no perfil |
 | 2.10 | Encaixe de pressão ou parafuso na tampa da caixa | ❓ | só se a tampa por 4 parafusos incomodar |
 
 ## Fase 3 — Teste físico

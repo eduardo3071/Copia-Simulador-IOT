@@ -126,4 +126,33 @@ describe("holder (suporte do pregoscopio)", () => {
     const tri = await stl(lid);
     expect(stlBounds(tri).size[2]).toBeCloseTo(p.wall + v2.ledPost.top, 2);
   });
+
+  it("rounded corners and the column window remove material without changing the outer size", async () => {
+    const volume = async (params: Partial<typeof p>) => {
+      const { body } = buildHolder(holderLayout({ ...p, ...params }));
+      return stlVolume(await stl(body));
+    };
+    const finished = await volume({});
+    const sharp = await volume({ cornerRadius: 0, edgeRound: 0 });
+    const solid = await volume({ lighten: false });
+    // four vertical corners of the 40 mm box: 4 x (1 - pi/4) x r^2 x h, minus the thin-wall parts that are not solid anyway
+    expect(sharp - finished).toBeGreaterThan(800);
+    // the stadium window: (width x (length - width) + pi r^2) x column depth
+    const win = layout.columnWindow!;
+    const windowVolume = (win.width * (win.zMax - win.zMin - win.width) + Math.PI * (win.width / 2) ** 2) * p.columnDepth;
+    expect(solid - finished).toBeGreaterThan(windowVolume * 0.95);
+    expect(solid - finished).toBeLessThan(windowVolume * 1.2);
+    const { min, max } = stlBounds(await stl(buildHolder(layout).body));
+    expect(min[0]).toBeCloseTo(-p.boxWidth / 2, 1);
+    expect(max[1]).toBeCloseTo(p.boxDepthBack, 1);
+    expect(layout.issues.filter((i) => i.severity === "error")).toEqual([]);
+  });
+
+  it("the column window leaves side walls of at least 5 mm and never reaches the box or the arm", () => {
+    const win = layout.columnWindow!;
+    expect((p.columnWidth - win.width) / 2).toBeGreaterThanOrEqual(5);
+    expect(win.zMin).toBeGreaterThanOrEqual(layout.box.height + 20);
+    expect(win.zMax).toBeLessThanOrEqual(layout.ring.bottom - 20);
+    expect(holderLayout({ ...p, windowWidth: 40 }).issues.some((i) => i.severity === "error")).toBe(true);
+  });
 });

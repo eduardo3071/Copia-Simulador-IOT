@@ -49,6 +49,16 @@ export interface HolderParams {
   boxHeight: number;
   columnWidth: number;
   columnDepth: number;
+  /** Vertical corners of the box and top edge round-over (0 = sharp). */
+  cornerRadius: number;
+  edgeRound: number;
+  /** Radius of the column/arm profile: outer corner at the top and the inner corner under the arm. */
+  columnRound: number;
+  /** Lightening window through the column, along Y (printable: it is a vertical hole when the body lies on its back). */
+  lighten: boolean;
+  windowWidth: number;
+  /** Solid column left above the box and below the arm. */
+  windowMargin: number;
   ledWindowDiameter: number;
   switchCutout: { x: number; width: number; height: number };
   /** Panel DC barrel jack (5.5 x 2.1 mm plug, 11 mm panel hole) on the right wall. */
@@ -113,6 +123,12 @@ export const DEFAULT_HOLDER_PARAMS: HolderParams = {
   boxHeight: 40,
   columnWidth: 44,
   columnDepth: 30,
+  cornerRadius: 6,
+  edgeRound: 2,
+  columnRound: 8,
+  lighten: true,
+  windowWidth: 30,
+  windowMargin: 22,
   ledWindowDiameter: 24,
   switchCutout: { x: -25, width: 19, height: 13 },
   jackDiameter: 11,
@@ -162,6 +178,8 @@ export interface HolderLayout {
   cavity: { xMin: number; xMax: number; yMin: number; yMax: number; top: number };
   posts: HolderPost[];
   column: { xMin: number; xMax: number; yMin: number; yMax: number; bottom: number; top: number };
+  /** Rounded stadium window through the column (null when `lighten` is off). */
+  columnWindow: { width: number; zMin: number; zMax: number; yMin: number; yMax: number } | null;
   /** The arm that joins the column to the clamp ring, same z range as the ring. */
   arm: { xMin: number; xMax: number; yMin: number; yMax: number; bottom: number; top: number };
   ring: { outerRadius: number; boreDiameter: number; bottom: number; top: number; gap: number };
@@ -226,6 +244,9 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
     bottom: box.height - EMBED,
     top: tubeTop,
   };
+  const columnWindow = p.lighten
+    ? { width: p.windowWidth, zMin: box.height + p.windowMargin, zMax: tubeTop - p.ringHeight - p.windowMargin, yMin: column.yMin, yMax: column.yMax }
+    : null;
   const arm = { xMin: column.xMin, xMax: column.xMax, yMin: 0, yMax: column.yMin + EMBED, bottom: ring.bottom, top: ring.top };
 
   const earLength = 10;
@@ -341,6 +362,12 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
   if (cradle && (cradle.xMax > cavity.xMax - 10 || cradle.yMax > cavity.yMax || cradle.yMin < ledPost.y + p.ledPostDiameter / 2)) {
     issues.push({ severity: "error", message: "O compartimento da pilha não cabe na caixa ou encosta no porta-LED." });
   }
+  if (columnWindow && (columnWindow.zMax - columnWindow.zMin < columnWindow.width || (p.columnWidth - p.windowWidth) / 2 < 5)) {
+    issues.push({ severity: "error", message: "A janela da coluna não cabe: aumente a coluna ou reduza a janela (paredes laterais de pelo menos 5 mm)." });
+  }
+  if (p.cornerRadius > 0 && p.cornerRadius <= p.wall) {
+    issues.push({ severity: "warning", message: "Raio dos cantos menor que a parede: o interior da caixa fica com canto vivo." });
+  }
   if (p.workingDistance + p.focusOffset < 0.2) {
     issues.push({ severity: "error", message: "A lente frontal ficaria a menos de 0,2 mm da lâmina: aumente workingDistance ou focusOffset." });
   }
@@ -354,6 +381,7 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
     cavity,
     posts,
     column,
+    columnWindow,
     arm,
     ring,
     ears,
