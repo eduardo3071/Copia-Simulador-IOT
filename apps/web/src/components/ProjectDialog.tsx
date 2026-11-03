@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api, type ProjectSummary } from "../api.ts";
 import { useApp } from "../store.ts";
 
@@ -35,6 +35,17 @@ export function ProjectDialog({ onClose }: { onClose?: () => void }) {
       .then((h) => setToolchain(h.toolchain.available ? `arduino-cli ${h.toolchain.arduinoCli} • ${Object.entries(h.toolchain.cores).map(([k, v]) => `${k}@${v}`).join(", ")}` : "arduino-cli não instalado (rode npm run setup:arduino); apenas exemplos pré-compilados executam"))
       .catch(() => setToolchain("API indisponível"));
   }, []);
+
+  // each click on an example saves a new copy; show one line per title, the most recent
+  const saved = useMemo(() => {
+    const byTitle = new Map<string, { project: ProjectSummary; copies: number }>();
+    for (const p of [...projects].sort((x, y) => y.updatedAt.localeCompare(x.updatedAt))) {
+      const seen = byTitle.get(p.title);
+      if (seen) seen.copies += 1;
+      else byTitle.set(p.title, { project: p, copies: 1 });
+    }
+    return [...byTitle.values()];
+  }, [projects]);
 
   const go = async (body: Parameters<typeof api.createProject>[0]) => {
     try {
@@ -95,7 +106,7 @@ export function ProjectDialog({ onClose }: { onClose?: () => void }) {
         <section>
           <h3>Abrir</h3>
           {projects.length === 0 && <p className="muted">Nenhum projeto salvo ainda.</p>}
-          {[...projects].sort((x, y) => y.updatedAt.localeCompare(x.updatedAt)).map((p) => (
+          {saved.map(({ project: p, copies }) => (
             <button
               key={p.id}
               className="list-item"
@@ -104,7 +115,7 @@ export function ProjectDialog({ onClose }: { onClose?: () => void }) {
                 onClose?.();
               }}
             >
-              <span>{p.title}</span>
+              <span>{p.title}{copies > 1 && <small> · {copies} cópias salvas, mostrando a mais recente</small>}</span>
               <small>
                 rev. {p.revision} • {new Date(p.updatedAt).toLocaleString("pt-BR")}
               </small>
