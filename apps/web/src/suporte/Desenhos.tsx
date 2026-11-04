@@ -57,6 +57,30 @@ function roundedSegs(u1: number, u2: number, w1: number, w2: number, r: number):
   ];
 }
 
+/**
+ * Outline of the objective seen from the side (measured on the product photo): tip, stepped nose, black grip, collar, blue ring, body.
+ * `z0` is the tip; `maxH` clips it for a detail.
+ */
+function objectiveSegs(z0: number, maxH = 35): Seg[] {
+  const half: [number, number][] = [[5.4, 0], [5.4, 2], [7.1, 2], [7.1, 5], [9.6, 5], [9.6, 6.7], [9.1, 6.7], [9.1, 15.1], [10, 15.1], [10, 34.3], [9.6, 34.3], [9.6, 35]];
+  const pts: [number, number][] = [];
+  for (const q of half) {
+    if (q[1] > maxH) {
+      pts.push([pts.at(-1)![0], maxH]);
+      break;
+    }
+    pts.push(q);
+  }
+  const top = pts.at(-1)!;
+  return [
+    ["M", -pts[0]![0], z0],
+    ...pts.map(([r, h]) => ["L", r, z0 + h] as Seg),
+    ["L", -top[0], z0 + top[1]],
+    ...[...pts].reverse().map(([r, h]) => ["L", -r, z0 + h] as Seg),
+    ["Z"],
+  ];
+}
+
 /** The light box seen in the x = 0 plane: walls, roof and the rounded top edge. */
 function shellSegs(g: G): Seg[] {
   const { box, cav } = g;
@@ -102,7 +126,7 @@ function Conjunto({ g, version, sheet, total }: { g: G; version: SuporteVersion;
       <Rect v={front} u1={-tube.radius} u2={tube.radius} w1={tube.bottom} w2={tube.top} fill="#fff" />
       <Rect v={front} u1={-25} u2={25} w1={tube.top} w2={head} fill="#fff" />
       <Rect v={front} u1={-tube.sleeveRadius} u2={tube.sleeveRadius} w1={tube.sleeveBottom} w2={tube.bottom} fill="#fff" />
-      <Rect v={front} u1={-tube.objectiveRadius} u2={tube.objectiveRadius} w1={tube.noseZ} w2={tube.sleeveBottom} fill="#fff" />
+      <Shape v={front} segs={objectiveSegs(tube.noseZ)} fill="#fff" />
       <Rect v={front} u1={sw.x - sw.width / 2} u2={sw.x + sw.width / 2} w1={20 - sw.height / 2} w2={20 + sw.height / 2} fill="#fdecea" />
       {g.v2 && <Circ v={front} u={p.knobX} w={20} r={p.knobDiameter / 2} />}
       <Line v={front} a={[0, -4]} b={[0, head + 6]} c="ctr" />
@@ -128,7 +152,7 @@ function Conjunto({ g, version, sheet, total }: { g: G; version: SuporteVersion;
       <Rect v={side} u1={-tube.radius} u2={tube.radius} w1={tube.bottom} w2={tube.top} fill="#fff" />
       <Rect v={side} u1={-7.5} u2={7.5} w1={tube.top} w2={head} fill="#fff" />
       <Rect v={side} u1={-tube.sleeveRadius} u2={tube.sleeveRadius} w1={tube.sleeveBottom} w2={tube.bottom} fill="#fff" />
-      <Rect v={side} u1={-tube.objectiveRadius} u2={tube.objectiveRadius} w1={tube.noseZ} w2={tube.sleeveBottom} fill="#fff" />
+      <Shape v={side} segs={objectiveSegs(tube.noseZ)} fill="#fff" />
       <Rect v={side} u1={-13} u2={13} w1={39.4} w2={40.4} />
       {g.v2 && <Circ v={side} u={0} w={20} r={p.jackDiameter / 2} c="hid" />}
       <DimH v={side} u1={-45} u2={70} w={-p.wall} off={-7} />
@@ -269,7 +293,7 @@ function CorteLongitudinal({ g, version, sheet, total }: { g: G; version: Suport
       <Shape v={v} segs={[["M", -2.5, post.ledTop - 2.5], ["A", 2.5, 2.5, post.ledTop - 2.5, 0], ["Z"]]} fill="#fffbe6" />
       <Solid v={v} ds={[rectSegs(-p.diffuserDiameter / 2, p.diffuserDiameter / 2, 37.8, 38.6)]} />
       <Solid v={v} ds={[rectSegs(-13, 13, slideTop - 1, slideTop)]} />
-      <Rect v={v} u1={-tube.objectiveRadius} u2={tube.objectiveRadius} w1={tube.noseZ} w2={tube.sleeveBottom} fill="#f6e7c8" />
+      <Shape v={v} segs={objectiveSegs(tube.noseZ)} fill="#f6e7c8" />
       <Rect v={v} u1={-tube.sleeveRadius} u2={tube.sleeveRadius} w1={tube.sleeveBottom} w2={tube.bottom} fill="#e5e9f0" />
       <Rect v={v} u1={-tube.radius} u2={tube.radius} w1={tube.bottom} w2={zCut} fill="#eef1f6" />
       {version === "v1" && L.cradle && (
@@ -298,7 +322,7 @@ function CorteLongitudinal({ g, version, sheet, total }: { g: G; version: Suport
       <Void v={d} u1={-(p.slideWidth + p.slideFit) / 2} u2={(p.slideWidth + p.slideFit) / 2} w1={roofTop - p.channelDepth} w2={roofTop} open="t" />
       <Solid v={d} ds={[rectSegs(-p.diffuserDiameter / 2, p.diffuserDiameter / 2, 37.8, 38.6)]} />
       <Solid v={d} ds={[rectSegs(-15, 15, slideTop - 1, slideTop)]} />
-      <Rect v={d} u1={-tube.objectiveRadius} u2={tube.objectiveRadius} w1={tube.noseZ} w2={44} fill="#f6e7c8" />
+      <Shape v={d} segs={objectiveSegs(tube.noseZ, 2.8)} fill="#f6e7c8" />
       <Rect v={d} u1={-2.9} u2={2.9} w1={31} w2={33.1} fill="#fffbe6" />
       <Shape v={d} segs={[["M", -2.5, 33.1], ["A", 2.5, 2.5, 33.1, 0], ["Z"]]} fill="#fffbe6" />
       <DimV v={d} w1={post.ledTop} w2={cav.top} u={-18} off={-8} text={f(cav.top - post.ledTop)} />
@@ -317,11 +341,12 @@ function CorteLongitudinal({ g, version, sheet, total }: { g: G; version: Suport
         <line className="dt-thin" x1={160} x2={290} y1={18.5} y2={18.5} />
         {[
           ["LED D1 (topo)", `z = ${f(post.ledTop)}`],
-          ["Difusor M4", "z = 37,8 a 38,6"],
+          ["Difusor M4", "z = 37,8–38,6"],
           ["Face superior do teto", `z = ${f(roofTop)}`],
           ["Lâmina L1 (topo)", `z = ${f(slideTop)}`],
           ["Lente da objetiva P9", `z = ${f(tube.noseZ)}`],
           ["Distância de trabalho", `${f(p.workingDistance)} mm`],
+          ["Objetiva P9 (total / abaixo do tubo)", `${f(p.objectiveLength + 3)} / ${f(p.objectiveLength)} mm`],
         ].map(([a, b], i) => (
           <g key={a}><T className="dt-t dt-tv" x={160} y={25 + i * 5.4}>{a}</T><T className="dt-t dt-tv" x={250} y={25 + i * 5.4}>{b}</T></g>
         ))}

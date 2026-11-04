@@ -7,7 +7,7 @@ import { JIGS } from "./jigs.ts";
 import { DrawingCheck } from "./Desenhos.tsx";
 import { LANG_LABEL, LangContext, type DocLang } from "./lang.tsx";
 import { Manual, pdfUrl, StepShot, StepViewer } from "./Manual.tsx";
-import { ASSETS, HEAD_Z, JigPreview, NOMINAL_RETRACT, OBJECTIVE_LENGTH, SLEEVE_DEPTH, SLIDE_Z, SuporteScene, type Layer } from "./Scene.tsx";
+import { ASSETS, HEAD_Z, INNER_TUBE_REACH, JigPreview, NOMINAL_RETRACT, OBJECTIVE_LENGTH, SLEEVE_DEPTH, SLIDE_Z, SuporteScene, type Layer } from "./Scene.tsx";
 
 type Tab = "3d" | "manual" | "eletronica" | "calibracao";
 const KIND_LABEL: Record<PartKind, string> = { impressa: "Peças impressas", referencia: "Pregoscópio (STEP V1)", comprada: "Peças compradas", calibracao: "Gabaritos" };
@@ -178,12 +178,12 @@ function ThreeD({ version, selected, setSelected, startView }: { version: Suport
           <div className="row sliders">
             <label>Explodir <b>{explode} mm</b><input type="range" min={0} max={70} value={explode} onChange={(e) => setExplode(Number(e.target.value))} /></label>
             <label>Corte <b>{cut <= -50 ? "desligado" : `y = ${cut} mm`}</b><input type="range" min={-50} max={70} value={cut} onChange={(e) => setCut(Number(e.target.value))} /></label>
-            <label>Tubo interno recolhido <b>{retract.toFixed(1)} mm</b><input type="range" min={0} max={40} step={0.5} value={retract} onChange={(e) => setRetract(Number(e.target.value))} /></label>
+            <label>Tubo interno estendido (escala) <b>{(INNER_TUBE_REACH - retract).toFixed(1)} mm</b><input type="range" min={INNER_TUBE_REACH - 40} max={INNER_TUBE_REACH} step={0.5} value={retract} onChange={(e) => setRetract(Number(e.target.value))} /></label>
           </div>
           <p className={`small ${gap < 0 ? "error" : "muted"}`}>
             {gap < 0
-              ? `A objetiva bate na caixa: a lente ficaria ${Math.abs(gap).toFixed(1)} mm abaixo da lâmina. Recolha mais o tubo interno.`
-              : `Lente a ${gap.toFixed(1)} mm acima da lâmina${Math.abs(gap - 0.8) < 0.3 ? " (foco nominal, distância de trabalho de 0,8 mm)" : ""}.`}
+              ? `A objetiva bate na caixa: a lente ficaria ${Math.abs(gap).toFixed(1)} mm abaixo da lâmina. Puxe menos o tubo interno.`
+              : `Lente a ${gap.toFixed(1)} mm acima da lâmina${Math.abs(gap - 0.8) < 0.3 ? " (foco nominal de projeto; a distância de trabalho real da objetiva fica entre 0,4 e 0,8 mm)" : ""}.`}
           </p>
           <div className="row">
             {(Object.keys(LAYER_LABEL) as Layer[]).map((l) => (
@@ -198,11 +198,12 @@ function ThreeD({ version, selected, setSelected, startView }: { version: Suport
             <tbody>
               <tr><td>Tubo externo ⌀</td><td>30 mm</td><td>33,5 mm</td></tr>
               <tr><td>Tubo interno ⌀</td><td>23,4 mm</td><td>22,5 mm</td></tr>
+              <tr><td>Objetiva (comprimento)</td><td>—</td><td>38 mm (35 abaixo do tubo)</td></tr>
               <tr><td>Luva inferior ⌀</td><td>36 mm</td><td>não medido</td></tr>
               <tr><td>Comprimento total estendido</td><td>156,5 mm</td><td>155 mm</td></tr>
             </tbody>
           </table>
-          <p className="small muted">O anel da abraçadeira (M2) segue o valor do paquímetro. A cabeça e as garras vêm do STEP. O gabarito G1 resolve a dúvida do tubo externo.</p>
+          <p className="small muted">O 3D e o anel da abraçadeira (M2) seguem o valor do paquímetro: os tubos são desenhados com as medidas das suas fotos. A cabeça e as garras vêm do STEP. O gabarito G1 resolve a dúvida do tubo externo.</p>
         </div>
       </div>
       <aside className="suporte-side">

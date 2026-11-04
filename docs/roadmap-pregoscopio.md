@@ -98,6 +98,7 @@ Atualizado em 02/11/2026. Legenda: ✅ feito · 🟡 feito, mas só digital ou p
 | 5.15 | Imagens dos passos com setas de encaixe, quantidade nos parafusos e rótulos maiores; o endereço guarda o passo (`#suporte/manual/v2/9`) | ✅ | |
 | 5.16 | 3D com fiação real: fios roteados ao redor das peças (sem atravessar nenhuma), ligados aos pads da placa do Gerber (posições vindas do circuit.json) e testados contra a lista de ligações do esquemático; placa com trilhas e pads, TO-220, resistor com 5 faixas, diodo, capacitor, interruptor, conector, reostato com botão, pilha com clipe e fonte com plugue | ✅ | os modelos seguem as medidas de catálogo, não os CAD dos fabricantes |
 | 5.17 | Manual em quatro edições: português com chinês, só português, só chinês, só inglês (`MANUAL-v?.pdf`, `-pt`, `-zh`, `-en`), com vista explodida; verificador de colisões roda nas oito edições | ✅ | chinês e inglês escritos sem tradutor técnico |
+| 5.18 | Pregoscópio no 3D conforme as fotos: tubo externo ⌀ 33,5 × 115 mm, tubo interno ⌀ 22,5 mm que desliza 0 a 40 mm com escala em mm impressa, objetiva 40x/0,65 (38 mm de comprimento, 35 abaixo do tubo) rosqueada direto no tubo interno; P7 e P8 do STEP removidos (não aparecem nas fotos) | ✅ | cabeça, garras e manoplas continuam vindo do STEP |
 | 5.2 | API acessível pelo site | 🟡 | só funciona com o PC ligado, Docker e `ngrok http 7860` rodando |
 | 5.3 | API permanente e gratuita | ❓ | Hugging Face exige PRO; Google Cloud Run pede cartão |
 | 5.4 | Código no GitHub | 🟡 | `main` publicada; falta commitar o pacote atualizado |

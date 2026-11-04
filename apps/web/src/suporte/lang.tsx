@@ -23,6 +23,7 @@ export function splitText(s: string): { pt: string; zh: string } {
 
 /** Portuguese phrase, Chinese, English. Longest phrases are applied first, so a whole sentence wins over its words. */
 const DICT: [string, string, string][] = [
+  ["Objetiva P9 (total / abaixo do tubo)", "物镜 P9（总长 / 管下露出）", "Objective P9 (total / below the tube)"],
   ["Arquivo suporte-base-coluna-impressao.stl: deitado nas costas; suportes só dentro da caixa.", "使用 suporte-base-coluna-impressao.stl：背面朝下打印；仅在盒内加支撑。", "File suporte-base-coluna-impressao.stl: lying on its back; supports only inside the box."],
   ["Impressão do M1", "M1 打印", "Printing M1"],
   ["v1 pilha 9 V", "v1 9 V 电池", "v1 9 V battery"],
@@ -46,7 +47,7 @@ const DICT: [string, string, string][] = [
   ["PLA, camada 0,2 mm, 3 perímetros, enchimento 20 a 30 %. Orientação de impressão: ver capa.", "PLA，层高 0.2 mm，3 层外壁，填充 20~30%。打印方向见封面。", "PLA, 0.2 mm layer, 3 perimeters, 20 to 30 % infill. Print orientation: see the cover."],
   ["Cotas com (*) dependem da calibração física e podem mudar na revisão B.", "带 (*) 的尺寸取决于实物校准，B 版可能调整。", "Dimensions marked (*) depend on the physical calibration and may change in revision B."],
   ["Planta-mãe: interior da caixa (corte horizontal z = 20)", "总装平面图：盒内布置（水平剖切 z = 20）", "Master plan: inside the box (horizontal section z = 20)"],
-  ["Planta-mãe: corte longitudinal A–A (x = 0) e pilha óptica", "总装剖视图 A–A（x = 0）与光学叠层", "Master plan: longitudinal section A–A (x = 0) and optical stack"],
+  ["Planta-mãe: corte longitudinal A–A (x = 0) e pilha óptica", "总装剖视图 A–A（x = 0）与光学叠层", "Master plan: section A–A (x = 0), optical stack"],
   ["M1 Suporte: vistas externas", "M1 支架：外形视图", "M1 Support: external views"],
   ["M1 Suporte: cortes A–A e B–B", "M1 支架：剖视 A–A 与 B–B", "M1 Support: sections A–A and B–B"],
   ["M1: detalhe do anel e recortes", "M1 支架：抱箍环详图与开孔表", "M1: ring detail and cut-outs"],

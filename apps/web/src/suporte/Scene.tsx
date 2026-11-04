@@ -6,7 +6,7 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { toCreasedNormals } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { DEFAULT_HOLDER_PARAMS, holderLayout, padAt, PCB, wires as routeWires, type SuporteVersion } from "@simiot/adapter-cad";
 import { MatContext, type Mat } from "./mat.ts";
-import { Adapter, Battery, Ceramic, Diode, Led5, Pcb, Plug, Pot, PowerJack, Resistor, RockerSwitch, Screw, Sleeve, Solder, To220, Tube, type V3 } from "./parts3d.tsx";
+import { Adapter, Battery, Ceramic, Diode, InnerTube, Led5, Objective, OuterTube, Pcb, Plug, Pot, PowerJack, Resistor, RockerSwitch, Screw, Sleeve, Solder, To220, Tube, type V3 } from "./parts3d.tsx";
 
 type Vec3 = [number, number, number];
 
@@ -18,6 +18,8 @@ export const SLIDE_Z = 40.4;
 /** STEP V1: the lower end of the sleeve is 156.5 mm under the head; the objective hangs 35 mm below it. */
 export const SLEEVE_DEPTH = 156.5;
 export const OBJECTIVE_LENGTH = 35;
+/** The inner tube is 41.5 mm out of the outer one at retract = 0 (the STEP value); the real tube pulls out 40 mm, so retract starts at 1.5. */
+export const INNER_TUBE_REACH = 41.5;
 /** Where the inner tube sits when the lens is 0.8 mm above the slide. */
 export const NOMINAL_RETRACT = SLIDE_Z + 0.8 + OBJECTIVE_LENGTH - (HEAD_Z - SLEEVE_DEPTH);
 
@@ -166,7 +168,7 @@ function PartGroup(props: PartProps & { position?: Vec3; rotation?: Vec3; label?
 /** Where each label hangs, in the part's own frame, so labels do not pile up in the middle of the model. */
 const LABEL_AT: Record<string, Vec3> = {
   M1: [0, 60, 115], M2: [0, -21, 199], M3: [-38, -42, -1], M4: [13, 0, 38],
-  P1: [-30, 0, 8], P2: [0, -15, -70], P3: [0, -11.7, -140], P4: [-60, 0, 34], P5: [60, 0, 34], P6: [79, 17, 10], P10: [-79, 17, 10], P7: [13.7, 0, -145], P8: [18, 0, -148],
+  P1: [-30, 0, 8], P4: [-60, 0, 34], P5: [60, 0, 34], P6: [79, 17, 10], P10: [-79, 17, 10],
 };
 
 function register(props: PartProps, object: Object3D | null, local = new Vector3()) {
@@ -302,7 +304,6 @@ function Assembly({ options, registry }: { options: SceneOptions; registry: Regi
   const pre = (n: number) => `${ASSETS}pregoscopio/pregoscopio-${n}.stl`;
   const lidZ = -(options.lidDrop ?? e);
   const headZ = HEAD_Z + e * 1.5;
-  const collarBottom = -SLEEVE_DEPTH + retract;
 
   return (
     <>
@@ -398,17 +399,22 @@ function Assembly({ options, registry }: { options: SceneOptions; registry: Regi
       {/* the pregoscopio, from the STEP; the moving group is the inner tube with its ring and sleeve */}
       <group position={[0, 0, headZ]}>
         <StlPart {...base} id="P1" layer="pregoscopio" url={pre(1)} color={COLORS.head} />
-        <StlPart {...base} id="P2" layer="pregoscopio" url={pre(2)} color={COLORS.tube} />
+        <PartGroup {...base} id="P2" layer="pregoscopio" label={[0, -17, -70]}>
+          <OuterTube diameter={layout.params.tubeDiameter} length={layout.params.tubeLength} />
+        </PartGroup>
         <StlPart {...base} id="P4" layer="pregoscopio" url={pre(4)} color={COLORS.hook} />
         <StlPart {...base} id="P5" layer="pregoscopio" url={pre(5)} color={COLORS.hook} />
         <StlPart {...base} id="P6" layer="pregoscopio" url={pre(6)} color={COLORS.knob} />
         <StlPart {...base} id="P10" layer="pregoscopio" url={pre(9)} color={COLORS.knob} />
+        {/* the inner tube slides in the outer one; the objective screws on its lower end */}
         <group position={[0, 0, retract]}>
-          <StlPart {...base} id="P3" layer="pregoscopio" url={pre(3)} color={COLORS.inner} />
-          <StlPart {...base} id="P7" layer="pregoscopio" url={pre(7)} color={COLORS.ring} />
-          <StlPart {...base} id="P8" layer="pregoscopio" url={pre(8)} color={COLORS.sleeve} />
+          <PartGroup {...base} id="P3" layer="pregoscopio" position={[0, 0, -SLEEVE_DEPTH]} label={[0, -12, 6]}>
+            <InnerTube diameter={layout.params.sleeveDiameter} length={80} reach={40} />
+          </PartGroup>
+          <PartGroup {...base} id="P9" layer="pregoscopio" position={[0, 0, -SLEEVE_DEPTH - OBJECTIVE_LENGTH]} label={[0, -10, 18]}>
+            <Objective />
+          </PartGroup>
         </group>
-        <Primitive {...base} id="P9" layer="pregoscopio" shape={{ kind: "cyl", r: 10, len: OBJECTIVE_LENGTH, axis: "z" }} color={COLORS.metal} position={[0, 0, collarBottom - OBJECTIVE_LENGTH / 2]} />
       </group>
     </>
   );

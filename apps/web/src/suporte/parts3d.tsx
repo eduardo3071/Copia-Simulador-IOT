@@ -385,6 +385,59 @@ export function Sleeve({ points }: { points: V3[] }) {
   return <Tube points={points} r={1.2} color="#ffc400" extra={{ opacity: 0.55 }} round={2} />;
 }
 
+/**
+ * The 40x/0.65 achromat (160/0.17, RMS thread), seen from the tip: the 35 mm that stick out below the inner tube.
+ * Origin at the tip, +z toward the tube. The 3 mm of thread that go inside the tube are not drawn.
+ */
+export function Objective() {
+  const metal = { metal: 0.65, rough: 0.28 } as const;
+  return (
+    <group>
+      <Cyl r={5.4} len={2} pos={[0, 0, 1]} color="#cfd5dc" extra={metal} />
+      <Cyl r={5.4} len={0.2} pos={[0, 0, 0.02]} color="#0b1015" seg={24} />
+      <Cyl r={7.1} len={3} pos={[0, 0, 3.5]} color="#c3c9d1" extra={metal} />
+      <Cyl r={9.6} len={1.7} pos={[0, 0, 5.85]} color="#d3d8df" extra={metal} />
+      <Cyl r={9.1} len={8.4} pos={[0, 0, 10.9]} color="#15181d" extra={{ rough: 0.8 }} />
+      {Array.from({ length: 24 }, (_, i) => (i / 24) * Math.PI * 2).map((a, i) => (
+        <Box key={i} size={[0.9, 0.5, 8.2]} pos={[Math.cos(a) * 9.25, Math.sin(a) * 9.25, 10.9]} rot={[0, 0, a + HALF]} color="#0c0e12" />
+      ))}
+      <Cyl r={10} len={4.4} pos={[0, 0, 17.3]} color="#d9dee5" extra={metal} />
+      <Cyl r={10.25} len={1.2} pos={[0, 0, 20.2]} color="#2a62d6" />
+      <Cyl r={10.15} len={12.8} pos={[0, 0, 27.2]} color="#cdd3da" extra={metal} />
+      <Box size={[7.5, 0.12, 3.4]} pos={[0, -10.2, 27.4]} rot={[0, 0, 0]} color="#10131a" />
+      <Box size={[6, 0.12, 2.4]} pos={[0, -10.2, 23.6]} rot={[0, 0, 0]} color="#10131a" />
+      <Cyl r={9.6} len={1.4} pos={[0, 0, 34.3]} color="#aeb5be" extra={metal} />
+    </group>
+  );
+}
+
+/** Outer tube of the pregoscope: black, 33.5 mm, with a rounded lip at the lower end. Origin at the top, +z up. */
+export function OuterTube({ diameter, length }: { diameter: number; length: number }) {
+  return (
+    <group>
+      <Cyl r={diameter / 2} len={length} pos={[0, 0, -length / 2]} color="#16181d" extra={{ rough: 0.55 }} />
+      <Cyl r={diameter / 2 - 1} len={0.4} pos={[0, 0, -length - 0.1]} color="#0a0b0e" seg={36} />
+    </group>
+  );
+}
+
+/**
+ * Inner tube: 22.5 mm, with the millimetre scale printed on the front. Origin at its lower end (where the objective screws in),
+ * +z up. The tick k sits k mm above that end, so the reading is the one that lines up with the edge of the outer tube.
+ */
+export function InnerTube({ diameter, length, reach }: { diameter: number; length: number; reach: number }) {
+  const r = diameter / 2;
+  return (
+    <group>
+      <Cyl r={r} len={length} pos={[0, 0, length / 2]} color="#1c1f26" extra={{ rough: 0.5 }} />
+      {Array.from({ length: reach + 1 }, (_, k) => (
+        <Box key={k} size={[k % 10 === 0 ? 9 : k % 5 === 0 ? 6 : 3.4, 0.25, 0.32]} pos={[0, -r - 0.02, k]} color={k % 5 === 0 ? "#f1efe6" : "#b9bcc2"} />
+      ))}
+      <Box size={[0.3, 0.25, reach]} pos={[0, -r - 0.02, reach / 2]} color="#b9bcc2" />
+    </group>
+  );
+}
+
 export function Solder({ pos }: { pos: V3 }) {
   return <Ball r={1.05} pos={pos} color="#cfd5dc" scale={[1, 1, 0.55]} extra={{ metal: 0.7, rough: 0.3 }} />;
 }

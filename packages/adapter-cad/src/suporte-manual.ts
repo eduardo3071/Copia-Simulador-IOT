@@ -37,7 +37,7 @@ const bi = (pt: string, zh: string, en: string): Bilingual => ({ pt, zh, en });
 /** Names in Chinese, so the manufacturer's engineers can match the drawing to the parts. */
 export const ZH_NAMES: Record<string, string> = {
   M1: "支架：灯箱、立柱和横臂", M2: "镜筒抱箍", M3: "底盖", M4: "扩散片",
-  P1: "头部：平板和螺纹杆", P2: "外镜筒", P3: "内镜筒（伸缩）", P4: "左夹爪", P5: "右夹爪", P6: "右旋钮", P10: "左旋钮（P6 的镜像）", P7: "物镜环", P8: "下套筒", P9: "物镜 40x / 0.65",
+  P1: "头部：平板和螺纹杆", P2: "外镜筒", P3: "内镜筒（伸缩）", P4: "左夹爪", P5: "右夹爪", P6: "右旋钮", P10: "左旋钮（P6 的镜像）", P9: "物镜 40x / 0.65",
   L1: "显微镜载玻片", D1: "白光 LED 5 mm（漫射型）", R1: "电阻 R1（设定电流）", C1: "陶瓷电容 100 nF", D2: "二极管 1N5819（防反接）", SW1: "摇臂开关 KCD1-101",
   BT1: "9 V 电池（6F22）及电池扣", PS1: "12 V 500 mA 电源适配器", J1: "面板 DC 插座 DC-022B", U1: "LM317T 可调稳压器", RV1: "220 Ω 线性电位器（WH148 B221）", PCB1: "驱动板",
   H1: "M3 × 10 自攻螺钉", H2: "M3 × 16 自攻螺钉", H3: "M3 × 8 自攻螺钉",
@@ -48,7 +48,7 @@ export const ZH_NAMES: Record<string, string> = {
 /** Names in English. */
 export const EN_NAMES: Record<string, string> = {
   M1: "Support: light box, column and arm", M2: "Tube clamp", M3: "Bottom lid", M4: "Diffuser",
-  P1: "Head: plate and threaded rod", P2: "Outer tube", P3: "Inner tube (telescopic)", P4: "Left jaw", P5: "Right jaw", P6: "Right knob", P10: "Left knob (mirror of P6)", P7: "Objective ring", P8: "Lower sleeve", P9: "Objective 40x / 0.65",
+  P1: "Head: plate and threaded rod", P2: "Outer tube", P3: "Inner tube (telescopic)", P4: "Left jaw", P5: "Right jaw", P6: "Right knob", P10: "Left knob (mirror of P6)", P9: "Objective 40x / 0.65",
   L1: "Microscope slide", D1: "White 5 mm LED (diffused)", R1: "Resistor R1 (sets the current)", C1: "Ceramic capacitor 100 nF", D2: "Diode 1N5819 (reverse polarity)", SW1: "Rocker switch KCD1-101",
   BT1: "9 V battery (6F22) with snap clip", PS1: "12 V 500 mA power adapter", J1: "Panel DC jack DC-022B", U1: "LM317T adjustable regulator", RV1: "220 Ω linear rheostat (WH148 B221)", PCB1: "Driver board",
   H1: "M3 × 10 self-tapping screw", H2: "M3 × 16 self-tapping screw", H3: "M3 × 8 self-tapping screw",
@@ -76,7 +76,9 @@ export const STANDARD_SIZE: Record<string, Bilingual> = {
   W1: bi("24 AWG: condutor ⌀ 0,51 mm; isolação ⌀ ≈ 1,4 mm", "24 AWG：导体 ⌀0.51 mm；绝缘外径约 1.4 mm", "24 AWG: conductor ⌀ 0.51 mm; insulation ⌀ ≈ 1.4 mm"),
   W2: bi("⌀ 2 a 3 mm antes de encolher; luvas de 10 mm", "收缩前 ⌀2~3 mm；每段 10 mm", "⌀ 2 to 3 mm before shrinking; 10 mm pieces"),
   W3: bi("bastão de cola ⌀ 7 mm; fita dupla face de 12 mm", "热熔胶棒 ⌀7 mm；12 mm 双面胶", "glue stick ⌀ 7 mm; 12 mm double-sided tape"),
-  P9: bi("objetiva 40x / 0,65, ⌀ 20 mm, comprimento 35 mm", "40x / 0.65 物镜，⌀20 mm，长 35 mm", "objective 40x / 0.65, ⌀ 20 mm, length 35 mm"),
+  P9: bi("objetiva 40x / 0,65 (160/0,17, rosca RMS), ⌀ 20 mm, 38 mm de comprimento (35 mm abaixo do tubo interno)", "40x / 0.65 物镜（160/0.17，RMS 螺纹），⌀20 mm，长 38 mm（内镜筒下方露出 35 mm）", "objective 40x / 0.65 (160/0.17, RMS thread), ⌀ 20 mm, 38 mm long (35 mm below the inner tube)"),
+  P3: bi("tubo ⌀ 22,5 mm, sai até 40 mm, escala impressa em mm", "镜筒 ⌀22.5 mm，最多伸出 40 mm，印有毫米刻度", "tube ⌀ 22.5 mm, pulls out up to 40 mm, printed mm scale"),
+  P2: bi("tubo ⌀ 33,5 mm × 115 mm (medido)", "镜筒 ⌀33.5 mm × 115 mm（实测）", "tube ⌀ 33.5 mm × 115 mm (measured)"),
 };
 
 export interface PlacedPart {
@@ -300,19 +302,19 @@ export function manualSteps(version: SuporteVersion): ManualStep[] {
         "取下抱箍 M2 的可拆半环，将外镜筒 P2 靠入立柱环，装回半环并拧入 2 颗 M3 × 16 螺钉 (H2)，不要用力过大。头部 P1 压在环的顶面，物镜 P9 位于光窗正上方。",
         "Take off the removable half of the clamp M2, lean the outer tube P2 into the column ring, put the half back and tighten the 2 screws M3 × 16 (H2) without forcing. The head P1 rests on top of the ring and the objective P9 sits over the window.",
       ),
-      adds: ["M2", "H2", "P1", "P2", "P3", "P4", "P5", "P6", "P10", "P7", "P8", "P9"], lidDrop: 0, view: "iso", lightOn: true,
+      adds: ["M2", "H2", "P1", "P2", "P3", "P4", "P5", "P6", "P10", "P9"], lidDrop: 0, view: "iso", lightOn: true,
     },
     {
       title: bi(v1 ? "Foco e uso" : "Ligar a fonte, foco e brilho (PS1)", v1 ? "对焦与使用" : "连接电源、对焦与亮度调节 (PS1)", v1 ? "Focus and use" : "Connect the supply, focus and brightness (PS1)"),
       text: bi(
         v1
-          ? "Ligue o interruptor SW1. Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno P3, até a lâmina ficar nítida. Foco nominal: a lente a 0,8 mm da lâmina, com o tubo interno recolhido 22,5 mm."
+          ? "Ligue o interruptor SW1. Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno P3, até a lâmina ficar nítida. Foco nominal: a lente a 0,8 mm da lâmina, com o tubo interno estendido 19 mm (leia a escala impressa no tubo, na borda do tubo externo). A ponta da objetiva tem mola, mas não force contra o vidro."
           : "Ligue a fonte de 12 V (PS1) ao conector J1 e o interruptor SW1. Gire o botão RV1 para ajustar o brilho. Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno P3, até a lâmina ficar nítida. Foco nominal: a lente a 0,8 mm da lâmina.",
         v1
-          ? "打开开关 SW1。松开抱箍并滑动外镜筒，或拉出内镜筒 P3，直到载玻片图像清晰。标称对焦：镜头距载玻片 0.8 mm，内镜筒收回 22.5 mm。"
+          ? "打开开关 SW1。松开抱箍并滑动外镜筒，或拉出内镜筒 P3，直到载玻片图像清晰。标称对焦：镜头距载玻片 0.8 mm，内镜筒伸出 19 mm（读取镜筒上印的刻度，位于外镜筒端口处）。物镜前端带弹簧，但不要顶压玻片。"
           : "将 12 V 电源 (PS1) 接到插座 J1 并打开开关 SW1。旋转 RV1 旋钮调节亮度。松开抱箍并滑动外镜筒，或拉出内镜筒 P3，直到载玻片图像清晰。标称对焦：镜头距载玻片 0.8 mm。",
         v1
-          ? "Switch SW1 on. Loosen the clamp and slide the outer tube, or pull the inner tube P3, until the slide is sharp. Nominal focus: the lens 0.8 mm from the slide, with the inner tube retracted 22.5 mm."
+          ? "Switch SW1 on. Loosen the clamp and slide the outer tube, or pull the inner tube P3, until the slide is sharp. Nominal focus: the lens 0.8 mm from the slide, with the inner tube pulled out 19 mm (read the scale printed on the tube, at the edge of the outer tube). The tip of the objective is spring-loaded, but do not push it against the glass."
           : "Plug the 12 V supply (PS1) into the jack J1 and switch SW1 on. Turn the knob RV1 to set the brightness. Loosen the clamp and slide the outer tube, or pull the inner tube P3, until the slide is sharp. Nominal focus: the lens 0.8 mm from the slide.",
       ),
       adds: v1 ? [] : ["PS1"], also: ["L1"], lidDrop: 0, view: "iso", lightOn: true,

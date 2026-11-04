@@ -40,8 +40,8 @@ const PRINT: { part: string; text: Bilingual }[] = [
 ];
 
 const STATUS: Bilingual[] = [
-  T("Tubo externo: o STEP diz 30 mm e o paquímetro 33,5 mm. O furo da abraçadeira usa 33,5 mm; confirmar com o gabarito G1.", "外镜筒：STEP 为 30 mm，卡尺测量为 33.5 mm。抱箍孔按 33.5 mm 设计，需用校准件 G1 确认。", "Outer tube: the STEP says 30 mm and the caliper 33.5 mm. The clamp bore uses 33.5 mm; confirm with jig G1."),
-  T("Comprimento que a objetiva sai do tubo (35 mm) ainda não foi conferido na peça.", "物镜伸出镜筒的长度（35 mm）尚未在实物上核对。", "The length by which the objective sticks out of the tube (35 mm) has not been checked on the real part."),
+  T("Tubo externo: o STEP dizia 30 mm e o paquímetro 33,5 mm. O 3D e o furo da abraçadeira usam 33,5 mm; confirmar com o gabarito G1.", "外镜筒：STEP 为 30 mm，卡尺测量为 33.5 mm。3D 和抱箍孔按 33.5 mm 设计，需用校准件 G1 确认。", "Outer tube: the STEP said 30 mm and the caliper 33.5 mm. The 3D and the clamp bore use 33.5 mm; confirm with jig G1."),
+  T("Objetiva: 38 mm de comprimento total (dado do fabricante) e 35 mm abaixo do tubo interno (medido); a distância de trabalho real (0,4 a 0,8 mm) depende do modelo e deve ser conferida no foco.", "物镜：总长 38 mm（厂家数据），内镜筒下方露出 35 mm（实测）；实际工作距离（0.4~0.8 mm）取决于型号，需在对焦时核实。", "Objective: 38 mm total length (manufacturer data) and 35 mm below the inner tube (measured); the real working distance (0.4 to 0.8 mm) depends on the model and must be checked while focusing."),
   T("Recortes do interruptor, conector e botão, flange do LED, lâmina e parafusos: confirmar com o gabarito G2; pilha de 9 V com o G3.", "开关、插座和旋钮开孔、LED 法兰、载玻片和螺钉：用校准件 G2 确认；9 V 电池用 G3。", "Cut-outs of the switch, jack and knob, LED flange, slide and screws: confirm with jig G2; the 9 V battery with G3."),
   T("As trilhas e a máscara das placas passaram numa verificação automática, mas não foram vistas num programa de PCB.", "电路板走线和阻焊层已通过自动检查，但尚未在 PCB 软件中人工查看。", "The traces and the solder mask of the boards passed an automatic check but have not been looked at in PCB software."),
   T("O texto em chinês e em inglês foi escrito sem tradutor técnico e precisa de revisão por um falante nativo.", "中文和英文内容未经专业技术翻译，需由母语人员审校。", "The Chinese and English text was written without a technical translator and needs review by a native speaker."),
@@ -58,7 +58,7 @@ const SAFETY: Bilingual[] = [
 const QA: Bilingual[] = [
   T("A lâmina L1 desliza no canal sem esforço e sem folga lateral visível.", "载玻片 L1 在槽道内滑动顺畅，侧向无明显间隙。", "The slide L1 moves in the channel without effort and without visible side play."),
   T("O tubo do pregoscópio entra no anel e fica preso pela M2 sem rachar o PLA.", "显微镜镜筒装入环中，由 M2 夹紧，PLA 无开裂。", "The pregoscope tube fits the ring and is held by M2 without cracking the PLA."),
-  T("Com o tubo interno recolhido 22,5 mm, a lente fica a 0,8 mm da lâmina e a imagem foca.", "内镜筒收回 22.5 mm 时，镜头距载玻片 0.8 mm 且图像可对焦。", "With the inner tube retracted 22.5 mm the lens is 0.8 mm from the slide and the image focuses."),
+  T("Com o tubo interno estendido 19 mm na escala, a lente fica a cerca de 0,8 mm da lâmina e a imagem foca.", "内镜筒按刻度伸出 19 mm 时，镜头距载玻片约 0.8 mm 且图像可对焦。", "With the inner tube pulled out 19 mm on its scale the lens is about 0.8 mm from the slide and the image focuses."),
   T("O LED acende e a luz é uniforme sobre a janela, sem ponto quente.", "LED 点亮，光窗光线均匀，无亮斑。", "The LED lights and the light is even over the window, with no hot spot."),
   T("Corrente do LED medida dentro da faixa do teste elétrico.", "LED 电流在电气测试范围内。", "LED current measured inside the range of the electrical test."),
   T("Tampa fechada com 4 parafusos, sem fio preso e sem folga maior que 0,5 mm.", "底盖用 4 颗螺钉关紧，无夹线，间隙不大于 0.5 mm。", "Lid closed with 4 screws, no trapped wire and no gap larger than 0.5 mm."),
