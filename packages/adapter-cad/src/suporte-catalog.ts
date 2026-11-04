@@ -79,7 +79,7 @@ export const SUPORTE_PARTS: SuportePart[] = [
     spec: "Vf ≈ 3,1 V a 20 mA, ângulo de 100° ou mais, corpo leitoso",
     criterion: "Ângulo largo e corpo difuso dão luz mais uniforme sob a lâmina. LED de feixe estreito (15°) faz um ponto quente no campo." },
   { id: "R1", name: "Resistor R1 (ajuste da corrente)", kind: "comprada", versions: both, qty: 1, evidence: "calculado",
-    spec: "68 Ω ¼ W 1 %, filme metálico (azul, cinza, preto, dourado); 18,4 mA nas duas versões",
+    spec: "68 Ω ¼ W 1 %, filme metálico (azul, cinza, preto, dourado, marrom); 18,4 mA nas duas versões",
     criterion: "1,25 V / 68 Ω = 18,4 mA, abaixo dos 20 mA do LED. Dissipa 23 mW, bem abaixo de ¼ W, e o 1 % mantém a corrente estável." },
   { id: "C1", name: "Capacitor cerâmico 100 nF", kind: "comprada", versions: both, qty: 1, evidence: "padrao",
     spec: "100 nF (104) 50 V, passo de 5 mm, entre a entrada do U1 e o GND",

@@ -5,6 +5,7 @@ import {
 } from "@simiot/adapter-cad";
 import { JIGS } from "./jigs.ts";
 import { DrawingCheck } from "./Desenhos.tsx";
+import { LANG_LABEL, LangContext, type DocLang } from "./lang.tsx";
 import { Manual, pdfUrl, StepShot, StepViewer } from "./Manual.tsx";
 import { ASSETS, HEAD_Z, JigPreview, NOMINAL_RETRACT, OBJECTIVE_LENGTH, SLEEVE_DEPTH, SLIDE_Z, SuporteScene, type Layer } from "./Scene.tsx";
 
@@ -25,9 +26,17 @@ class Guard extends Component<{ children: ReactNode }, { failed: boolean }> {
 }
 
 /** #suporte, #suporte/eletronica, #suporte/calibracao/v2 ... so each view has its own link. */
-function fromHash(): { tab: Tab; version: SuporteVersion; view: string; shot: boolean; check: boolean } {
-  const [, tab, version, view, mode] = location.hash.split("/");
-  return { tab: tab === "eletronica" || tab === "calibracao" || tab === "manual" ? tab : "3d", version: version === "v2" ? "v2" : "v1", view: view ?? "iso", shot: mode === "shot", check: mode === "check" };
+function fromHash(): { tab: Tab; version: SuporteVersion; view: string; shot: boolean; check: boolean; doc: boolean; lang: DocLang } {
+  const [, tab, version, view, mode, lang] = location.hash.split("/");
+  return {
+    tab: tab === "eletronica" || tab === "calibracao" || tab === "manual" ? tab : "3d",
+    version: version === "v2" ? "v2" : "v1",
+    view: view ?? "iso",
+    shot: mode === "shot",
+    check: mode === "check",
+    doc: mode === "doc",
+    lang: lang === "pt" || lang === "zh" || lang === "en" ? lang : "bi",
+  };
 }
 
 export function SuportePage() {
@@ -35,13 +44,14 @@ export function SuportePage() {
   const [version, setVersion] = useState<SuporteVersion>(start.version);
   const [tab, setTab] = useState<Tab>(start.tab);
   const [step, setStep] = useState(Number(start.view) || 1);
+  const [docLang, setDocLang] = useState<DocLang>(start.lang);
   const [selected, setSelected] = useState<string | null>(null);
   useEffect(() => {
-    if (start.shot) return;
+    if (start.shot || start.doc || start.check) return;
     const names: Record<Tab, string> = { "3d": "3D e peças", manual: "Manual de construção", eletronica: "Eletrônica", calibracao: "Calibração" };
     document.title = `${names[tab]} (${version}) · Suporte do Pregoscópio`;
     history.replaceState(null, "", `${location.pathname}${location.search}#suporte/${tab}/${version}${tab === "manual" ? `/${step}` : ""}`);
-  }, [tab, version, step, start.shot]);
+  }, [tab, version, step, start.shot, start.doc, start.check]);
   // a link to another view of this page (#suporte/calibracao/v2) while it is already open
   useEffect(() => {
     const onHash = () => {
@@ -53,8 +63,9 @@ export function SuportePage() {
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
-  if (start.check) return <DrawingCheck version={start.version} />;
-  if (start.shot) return <StepShot version={start.version} n={Number(start.view) || 1} />;
+  if (start.check) return <LangContext.Provider value={start.lang}><DrawingCheck version={start.version} /></LangContext.Provider>;
+  if (start.doc) return <div className="manual-page"><Manual version={start.version} lang={start.lang} /></div>;
+  if (start.shot) return <StepShot version={start.version} n={Number(start.view) || 0} />;
   return (
     <div className="suporte">
       <header className="suporte-top">
@@ -77,15 +88,24 @@ export function SuportePage() {
       {tab === "manual" && (
         <div className="manual-page">
           <div className="no-print manual-intro">
-            <h2>Manual de construção · 制造与装配手册</h2>
-            <p className="small">Planta-mãe com todas as peças juntas, posição de cada uma, lista de materiais com medidas padrão e montagem passo a passo, em português e chinês. Escolha a versão acima. Para gerar o PDF, use o botão e escolha “Salvar como PDF”.</p>
+            <h2>Manual de construção · 制造与装配手册 · Construction manual</h2>
+            <p className="small">Planta-mãe com todas as peças juntas, posição de cada uma, lista de materiais com medidas padrão e montagem passo a passo. Escolha a versão acima e o idioma abaixo; cada edição tem o seu PDF.</p>
+            <div className="seg" role="radiogroup" aria-label="Idioma do manual">
+              {(["bi", "pt", "zh", "en"] as const).map((l) => (
+                <button key={l} role="radio" aria-checked={docLang === l} className={docLang === l ? "active" : ""} onClick={() => setDocLang(l)}>{LANG_LABEL[l]}</button>
+              ))}
+            </div>
             <div className="row">
-              <a className="button primary" href={pdfUrl(version)} download>Baixar o PDF da {version === "v1" ? "versão 1 (pilha)" : "versão 2 (fonte e dimmer)"}</a>
+              {(["bi", "pt", "zh", "en"] as const).map((l) => (
+                <a key={l} className={`button${docLang === l ? " primary" : ""}`} href={pdfUrl(version, l)} download>PDF · {LANG_LABEL[l]}</a>
+              ))}
               <button onClick={() => window.print()}>Imprimir esta página</button>
             </div>
-            <StepViewer key={version} version={version} start={step} onStep={setStep} />
+            <LangContext.Provider value={docLang}>
+              <StepViewer key={version} version={version} start={step} onStep={setStep} />
+            </LangContext.Provider>
           </div>
-          <Manual version={version} />
+          <Manual version={version} lang={docLang} />
         </div>
       )}
       {tab === "eletronica" && <Eletronica version={version} selected={selected} setSelected={setSelected} />}

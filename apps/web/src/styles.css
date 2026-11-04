@@ -425,3 +425,8 @@ a.button.primary { background: #2b6fe0; border-color: #2b6fe0; color: #fff; }
   .manual-doc .cover .status-box { margin: 6px 0; padding: 6px 12px; }
 }
 .suporte-stage.paper .badge-id { font-size: 14px; padding: 2px 9px; border-radius: 12px; }
+.seg button.active { background: #2b6fe0; color: #fff; }
+.manual-doc .bi .zh1 { display: block; color: inherit; }
+@media print {
+  @page { @bottom-center { content: "PREGOSCÓPIO 显微镜 · Pregoscope · Rev. A · " counter(page) " / " counter(pages); font: 8px sans-serif; color: #555; } }
+}

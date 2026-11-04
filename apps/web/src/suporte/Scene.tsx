@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { BufferGeometry, Color, DoubleSide, Group, Object3D, Plane, Quaternion, Vector3 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { toCreasedNormals } from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import type { SuporteVersion } from "@simiot/adapter-cad";
+import { DEFAULT_HOLDER_PARAMS, holderLayout, padAt, PCB, wires as routeWires, type SuporteVersion } from "@simiot/adapter-cad";
+import { MatContext, type Mat } from "./mat.ts";
+import { Adapter, Battery, Ceramic, Diode, Led5, Pcb, Plug, Pot, PowerJack, Resistor, RockerSwitch, Screw, Sleeve, Solder, To220, Tube, type V3 } from "./parts3d.tsx";
 
 type Vec3 = [number, number, number];
 
@@ -73,6 +75,41 @@ function shown(options: SceneOptions, id: string, layer: Layer, needs?: string) 
   return true;
 }
 
+/** 68 ohm 1 %: blue, grey, black, gold, brown. */
+const R1_BANDS = ["#2a4fd6", "#8a8f98", "#111111", "#d4af37", "#7a4a21"];
+
+/**
+ * The end of a panel wire that is soldered to a part of the box stays with the box when the lid is pulled away: the wire
+ * sags between the two, the way a service loop does.
+ */
+function dropped(path: Vec3[], drop: number): V3[] {
+  if (drop <= 0) return path as V3[];
+  const n = path.length;
+  return path.map((p, i) => {
+    const w = i < 2 ? 1 : Math.max(0, 1 - (i - 1) / (n - 2)) ** 1.6;
+    return [p[0], p[1], p[2] + drop * w] as V3;
+  });
+}
+
+/** First `length` mm of a polyline. */
+function headOf(path: Vec3[], length: number): V3[] {
+  const out: V3[] = [path[0]!];
+  let left = length;
+  for (let i = 0; i < path.length - 1 && left > 0; i++) {
+    const a = new Vector3(...path[i]!);
+    const b = new Vector3(...path[i + 1]!);
+    const d = a.distanceTo(b);
+    if (d >= left) {
+      const p = a.lerp(b, left / d);
+      out.push([p.x, p.y, p.z]);
+      return out;
+    }
+    out.push(path[i + 1]!);
+    left -= d;
+  }
+  return out;
+}
+
 const COLORS = {
   body: "#aab5c1", lid: "#7d8999", clamp: "#e8872b", diffuser: "#f3efe4",
   head: "#4a5463", tube: "#566073", inner: "#8b95a3", hook: "#3d4654", knob: "#2f3744", ring: "#c5ccd5", sleeve: "#69748a",
@@ -87,14 +124,14 @@ interface PartProps {
   plane: Plane;
 }
 
-function useMaterialProps(props: PartProps, color: string, extra: { opacity?: number; emissive?: string } = {}) {
+function materialProps(props: PartProps, color: string, extra: { opacity?: number; emissive?: string; metal?: number; rough?: number } = {}) {
   const { options, id, plane } = props;
   const selected = options.selected === id || (options.highlight?.has(id) ?? false);
   const clipping = options.cut > -50 ? [plane] : [];
   return {
     color,
-    roughness: 0.58,
-    metalness: 0.05,
+    roughness: extra.rough ?? 0.58,
+    metalness: extra.metal ?? 0.05,
     side: DoubleSide,
     clippingPlanes: clipping,
     transparent: (extra.opacity ?? 1) < 1,
@@ -103,6 +140,27 @@ function useMaterialProps(props: PartProps, color: string, extra: { opacity?: nu
     emissive: new Color(selected ? "#ff8a00" : extra.emissive ?? "#000000"),
     emissiveIntensity: selected ? 0.55 : extra.emissive ? 0.9 : 0,
   };
+}
+
+function useMaterialProps(props: PartProps, color: string, extra: { opacity?: number; emissive?: string } = {}) {
+  return materialProps(props, color, extra);
+}
+
+/** A part made of several meshes (the models of parts3d): hidden until its assembly step, glows when highlighted, reports its label point. */
+function PartGroup(props: PartProps & { position?: Vec3; rotation?: Vec3; label?: Vec3; needs?: string; children: ReactNode }) {
+  const ref = useRef<Group>(null);
+  const { options, id, plane } = props;
+  const mat = useMemo<Mat>(() => (color, extra) => materialProps(props, color, extra), [options.selected, options.highlight, options.cut, id, plane]); // eslint-disable-line react-hooks/exhaustive-deps
+  const label = props.label ? props.label.join(",") : "";
+  useEffect(() => register(props, ref.current, new Vector3(...(props.label ?? [0, 0, 0]))), [id, label]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (!shown(options, id, props.layer, props.needs)) return <group ref={ref} />;
+  return (
+    <MatContext.Provider value={mat}>
+      <group ref={ref} position={props.position} rotation={props.rotation} onClick={(e: ThreeEvent<MouseEvent>) => { e.stopPropagation(); options.onPick(id); }}>
+        {props.children}
+      </group>
+    </MatContext.Provider>
+  );
 }
 
 /** Where each label hangs, in the part's own frame, so labels do not pile up in the middle of the model. */
@@ -160,41 +218,6 @@ function Primitive(props: PartProps & { shape: Shape; color: string; position: V
   );
 }
 
-type WireDef = { points: Vec3[]; color: string };
-
-/** Wires of each version in the lid's frame: the LED pair first (they carry the heat-shrink), then the rest. */
-function wiring(version: SuporteVersion, board: { w: number; x: number; y: number }): WireDef[] {
-  const top = 7.9; // board surface plus a pad
-  if (version === "v1") {
-    const near = board.y + 8;
-    return [
-      { color: "#ff8a1f", points: [[0.9, -5.5, 3], [0.9, -11, 3], [board.x + 8, near, top]] },
-      { color: "#222222", points: [[-0.9, -5.5, 3], [-0.9, -11, 3], [board.x + 10, near, top]] },
-      // battery clip: red and black leads to the board
-      { color: "#d92d20", points: [[-18, 38, 17.5], [-16, 12, 13], [board.x - 14, board.y + 11, top]] },
-      { color: "#222222", points: [[-12, 38, 17.5], [-10, 14, 13], [board.x - 11, board.y + 11, top]] },
-      // switch terminals
-      { color: "#d92d20", points: [[-30, -40, 17], [-24, -34, 12], [board.x - 14, board.y - 8, top]] },
-      { color: "#ff8a1f", points: [[-20, -40, 17], [-16, -34, 12], [board.x - 11, board.y - 8, top]] },
-    ];
-  }
-  const near = board.y - 10;
-  return [
-    { color: "#ff8a1f", points: [[0.9, 5.5, 3], [0.9, 11, 3], [-4, near, top]] },
-    { color: "#222222", points: [[-0.9, 5.5, 3], [-0.9, 11, 3], [-2, near, top]] },
-    // panel jack
-    { color: "#d92d20", points: [[38, 2, 20], [34, 14, 14], [board.x - 30, board.y - 9, top]] },
-    { color: "#222222", points: [[38, -2, 20], [35, 12, 14], [board.x - 28, board.y - 9, top]] },
-    // switch
-    { color: "#d92d20", points: [[-30, -40, 17], [-38, 0, 14], [board.x - 33, board.y - 6, top]] },
-    { color: "#ff8a1f", points: [[-20, -40, 17], [-30, 0, 14], [board.x - 31, board.y - 3, top]] },
-    // rheostat, three terminals
-    { color: "#e0c200", points: [[19, -40, 18], [18, 4, 12], [board.x + 5, board.y - 10, top]] },
-    { color: "#2e9e4f", points: [[25, -40, 18], [22, 4, 12], [board.x + 8, board.y - 10, top]] },
-    { color: "#2f6fdb", points: [[31, -40, 18], [26, 4, 12], [board.x + 11, board.y - 10, top]] },
-  ];
-}
-
 /** A cylinder between two points: wires, legs and the pieces of a polyline. */
 function Segment({ a, b, r, color, material }: { a: Vec3; b: Vec3; r: number; color: string; material: Record<string, unknown> }) {
   const from = new Vector3(...a);
@@ -207,24 +230,6 @@ function Segment({ a, b, r, color, material }: { a: Vec3; b: Vec3; r: number; co
       <cylinderGeometry args={[r, r, length, 12]} />
       <meshStandardMaterial {...material} color={color} />
     </mesh>
-  );
-}
-
-/** A wire (or a sleeve over one) along a polyline; the label hangs from the middle of the first segment. */
-function Wire(props: PartProps & { points: Vec3[]; color: string; r?: number; opacity?: number; label?: boolean; needs?: string }) {
-  const ref = useRef<Group>(null);
-  const material = useMaterialProps(props, props.color, { opacity: props.opacity });
-  useEffect(() => {
-    if (props.label) register(props, ref.current, new Vector3(...props.points[0]!).add(new Vector3(...props.points[1]!)).multiplyScalar(0.5));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.id, props.label]);
-  if (!shown(props.options, props.id, props.layer, props.needs)) return <group ref={ref} />;
-  return (
-    <group ref={ref} onClick={(e: ThreeEvent<MouseEvent>) => { e.stopPropagation(); props.options.onPick(props.id); }}>
-      {props.points.slice(0, -1).map((p, i) => (
-        <Segment key={i} a={p} b={props.points[i + 1]!} r={props.r ?? 0.7} color={props.color} material={material} />
-      ))}
-    </group>
   );
 }
 
@@ -272,8 +277,26 @@ function Assembly({ options, registry }: { options: SceneOptions; registry: Regi
   const plane = useMemo(() => new Plane(new Vector3(0, 1, 0), 0), []);
   plane.constant = -options.cut;
   const v = version === "v1" ? "v1-pilha" : "v2-fonte";
-  const board = version === "v1" ? { w: 40, x: 8, y: -19 } : { w: 70, x: 0, y: 38 };
-  const wires = wiring(version, board);
+  const layout = useMemo(() => holderLayout({ ...DEFAULT_HOLDER_PARAMS, variant: version === "v1" ? "pilha" : "fonte" }), [version]);
+  const routes = useMemo(() => routeWires(version), [version]);
+  const pcb = PCB[version];
+  const bd = layout.board;
+  const bcx = (bd.xMin + bd.xMax) / 2;
+  const bcy = (bd.yMin + bd.yMax) / 2;
+  const bw = pcb.width;
+  const bh = pcb.height;
+  const bTop = bd.standoffHeight + 1.6;
+  const led = layout.ledPost;
+  const uOut = padAt(version, "U1.OUT");
+  const between = (a: string, b: string) => {
+    const p = padAt(version, a);
+    const q = padAt(version, b);
+    return { mid: [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2] as [number, number], angle: Math.atan2(q[1] - p[1], q[0] - p[0]), span: Math.hypot(q[0] - p[0], q[1] - p[1]) };
+  };
+  const r1 = between("R1.pin1", "R1.pin2");
+  const c1 = between("C1.pin1", "C1.pin2");
+  const d2 = version === "v2" ? between("D2.pin1", "D2.pin2") : null;
+  const mountHoles: [number, number][] = layout.boardPosts.map((q) => [q.x - bcx, q.y - bcy]);
   const base = { options, registry, plane };
   const stl = (name: string) => `${ASSETS}mecanica/${name}`;
   const pre = (n: number) => `${ASSETS}pregoscopio/pregoscopio-${n}.stl`;
@@ -295,70 +318,81 @@ function Assembly({ options, registry }: { options: SceneOptions; registry: Regi
       {/* everything that rides on the lid */}
       <group position={[0, 0, lidZ]}>
         <StlPart {...base} id="M3" layer="impressa" url={stl(`${v}/tampa-fundo.stl`)} color={COLORS.lid} />
-        <Primitive {...base} id="D1" layer="eletronica" shape={{ kind: "cyl", r: 2.5, len: 4.5, axis: "z" }} color={COLORS.led} emissive={options.lightOn ? "#ffd27a" : undefined} position={[0, 0, 30.85]} />
-        <Primitive {...base} id="D1" layer="eletronica" shape={{ kind: "dome" }} color={COLORS.led} emissive={options.lightOn ? "#ffd27a" : undefined} position={[0, 0, 33.1]} />
-        {/* wires of the electronics, from each part to the driver board; the LED ones leave by the slot at the foot of its post */}
-        {wires.map((w, i) => (
-          <Wire key={i} {...base} id="W1" layer="fios" points={w.points} color={w.color} label={i === 0} needs={i < 2 ? "D1" : "PCB1"} />
-        ))}
-        {/* heat-shrink over the two LED wires, and the glue ring that holds the diffuser */}
-        {wires.slice(0, 2).map((w, i) => (
-          <Wire key={`sleeve${i}`} {...base} id="W2" layer="fios" points={[w.points[0]!, w.points[1]!]} color="#ffc400" r={1.3} opacity={0.55} label={i === 0} needs="D1" />
-        ))}
+        <PartGroup {...base} id="D1" layer="eletronica" position={[0, 0, led.top - led.seatDepth]} label={[0, 0, 9]}>
+          <Led5 lit={options.lightOn} />
+        </PartGroup>
+        {/* the driver board on its four standoffs, with the real pads and traces of the Gerber files */}
+        <PartGroup {...base} id="PCB1" layer="eletronica" position={[bcx, bcy, bd.standoffHeight]} label={[bw / 2 - 4, bh / 2 - 3, 1.6]}>
+          <Pcb width={bw} height={bh} pads={Object.values(pcb.pads)} holes={mountHoles} traces={pcb.traces} />
+          {Object.values(pcb.pads).map((p, i) => <Solder key={i} pos={[p[0], p[1], 1.9]} />)}
+        </PartGroup>
+        <PartGroup {...base} id="U1" layer="eletronica" position={[uOut[0], uOut[1], bTop]} label={[0, 0, 22]}>
+          <To220 pitch={Math.abs(padAt(version, "U1.IN")[0] - uOut[0])} />
+        </PartGroup>
+        <PartGroup {...base} id="R1" layer="eletronica" position={[r1.mid[0], r1.mid[1], bTop]} rotation={[0, 0, r1.angle]} label={[0, 0, 4]}>
+          <Resistor span={r1.span} bands={R1_BANDS} />
+        </PartGroup>
+        <PartGroup {...base} id="C1" layer="eletronica" position={[c1.mid[0], c1.mid[1], bTop]} rotation={[0, 0, c1.angle]} label={[0, 0, 8]}>
+          <Ceramic span={c1.span} />
+        </PartGroup>
+        {d2 && (
+          <PartGroup {...base} id="D2" layer="eletronica" position={[d2.mid[0], d2.mid[1], bTop]} rotation={[0, 0, d2.angle]} label={[0, 0, 4]}>
+            <Diode span={d2.span} />
+          </PartGroup>
+        )}
         {version === "v1" && (
-          <>
-          <Primitive {...base} id="BT1" layer="eletronica" shape={{ kind: "cyl", r: 3.2, len: 1.6, axis: "z" }} color="#c5ccd5" position={[-18, 38, 18.3]} />
-          <Primitive {...base} id="BT1" layer="eletronica" shape={{ kind: "cyl", r: 3.2, len: 1.6, axis: "z" }} color="#c5ccd5" position={[-12, 38, 18.3]} />
-          <Primitive {...base} id="BT1" layer="eletronica" shape={{ kind: "box", size: [14, 9, 5] }} color="#1d2027" position={[-15, 38, 21.3]} />
-          <Primitive {...base} id="BT1" layer="eletronica" shape={{ kind: "box", size: [48.5, 26.5, 17.5] }} color={COLORS.battery} position={[0, 38, 8.75]} />
-          </>
+          <PartGroup {...base} id="BT1" layer="eletronica" position={[0, layout.params.batteryY, 0]} label={[10, 0, 18]}>
+            <Battery />
+          </PartGroup>
         )}
-        {/* driver board on its four standoffs: v1 40 x 25 mm in front of the LED, v2 70 x 25 mm where the battery would be */}
-        <Primitive {...base} id="PCB1" layer="eletronica" shape={{ kind: "box", size: [board.w, 25, 1.6] }} color={COLORS.board} position={[board.x, board.y, 6.8]} />
-        <Primitive {...base} id="U1" layer="eletronica" shape={{ kind: "box", size: [10, 1.4, 5.5] }} color="#c5ccd5" position={[board.x - board.w * 0.12, board.y + 4, 19.35]} />
-        <Primitive {...base} id="U1" layer="eletronica" shape={{ kind: "cyl", r: 0.5, len: 4.5, axis: "z" }} color="#c5ccd5" position={[board.x - board.w * 0.12 + -2.54, board.y + 4, 8.6]} />
-        <Primitive {...base} id="U1" layer="eletronica" shape={{ kind: "cyl", r: 0.5, len: 4.5, axis: "z" }} color="#c5ccd5" position={[board.x - board.w * 0.12 + 0, board.y + 4, 8.6]} />
-        <Primitive {...base} id="U1" layer="eletronica" shape={{ kind: "cyl", r: 0.5, len: 4.5, axis: "z" }} color="#c5ccd5" position={[board.x - board.w * 0.12 + 2.54, board.y + 4, 8.6]} />
-        <Primitive {...base} id="U1" layer="eletronica" shape={{ kind: "box", size: [10, 4.5, 9] }} color={COLORS.dark} position={[board.x - board.w * 0.12, board.y + 4, 12.1]} />
-        <Primitive {...base} id="R1" layer="eletronica" shape={{ kind: "cyl", r: 1.75, len: 0.7, axis: "x" }} color="#2a4fd6" position={[board.x + board.w * 0.12 + -2.8, board.y - 3, 9.2]} />
-        <Primitive {...base} id="R1" layer="eletronica" shape={{ kind: "cyl", r: 1.75, len: 0.7, axis: "x" }} color="#8a8f98" position={[board.x + board.w * 0.12 + -1.4, board.y - 3, 9.2]} />
-        <Primitive {...base} id="R1" layer="eletronica" shape={{ kind: "cyl", r: 1.75, len: 0.7, axis: "x" }} color="#111111" position={[board.x + board.w * 0.12 + 0, board.y - 3, 9.2]} />
-        <Primitive {...base} id="R1" layer="eletronica" shape={{ kind: "cyl", r: 1.75, len: 0.7, axis: "x" }} color="#d4af37" position={[board.x + board.w * 0.12 + 2.8, board.y - 3, 9.2]} />
-        <Primitive {...base} id="R1" layer="eletronica" shape={{ kind: "cyl", r: 1.6, len: 9, axis: "x" }} color="#c9b27a" position={[board.x + board.w * 0.12, board.y - 3, 9.2]} />
-        <Primitive {...base} id="C1" layer="eletronica" shape={{ kind: "box", size: [5, 3, 6] }} color="#d9a441" position={[board.x + board.w * 0.02, board.y - 7, 10.6]} />
-        {version === "v2" && (
-          <Primitive {...base} id="D2" layer="eletronica" shape={{ kind: "cyl", r: 1.8, len: 7, axis: "x" }} color="#1d2027" position={[board.x - board.w * 0.3, board.y - 7, 9.2]} />
-        )}
-        {[-1, 1].flatMap((sx) =>
-          [-1, 1].map((sy) => (
-            <Primitive key={`${sx},${sy}`} {...base} id="H3" layer="parafusos" shape={{ kind: "cyl", r: 3, len: 1.5, axis: "z" }} color={COLORS.screw} position={[board.x + (sx * (board.w - 7)) / 2, board.y + sy * 9, 8.5]} />
-          )),
-        )}
-        {[-37.6, 37.6].flatMap((x) => [-37.6, 62.6].map((y) => <Primitive key={`${x},${y}`} {...base} id="H1" layer="parafusos" shape={{ kind: "cyl", r: 3, len: 2, axis: "z" }} color={COLORS.screw} position={[x, y, -3.4]} />))}
+        {/* wires, routed around the parts; the LED pair carries heat-shrink where it leaves the post */}
+        {routes.map((w, i) => (
+          <PartGroup key={w.id} {...base} id="W1" layer="fios" needs={w.spec.part === "D1" ? "D1" : "PCB1"} label={w.path[Math.min(3, w.path.length - 1)]!}>
+            <Tube points={w.spec.part === "D1" || w.spec.part === "BT1" ? (w.path as V3[]) : dropped(w.path, -lidZ)} r={0.62} color={w.spec.color} round={3.2} />
+            <Solder pos={w.spec.part === "D1" || w.spec.part === "BT1" ? [w.from[0], w.from[1], w.from[2]] : [w.from[0], w.from[1], w.from[2] - lidZ]} />
+          </PartGroup>
+        ))}
+        {routes.filter((w) => w.spec.part === "D1").map((w) => (
+          <PartGroup key={`s${w.id}`} {...base} id="W2" layer="fios" needs="D1" label={w.path[2]!}>
+            <Sleeve points={headOf(w.path, 11)} />
+          </PartGroup>
+        ))}
+        {layout.boardPosts.map((q, i) => (
+          <PartGroup key={i} {...base} id="H3" layer="parafusos" position={[q.x, q.y, bTop]} label={[0, 0, 2]}>
+            <Screw r={2.8} />
+          </PartGroup>
+        ))}
+        {layout.lid.holes.map((q, i) => (
+          <PartGroup key={i} {...base} id="H1" layer="parafusos" position={[q.x, q.y, -layout.params.wall]} rotation={[Math.PI, 0, 0]} label={[0, 0, 2]}>
+            <Screw r={2.8} />
+          </PartGroup>
+        ))}
       </group>
 
       {/* on the box wall */}
-      <Primitive {...base} id="SW1" layer="eletronica" shape={{ kind: "box", size: [17, 3, 11] }} color="#d9362b" position={[-25, -51.5 - e * 0.3, 20]} />
-      <Primitive {...base} id="SW1" layer="eletronica" shape={{ kind: "cyl", r: 0.6, len: 6, axis: "y" }} color="#c5ccd5" position={[-30, -37 - e * 0.3, 17]} />
-      <Primitive {...base} id="SW1" layer="eletronica" shape={{ kind: "cyl", r: 0.6, len: 6, axis: "y" }} color="#c5ccd5" position={[-20, -37 - e * 0.3, 17]} />
-      <Primitive {...base} id="SW1" layer="eletronica" shape={{ kind: "box", size: [21.2, 10, 15] }} color={COLORS.dark} position={[-25, -45 - e * 0.3, 20]} />
+      <PartGroup {...base} id="SW1" layer="eletronica" position={[layout.params.switchCutout.x, layout.box.yMin - e * 0.3, 20]} label={[0, -4, 0]}>
+        <RockerSwitch />
+      </PartGroup>
       {version === "v2" && (
         <>
-          <Primitive {...base} id="J1" layer="eletronica" shape={{ kind: "cyl", r: 6, len: 1.6, axis: "x" }} color="#c5ccd5" position={[41.8 + e * 0.3, 0, 20]} />
-          <Primitive {...base} id="J1" layer="eletronica" shape={{ kind: "cyl", r: 4, len: 10, axis: "x" }} color="#262c36" position={[37 + e * 0.3, 0, 20]} />
-          <Primitive {...base} id="J1" layer="eletronica" shape={{ kind: "cyl", r: 5, len: 12, axis: "x" }} color={COLORS.dark} position={[48 + e * 0.3, 0, 20]} />
-          <Primitive {...base} id="RV1" layer="eletronica" shape={{ kind: "cyl", r: 3, len: 6, axis: "y" }} color="#c5ccd5" position={[25, -42 - e * 0.3, 20]} />
-          <Primitive {...base} id="RV1" layer="eletronica" shape={{ kind: "cyl", r: 5, len: 1.6, axis: "y" }} color="#c5ccd5" position={[25, -41.4 - e * 0.3, 20]} />
-          <Primitive {...base} id="RV1" layer="eletronica" shape={{ kind: "box", size: [1.2, 0.8, 6] }} color="#f4f1e6" position={[25, -53.2 - e * 0.3, 23]} />
-          <Primitive {...base} id="RV1" layer="eletronica" shape={{ kind: "cyl", r: 7, len: 8, axis: "y" }} color={COLORS.knob} position={[25, -49 - e * 0.3, 20]} />
-          <Primitive {...base} id="PS1" layer="eletronica" shape={{ kind: "cyl", r: 4.2, len: 10, axis: "x" }} color="#262c36" position={[59 + e * 0.3, 0, 20]} />
-          <Wire {...base} id="PS1" layer="eletronica" points={[[64 + e * 0.3, 0, 20], [68 + e * 0.3, 0, 12], [71 + e * 0.3, 0, 14]]} color="#111111" r={1.6} />
-          <Primitive {...base} id="PS1" layer="eletronica" shape={{ kind: "box", size: [38, 26, 24] }} color={COLORS.psu} opacity={0.6} position={[90 + e * 0.3, 0, 14]} />
+          <PartGroup {...base} id="J1" layer="eletronica" position={[layout.box.xMax + e * 0.3, layout.params.jackY, 20]} rotation={[0, 0, Math.PI / 2]} label={[0, -2, 4]}>
+            <PowerJack />
+          </PartGroup>
+          <PartGroup {...base} id="RV1" layer="eletronica" position={[layout.params.knobX, layout.box.yMin - e * 0.3, 20]} label={[0, -8, 0]}>
+            <Pot />
+          </PartGroup>
+          <PartGroup {...base} id="PS1" layer="eletronica" position={[0, 0, 0]} label={[90 + e * 0.3, 0, 28]}>
+            <group position={[90 + e * 0.3, 0, 14]}><Adapter /></group>
+            <group position={[layout.box.xMax + e * 0.3, layout.params.jackY, 20]}><Plug /></group>
+            <Tube points={[[layout.box.xMax + 14 + e * 0.3, 0, 20], [layout.box.xMax + 19 + e * 0.3, 0, 20.5], [layout.box.xMax + 22 + e * 0.3, 0, 16], [layout.box.xMax + 24 + e * 0.3, 0, 12.2]]} r={1.6} color="#14171c" />
+          </PartGroup>
         </>
       )}
       <Primitive {...base} id="L1" layer="lamina" shape={{ kind: "box", size: [76, 26, 1] }} color={COLORS.glass} opacity={0.4} position={[0, 0, 39.9 + e * 1.1]} />
       {[-24.4, 24.4].map((x) => (
-        <Primitive key={x} {...base} id="H2" layer="parafusos" shape={{ kind: "cyl", r: 3, len: 2, axis: "y" }} color={COLORS.screw} position={[x, -12.8 - e * 0.9, 199.2]} />
+        <PartGroup key={x} {...base} id="H2" layer="parafusos" position={[x, -12.8 - e * 0.9, 199.2]} rotation={[Math.PI / 2, 0, 0]} label={[0, 0, 2]}>
+          <Screw r={2.8} />
+        </PartGroup>
       ))}
 
       {/* the pregoscopio, from the STEP; the moving group is the inner tube with its ring and sleeve */}

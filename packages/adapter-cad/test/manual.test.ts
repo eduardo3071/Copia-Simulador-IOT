@@ -68,3 +68,27 @@ describe("manual: conteúdo de apoio", () => {
     }
   });
 });
+
+describe("manual: os três idiomas", () => {
+  it("every step, name and warning exists in Portuguese, Chinese and English", async () => {
+    const { EN_NAMES, HINT_TEXT, TEST_TEXT, manualFiles, netList, testPlan, wiringOrder } = await import("../src/index.ts");
+    for (const v of ["v1", "v2"] as const) {
+      for (const s of manualSteps(v)) {
+        for (const t of [s.title, s.text, ...(s.check ? [s.check] : []), ...(s.warn ? [s.warn] : [])]) {
+          expect(t.pt.length, s.title.pt).toBeGreaterThan(2);
+          expect(t.zh.length, s.title.pt).toBeGreaterThan(1);
+          expect(t.en.length, s.title.pt).toBeGreaterThan(2);
+          expect(/[\u4e00-\u9fff]/.test(t.en), `chinês no inglês: ${t.en.slice(0, 40)}`).toBe(false);
+          expect(/[\u4e00-\u9fff]/.test(t.zh) || /^[\d\s.,A-Za-z×]+$/.test(t.zh), `sem chinês: ${t.zh.slice(0, 40)}`).toBe(true);
+        }
+      }
+      for (const l of manualBom(v)) expect(EN_NAMES[l.id], l.id).toBeTruthy();
+      for (const f of manualFiles(v)) expect(f.text.en.length).toBeGreaterThan(2);
+      for (const w of [...wiringOrder(v), ...netList(v)]) expect(w.en.length).toBeGreaterThan(5);
+      for (const r of testPlan(v)) {
+        expect(TEST_TEXT[r.point], r.point).toBeTruthy();
+        expect(HINT_TEXT[r.hint], r.hint).toBeTruthy();
+      }
+    }
+  });
+});

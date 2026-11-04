@@ -15,3 +15,26 @@ export const JIGS: { id: string; file: string; title: string; series: Series[] }
     { name: "Bateria 9 V", id: "BT1", sizes: ["48,6×26,6", "49,1×27,1", "49,6×27,6", "50,1×28,1"], param: "batteryFit = valor escolhido − medida da bateria" },
   ] },
 ];
+
+/** Chinese and English of the texts above, keyed by the Portuguese string. */
+export const JIG_TEXT: Record<string, { zh: string; en: string }> = {
+  "Gabarito do tubo": { zh: "镜筒校准件", en: "Tube jig" },
+  "Gabarito das peças": { zh: "零件校准件", en: "Parts jig" },
+  "Gabarito da bateria": { zh: "电池校准件", en: "Battery jig" },
+  "Tubo externo": { zh: "外镜筒", en: "Outer tube" },
+  "Lâmina (rebaixo de 1,2 mm)": { zh: "载玻片（凹槽 1.2 mm）", en: "Slide (1.2 mm recess)" },
+  "Interruptor KCD1-101": { zh: "开关 KCD1-101", en: "Switch KCD1-101" },
+  "Flange do LED": { zh: "LED 法兰", en: "LED flange" },
+  "Furo-piloto M3": { zh: "M3 底孔", en: "M3 pilot hole" },
+  "Conector DC-022B": { zh: "插座 DC-022B", en: "Jack DC-022B" },
+  "Rosca M7 do reostato": { zh: "电位器 M7 螺纹", en: "Rheostat M7 thread" },
+  "Bateria 9 V": { zh: "9 V 电池", en: "9 V battery" },
+  "tubeDiameter = valor escolhido − 0,2": { zh: "tubeDiameter = 选定值 − 0.2", en: "tubeDiameter = chosen value − 0.2" },
+  "slideWidth = valor escolhido − 0,6": { zh: "slideWidth = 选定值 − 0.6", en: "slideWidth = chosen value − 0.6" },
+  "switchCutout (largura e altura)": { zh: "switchCutout（宽和高）", en: "switchCutout (width and height)" },
+  "ledFlange = valor escolhido − 0,4": { zh: "ledFlange = 选定值 − 0.4", en: "ledFlange = chosen value − 0.4" },
+  "pilotHole (entra apertado e rosqueia)": { zh: "pilotHole（螺钉旋入时较紧并能攻丝）", en: "pilotHole (tight fit that still threads)" },
+  "jackDiameter": { zh: "jackDiameter", en: "jackDiameter" },
+  "knobDiameter": { zh: "knobDiameter", en: "knobDiameter" },
+  "batteryFit = valor escolhido − medida da bateria": { zh: "batteryFit = 选定值 − 电池实测尺寸", en: "batteryFit = chosen value − battery measurement" },
+};

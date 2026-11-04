@@ -50,7 +50,7 @@ A lista completa de compras, com o que digitar na loja e a confiança em cada n�
 | ID | Qtd | Item |
 |---|---|---|
 | D1 | 1 | LED branco 5 mm difuso, ângulo de 100° ou mais (Vf ≈ 3,1 V) |
-| R1 | 1 | Resistor 68 Ω, 1/4 W, 1 % (azul, cinza, preto, dourado) |
+| R1 | 1 | Resistor 68 Ω, 1/4 W, 1 % (azul, cinza, preto, dourado, marrom) |
 | C1 | 1 | Capacitor cerâmico 100 nF (104), 50 V |
 | U1 | 1 | LM317T, TO-220 |
 | SW1 | 1 | Interruptor de balancim KCD1-101, 2 terminais |

@@ -3,6 +3,7 @@
  * dimension lines, leaders and a title block. Every function maps model millimetres to the sheet with a view `V`.
  */
 import type { ReactNode } from "react";
+import { T, useLang } from "./lang.tsx";
 
 export interface V {
   /** Sheet position of the model origin. */
@@ -133,7 +134,7 @@ export function DimH({ v, u1, u2, w, off, text, w2 }: { v: V; u1: number; u2: nu
       <line className="dt-dim" x1={x1} x2={x1} y1={yStart(y1)} y2={y + sg * OVER} />
       <line className="dt-dim" x1={x2} x2={x2} y1={yStart(y2)} y2={y + sg * OVER} />
       <line className="dt-dim" x1={x1} x2={x2} y1={y} y2={y} markerStart="url(#dt-arr)" markerEnd="url(#dt-arr)" />
-      <text className="dt-t dt-tdim" x={(x1 + x2) / 2} y={y - 0.8} textAnchor="middle">{text ?? f(Math.abs(u2 - u1))}</text>
+      <T className="dt-t dt-tdim" x={(x1 + x2) / 2} y={y - 0.8} textAnchor="middle">{text ?? f(Math.abs(u2 - u1))}</T>
     </g>
   );
 }
@@ -152,7 +153,7 @@ export function DimV({ v, w1, w2, u, off, text, u2 }: { v: V; w1: number; w2: nu
       <line className="dt-dim" y1={y1} y2={y1} x1={xStart(x1)} x2={x + sg * OVER} />
       <line className="dt-dim" y1={y2} y2={y2} x1={xStart(x2)} x2={x + sg * OVER} />
       <line className="dt-dim" x1={x} x2={x} y1={y1} y2={y2} markerStart="url(#dt-arr)" markerEnd="url(#dt-arr)" />
-      <text className="dt-t dt-tdim" transform={`translate(${x - 0.8} ${(y1 + y2) / 2}) rotate(-90)`} textAnchor="middle">{text ?? f(Math.abs(w2 - w1))}</text>
+      <T className="dt-t dt-tdim" transform={`translate(${x - 0.8} ${(y1 + y2) / 2}) rotate(-90)`} textAnchor="middle">{text ?? f(Math.abs(w2 - w1))}</T>
     </g>
   );
 }
@@ -167,7 +168,7 @@ export function Lead({ v, at, dx, dy, text, dot = true }: { v: V; at: [number, n
       <line className="dt-dim" x1={x} y1={y} x2={x + dx} y2={y + dy} />
       <line className="dt-dim" x1={x + dx} y1={y + dy} x2={x + dx + (right ? 4 : -4)} y2={y + dy} />
       {dot && <circle cx={x} cy={y} r={0.5} fill="#0b4fa8" />}
-      <text className="dt-t dt-tdim" x={x + dx + (right ? 4.6 : -4.6)} y={y + dy + 0.9} textAnchor={right ? "start" : "end"}>{text}</text>
+      <T className="dt-t dt-tdim" x={x + dx + (right ? 4.6 : -4.6)} y={y + dy + 0.9} textAnchor={right ? "start" : "end"}>{text}</T>
     </g>
   );
 }
@@ -232,8 +233,8 @@ export function CutMark({ v, a, b, letter, dir }: { v: V; a: [number, number]; b
 export function ViewTitle({ x, y, text, scale }: { x: number; y: number; text: string; scale: string }) {
   return (
     <g>
-      <text className="dt-t dt-tview" x={x} y={y} textAnchor="middle">{text}</text>
-      <text className="dt-t dt-tscale" x={x} y={y + 3.6} textAnchor="middle">{scale}</text>
+      <T className="dt-t dt-tview" x={x} y={y} textAnchor="middle">{text}</T>
+      <T className="dt-t dt-tscale" x={x} y={y + 3.6} textAnchor="middle">{scale}</T>
       <line className="dt-thin" x1={x - 18} x2={x + 18} y1={y + 5} y2={y + 5} />
     </g>
   );
@@ -256,8 +257,10 @@ export interface SheetInfo {
 
 /** One A4 landscape sheet (297 x 210) with frame, general notes and title block. Views are children, in sheet millimetres. */
 export function Sheet({ info, children }: { info: SheetInfo; children: ReactNode }) {
+  const lang = useLang();
   const x0 = 142;
   const y0 = 166;
+  const versionLabel = info.version === "v1" ? "v1 pilha 9 V · v1 9 V 电池" : "v2 fonte 12 V · v2 12 V 电源";
   return (
     <svg className="dt-sheet" viewBox="0 0 297 210" role="img" aria-label={`${info.code} ${info.titlePt}`}>
       <defs>
@@ -268,13 +271,17 @@ export function Sheet({ info, children }: { info: SheetInfo; children: ReactNode
       <rect className="dt-frame" x={5} y={5} width={287} height={200} />
       {children}
       <g className="dt-notes">
-        <text className="dt-t dt-tnh" x={8} y={169.5}>Notas gerais · 通用说明</text>
-        {info.notes.map((n, i) => (
-          <g key={i}>
-            <text className="dt-t dt-tn" x={8} y={174.5 + i * 6.2}>{i + 1}. {n.pt}</text>
-            <text className="dt-t dt-tn dt-tzh" x={11} y={177.9 + i * 6.2}>{n.zh}</text>
-          </g>
-        ))}
+        <T className="dt-t dt-tnh" x={8} y={169.5}>Notas gerais · 通用说明</T>
+        {info.notes.map((n, i) =>
+          lang === "bi" ? (
+            <g key={i}>
+              <text className="dt-t dt-tn" x={8} y={174.5 + i * 6.2}>{i + 1}. {n.pt}</text>
+              <text className="dt-t dt-tn dt-tzh" x={11} y={177.9 + i * 6.2}>{n.zh}</text>
+            </g>
+          ) : (
+            <T key={i} className="dt-t dt-tn" x={8} y={175 + i * 5.6}>{`${i + 1}. ${n.pt} · ${n.zh}`}</T>
+          ),
+        )}
       </g>
       <g className="dt-title">
         <rect x={x0} y={y0} width={150} height={39} />
@@ -284,31 +291,37 @@ export function Sheet({ info, children }: { info: SheetInfo; children: ReactNode
         <line x1={x0 + 100} x2={x0 + 100} y1={y0} y2={y0 + 14} />
         {[37.5, 75, 112.5].map((d) => <line key={d} x1={x0 + d} x2={x0 + d} y1={y0 + 14} y2={y0 + 30} />)}
         <line x1={x0 + 75} x2={x0 + 75} y1={y0 + 30} y2={y0 + 39} />
-        <text className="dt-t dt-tl" x={x0 + 2} y={y0 + 3.4}>Título · 图名</text>
-        <text className="dt-t dt-tb" x={x0 + 2} y={y0 + 8.2}>{info.titlePt}</text>
-        <text className="dt-t dt-tbz" x={x0 + 2} y={y0 + 12.4}>{info.titleZh}</text>
-        <text className="dt-t dt-tl" x={x0 + 102} y={y0 + 3.4}>Código · 图号</text>
+        <T className="dt-t dt-tl" x={x0 + 2} y={y0 + 3.4}>Título · 图名</T>
+        {lang === "bi" ? (
+          <>
+            <text className="dt-t dt-tb" x={x0 + 2} y={y0 + 8.2}>{info.titlePt}</text>
+            <text className="dt-t dt-tbz" x={x0 + 2} y={y0 + 12.4}>{info.titleZh}</text>
+          </>
+        ) : (
+          <T className="dt-t dt-tb" x={x0 + 2} y={y0 + 9.6}>{`${info.titlePt} ${info.titleZh}`}</T>
+        )}
+        <T className="dt-t dt-tl" x={x0 + 102} y={y0 + 3.4}>Código · 图号</T>
         <text className="dt-t dt-tb" x={x0 + 102} y={y0 + 10}>{info.code}</text>
         {([
           ["Peça · 零件", info.part], ["Material · 材料", info.material ?? "PLA"], ["Escala · 比例", info.scale], ["Folha · 张", `${info.sheet} / ${info.total}`],
         ] as const).map(([l, val], i) => (
           <g key={l}>
-            <text className="dt-t dt-tl" x={x0 + i * 37.5 + 2} y={y0 + 17.2}>{l}</text>
-            <text className="dt-t dt-tv" x={x0 + i * 37.5 + 2} y={y0 + 21}>{val}</text>
+            <T className="dt-t dt-tl" x={x0 + i * 37.5 + 2} y={y0 + 17.2}>{l}</T>
+            <T className="dt-t dt-tv" x={x0 + i * 37.5 + 2} y={y0 + 21}>{val}</T>
           </g>
         ))}
         {([
-          ["Unidades · 单位", "mm"], ["Tolerância · 公差", "±0,2 (ISO 2768-m)"], ["Revisão · 版本", `${info.rev} · ${info.date}`], ["Versão · 版本号", info.version === "v1" ? "v1 pilha 9 V" : "v2 fonte 12 V"],
+          ["Unidades · 单位", "mm"], ["Tolerância · 公差", "±0,2 (ISO 2768-m)"], ["Revisão · 版本", `${info.rev} · ${info.date}`], ["Versão · 版本号", versionLabel],
         ] as const).map(([l, val], i) => (
           <g key={l}>
-            <text className="dt-t dt-tl" x={x0 + i * 37.5 + 2} y={y0 + 25.2}>{l}</text>
-            <text className="dt-t dt-tv" x={x0 + i * 37.5 + 2} y={y0 + 29}>{val}</text>
+            <T className="dt-t dt-tl" x={x0 + i * 37.5 + 2} y={y0 + 25.2}>{l}</T>
+            <T className="dt-t dt-tv" x={x0 + i * 37.5 + 2} y={y0 + 29}>{val}</T>
           </g>
         ))}
-        <text className="dt-t dt-tl" x={x0 + 2} y={y0 + 33.2}>Projeto · 项目</text>
-        <text className="dt-t dt-tv" x={x0 + 2} y={y0 + 37.2}>Pregoscópio — suporte com luz 显微镜支架</text>
-        <text className="dt-t dt-tl" x={x0 + 77} y={y0 + 33.2}>Projeção · 投影法</text>
-        <text className="dt-t dt-tv" x={x0 + 77} y={y0 + 37.2}>1º diedro 第一角</text>
+        <T className="dt-t dt-tl" x={x0 + 2} y={y0 + 33.2}>Projeto · 项目</T>
+        <T className="dt-t dt-tv" x={x0 + 2} y={y0 + 37.2}>Pregoscópio — suporte com luz 显微镜支架</T>
+        <T className="dt-t dt-tl" x={x0 + 77} y={y0 + 33.2}>Projeção · 投影法</T>
+        <T className="dt-t dt-tv" x={x0 + 77} y={y0 + 37.2}>1º diedro 第一角</T>
         {/* first-angle symbol: frustum, then its two circles */}
         <g className="dt-sym" transform={`translate(${x0 + 123} ${y0 + 31.5})`}>
           <path d="M0 1.2 L5 0 L5 6 L0 4.8 Z" />

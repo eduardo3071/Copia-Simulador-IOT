@@ -7,3 +7,5 @@ export * from "./layout.ts";
 export * from "./protocol.ts";
 export * from "./stl.ts";
 export * from "./suporte-manual.ts";
+export * from "./suporte-wiring.ts";
+export * from "./suporte-pcb.ts";

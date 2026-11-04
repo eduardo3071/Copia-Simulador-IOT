@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, type ReactNode } from "react";
 import { DEFAULT_HOLDER_PARAMS, holderLayout, masterPlan, type SuporteVersion } from "@simiot/adapter-cad";
+import { T, useLang } from "./lang.tsx";
 import {
   Balloon, Circ, circleSegs, Ctr, CutMark, DimH, DimV, f, Lead, Line, Rect, rectSegs, Sheet, Shape, Solid, Void, VoidShape, ViewTitle,
   type Seg, type SheetInfo, type V,
@@ -65,12 +66,18 @@ function shellSegs(g: G): Seg[] {
   ];
 }
 
-/** Lines of text at (x, y), `pitch` apart. */
+/** Lines of text at (x, y), `pitch` apart. A line flagged `zh` is the Chinese twin of the line before it. */
 function Block({ x, y, lines, pitch = 4.8, head }: { x: number; y: number; lines: { t: string; zh?: boolean; b?: boolean }[]; pitch?: number; head?: string }) {
+  const lang = useLang();
+  const shown = lines.filter((l, i) => {
+    if (lang === "bi") return true;
+    if (lang === "zh") return l.zh || !lines[i + 1]?.zh;
+    return !l.zh;
+  });
   return (
     <g>
-      {head && <text className="dt-t dt-tnh" x={x} y={y}>{head}</text>}
-      {lines.map((l, i) => <text key={i} className={`dt-t dt-tn${l.zh ? " dt-tzh" : ""}${l.b ? " dt-tv" : ""}`} x={x} y={y + (head ? 6 : 0) + i * pitch}>{l.t}</text>)}
+      {head && <T className="dt-t dt-tnh" x={x} y={y}>{head}</T>}
+      {shown.map((l, i) => <T key={i} className={`dt-t dt-tn${l.zh && lang === "bi" ? " dt-tzh" : ""}${l.b ? " dt-tv" : ""}`} x={x} y={y + (head ? 6 : 0) + i * pitch}>{l.t}</T>)}
     </g>
   );
 }
@@ -196,11 +203,11 @@ function PlantaInterior({ g, version, sheet, total }: { g: G; version: SuporteVe
       <DimV v={v} w1={box.yMin} w2={box.yMax} u={box.xMin} off={-9} />
       <DimH v={v} u1={board.xMin} u2={board.xMax} w={board.yMax} off={7} />
       <DimV v={v} w1={board.yMin} w2={board.yMax} u={board.xMax} off={9} />
-      <Balloon v={v} at={[0, 0]} dx={v2 ? -22 : 20} dy={-14} id="D1" />
+      <Balloon v={v} at={[0, 0]} dx={v2 ? -2 : 20} dy={v2 ? 22 : -14} id="D1" />
       <Balloon v={v} at={[bx + bw / 2, by]} dx={13} dy={0} id="PCB1" />
       <Balloon v={v} at={[u1.x, u1.y]} dx={v2 ? -6 : -14} dy={v2 ? -18 : 28} id="U1" />
       <Balloon v={v} at={[r1.x, r1.y]} dx={6} dy={v2 ? 18 : 30} id="R1" />
-      <Balloon v={v} at={[c1.x, c1.y]} dx={v2 ? 0 : 22} dy={v2 ? 26 : 22} id="C1" />
+      <Balloon v={v} at={[c1.x, c1.y]} dx={v2 ? 14 : 22} dy={v2 ? 16 : 22} id="C1" />
       <Balloon v={v} at={[sw.x, box.yMin + wall + 4]} dx={0} dy={-20} id="SW1" />
       <Balloon v={v} at={[L.posts[2]!.x, L.posts[2]!.y]} dx={16} dy={0} id="M1" />
       {v2 ? (
@@ -214,21 +221,21 @@ function PlantaInterior({ g, version, sheet, total }: { g: G; version: SuporteVe
       )}
       <ViewTitle x={v.ox + 40} y={152} text="Planta sem tampa e sem teto · 无底盖无顶板平面图" scale="1:1" />
       <g className="dt-table">
-        <text className="dt-t dt-tnh" x={140} y={16}>Posição do centro de cada peça (mm) · 零件中心位置</text>
+        <T className="dt-t dt-tnh" x={140} y={16}>Posição do centro de cada peça (mm) · 零件中心位置</T>
         <line className="dt-thin" x1={140} x2={290} y1={18.5} y2={18.5} />
-        {["ID", "X", "Y", "Z", "Dimensão · 尺寸"].map((h, i) => <text key={h} className="dt-t dt-tl" x={[140, 156, 172, 188, 206][i]} y={22.5}>{h}</text>)}
+        {["ID", "X", "Y", "Z", "Dimensão · 尺寸"].map((h, i) => <T key={h} className="dt-t dt-tl" x={[140, 156, 172, 188, 206][i]} y={22.5}>{h}</T>)}
         {plan.map((q, i) => (
           <g key={q.id}>
-            <text className="dt-t dt-tv" x={140} y={28.5 + i * 5.2}>{q.id}</text>
-            <text className="dt-t dt-tv" x={156} y={28.5 + i * 5.2}>{f(q.x)}</text>
-            <text className="dt-t dt-tv" x={172} y={28.5 + i * 5.2}>{f(q.y)}</text>
-            <text className="dt-t dt-tv" x={188} y={28.5 + i * 5.2}>{f(q.z)}</text>
-            <text className="dt-t dt-tv" x={206} y={28.5 + i * 5.2}>{q.size.map(f).join(" × ")}</text>
+            <T className="dt-t dt-tv" x={140} y={28.5 + i * 5.2}>{q.id}</T>
+            <T className="dt-t dt-tv" x={156} y={28.5 + i * 5.2}>{f(q.x)}</T>
+            <T className="dt-t dt-tv" x={172} y={28.5 + i * 5.2}>{f(q.y)}</T>
+            <T className="dt-t dt-tv" x={188} y={28.5 + i * 5.2}>{f(q.z)}</T>
+            <T className="dt-t dt-tv" x={206} y={28.5 + i * 5.2}>{q.size.map(f).join(" × ")}</T>
           </g>
         ))}
-        <text className="dt-t dt-tn" x={140} y={33 + plan.length * 5.2}>Origem: eixo do tubo, z = 0 no piso da caixa. · 原点：镜筒轴线，z = 0 为灯箱底面。</text>
-        <text className="dt-t dt-tn" x={140} y={38 + plan.length * 5.2}>PCB1: {f(placed("PCB1").size[0])} × {f(placed("PCB1").size[1])} × 1,6 mm, face superior em z = {f(placed("PCB1").z + 0.8)}.</text>
-        <text className="dt-t dt-tn" x={140} y={43 + plan.length * 5.2}>Fios: ver DT-03 e a ordem das ligações (seção 4). · 导线见 DT-03 与第 4 节。</text>
+        <T className="dt-t dt-tn" x={140} y={33 + plan.length * 5.2}>Origem: eixo do tubo, z = 0 no piso da caixa. · 原点：镜筒轴线，z = 0 为灯箱底面。</T>
+        <T className="dt-t dt-tn" x={140} y={38 + plan.length * 5.2}>PCB1: {f(placed("PCB1").size[0])} × {f(placed("PCB1").size[1])} × 1,6 mm, face superior em z = {f(placed("PCB1").z + 0.8)}.</T>
+        <T className="dt-t dt-tn" x={140} y={43 + plan.length * 5.2}>Fios: ver DT-03 e a ordem das ligações (seção 4). · 导线见 DT-03 与第 4 节。</T>
       </g>
     </Sheet>
   );
@@ -306,7 +313,7 @@ function CorteLongitudinal({ g, version, sheet, total }: { g: G; version: Suport
       <Balloon v={d} at={[0, 34]} dx={-14} dy={20} id="D1" />
       <ViewTitle x={d.ox} y={152} text="Detalhe H: pilha óptica · 局部详图 H" scale="3,5:1" />
       <g className="dt-table">
-        <text className="dt-t dt-tnh" x={160} y={16}>Pilha óptica (de baixo para cima) · 光学叠层（自下而上）</text>
+        <T className="dt-t dt-tnh" x={160} y={16}>Pilha óptica (de baixo para cima) · 光学叠层（自下而上）</T>
         <line className="dt-thin" x1={160} x2={290} y1={18.5} y2={18.5} />
         {[
           ["LED D1 (topo)", `z = ${f(post.ledTop)}`],
@@ -316,7 +323,7 @@ function CorteLongitudinal({ g, version, sheet, total }: { g: G; version: Suport
           ["Lente da objetiva P9", `z = ${f(tube.noseZ)}`],
           ["Distância de trabalho", `${f(p.workingDistance)} mm`],
         ].map(([a, b], i) => (
-          <g key={a}><text className="dt-t dt-tv" x={160} y={25 + i * 5.4}>{a}</text><text className="dt-t dt-tv" x={250} y={25 + i * 5.4}>{b}</text></g>
+          <g key={a}><T className="dt-t dt-tv" x={160} y={25 + i * 5.4}>{a}</T><T className="dt-t dt-tv" x={250} y={25 + i * 5.4}>{b}</T></g>
         ))}
       </g>
     </Sheet>
@@ -480,17 +487,17 @@ function M1Detalhes({ g, version, sheet, total }: { g: G; version: SuporteVersio
       <Lead v={v} at={[earX, 4]} dx={12} dy={20} text={`piloto ⌀${f(p.pilotHole)} (*) × 8`} />
       <Lead v={v} at={[-R, 6]} dx={-8} dy={-16} text={`R ext. ${f(R)}`} dot={false} />
       <ViewTitle x={v.ox} y={150} text="Detalhe E: planta do anel em z = 199,2 · 局部详图 E" scale="2:1" />
-      <g className="dt-table">
-        <text className="dt-t dt-tnh" x={160} y={16}>Tabela de recortes e furos do M1 · M1 开孔表</text>
+     <g className="dt-table">
+        <T className="dt-t dt-tnh" x={160} y={16}>Tabela de recortes e furos do M1 · M1 开孔表</T>
         <line className="dt-thin" x1={160} x2={290} y1={18.5} y2={18.5} />
         {rows.map(([a, b, c], i) => (
           <g key={a}>
-            <text className="dt-t dt-tv" x={160} y={25 + i * 12.5}>{a}</text>
-            <text className="dt-t dt-tn" x={160} y={29.6 + i * 12.5}>{b}</text>
-            <text className="dt-t dt-tn dt-tzh" x={160} y={33.6 + i * 12.5}>{c}</text>
+            <T className="dt-t dt-tv" x={160} y={25 + i * 12.5}>{a}</T>
+            <T className="dt-t dt-tn" x={160} y={29.6 + i * 12.5}>{b}</T>
+            <T className="dt-t dt-tn dt-tzh" x={160} y={33.6 + i * 12.5}>{c}</T>
           </g>
         ))}
-        <text className="dt-t dt-tn" x={160} y={160}>(*) a confirmar com os gabaritos G1 a G3. · 以校准件 G1~G3 核实。</text>
+        <T className="dt-t dt-tn" x={160} y={160}>(*) a confirmar com os gabaritos G1 a G3. · 以校准件 G1~G3 核实。</T>
       </g>
     </Sheet>
   );
@@ -608,7 +615,7 @@ function M3Tampa({ g, version, sheet, total }: { g: G; version: SuporteVersion; 
       <Lead v={plan} at={[box.xMin + 4, box.yMin + 4]} dx={-6} dy={14} text={`R${f(p.cornerRadius)}`} />
       <CutMark v={plan} a={[0, box.yMax + 6]} b={[0, box.yMin - 8]} letter="C" dir={[-1, 0]} />
       <CutMark v={plan} a={[box.xMin - 8, bpy]} b={[box.xMax + 8, bpy]} letter="D" dir={[0, 1]} />
-      <ViewTitle x={plan.ox} y={160} text="Vista superior · 俯视图（打印方向）" scale="1:1" />
+      <ViewTitle x={plan.ox + 34} y={160} text="Vista superior (orientação de impressão) · 俯视图（打印方向）" scale="1:1" />
       <Solid v={cc} ds={[rectSegs(box.yMin, box.yMax, -wall, 0), rectSegs(-post.diameter / 2, post.diameter / 2, -0.2, post.top), ...(L.cradle ? [rectSegs(L.cradle.yMin, L.cradle.yMin + p.cradleWall, 0, L.cradle.height), rectSegs(L.cradle.yMax - p.cradleWall, L.cradle.yMax, 0, L.cradle.height)] : [])]} />
       <Void v={cc} u1={-post.seatDiameter / 2} u2={post.seatDiameter / 2} w1={post.top - post.seatDepth} w2={post.top} open="t" />
       <Void v={cc} u1={-post.legHole / 2} u2={post.legHole / 2} w1={1} w2={post.top - post.seatDepth} />
@@ -630,9 +637,9 @@ function M3Tampa({ g, version, sheet, total }: { g: G; version: SuporteVersion; 
         <line className="dt-thin" x1={135} x2={290} y1={19} y2={19} />
         {rowsH.map(([a, b, c], i) => (
           <g key={a}>
-            <text className="dt-t dt-tv" x={135} y={24 + i * 8.5}>{a}</text>
-            <text className="dt-t dt-tn" x={135} y={27.8 + i * 8.5}>{b}</text>
-            <text className="dt-t dt-tn dt-tzh" x={218} y={27.8 + i * 8.5}>{c}</text>
+            <T className="dt-t dt-tv" x={135} y={24 + i * 8.5}>{a}</T>
+            <T className="dt-t dt-tn" x={135} y={27.8 + i * 8.5}>{b}</T>
+            <T className="dt-t dt-tn dt-tzh" x={218} y={27.8 + i * 8.5}>{c}</T>
           </g>
         ))}
       </g>
