@@ -10,7 +10,7 @@ mkdirSync(resolve("shots"), { recursive: true });
 let total = 0;
 for (const [v, lang] of ["v1", "v2"].flatMap((x) => ["bi", "pt", "zh", "en"].map((l) => [x, l] as const))) {
   const profile = resolve("shots", `edge-check-${v}-${lang}`).replaceAll("\\", "/");
-  const run = spawnSync(EDGE, ["--headless=new", `--user-data-dir=${profile}`, "--dump-dom", "--virtual-time-budget=20000", `${BASE}#suporte/manual/${v}/1/check/${lang}`], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+  const run = spawnSync(EDGE, ["--headless=new", `--user-data-dir=${profile}`, "--dump-dom", "--virtual-time-budget=90000", `${BASE}#suporte/manual/${v}/1/check/${lang}`], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
   const m = /<pre id="dt-check"[^>]*>([^<]*)<\/pre>/.exec(run.stdout ?? "");
   if (!m) { console.log(v, lang, "sem resultado"); total += 1; continue; }
   const data = JSON.parse(m[1]!.replaceAll("&quot;", '"').replaceAll("&amp;", "&").replaceAll("&lt;", "<").replaceAll("&gt;", ">")) as { problems: string[] };

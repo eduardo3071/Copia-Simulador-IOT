@@ -10,6 +10,8 @@ cpSync(new URL("mecanica/", from), new URL("mecanica/", to), { recursive: true, 
 for (const [source, target] of [
   ["eletronica/v1-pilha/esquematico.svg", "eletronica/v1-esquematico.svg"],
   ["eletronica/v2-fonte-dimmer/esquematico.svg", "eletronica/v2-esquematico.svg"],
+  ...["v1", "v2"].flatMap((v) => ["frente", "verso"].map((s) => [`eletronica/${v}-placa-${s}.png`, `eletronica/${v}-placa-${s}.png`])),
+  ["TRADUCAO-REVISAO.csv", "TRADUCAO-REVISAO.csv"],
 ]) {
   mkdirSync(new URL("eletronica/", to), { recursive: true });
   cpSync(new URL(source, from), new URL(target, to));

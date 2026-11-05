@@ -1,13 +1,13 @@
-G04 Simulador-IOT | Luz do pregoscopio v2 (fonte + dimmer) | revisão 2*
+G04 Simulador-IOT | Luz do pregoscopio v2 (fonte + dimmer) | revisão 3*
 %TF.GenerationSoftware,tscircuit,circuit-json-to-gerber,0.0.112*%
-%TF.CreationDate,2026-11-03T12:35:19.173Z*%
+%TF.CreationDate,2026-11-04T20:54:31.153Z*%
 %TF.SameCoordinates,Original*%
 %TF.FileFunction,Copper,L1,Top*%
 %TF.FilePolarity,Positive*%
 %FSLAX46Y46*%
 %MOMM*%
 G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
-G04 Created by tscircuit (builder) date 2026-11-03T12:35:19.174Z*
+G04 Created by tscircuit (builder) date 2026-11-04T20:54:31.153Z*
 G01*
 %LPD*%
 G75*
@@ -74,8 +74,10 @@ G04 aperture START LIST*
 %ADD16C,0.100000*%
 %TA.AperFunction,ComponentPad*%
 %ADD17C,1.900000*%
+%TA.AperFunction,Conductor*%
+%ADD18C,0.099000*%
 %TA.AperFunction,ViaPad*%
-%ADD18C,0.300000*%
+%ADD19C,0.300000*%
 %TD*%
 G04 aperture END LIST*
 D11*
@@ -165,6 +167,6 @@ X-08350000Y-07640000D01*
 D10*
 X-13270000Y-00680000D02*
 X-13270000Y-03820000D01*
-D18*
+D19*
 X-04335000Y-03940000D03*
 M02*

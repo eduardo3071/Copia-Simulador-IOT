@@ -83,3 +83,29 @@ describe("placa 3D", () => {
     }
   });
 });
+
+describe("lista de corte dos fios", () => {
+  it("v1 pede cerca de 0,6 m e v2 cerca de 1,3 m, cada fio com folga e múltiplo de 5 mm", async () => {
+    const { wireCutList } = await import("../src/index.ts");
+    const total = (v: "v1" | "v2") => wireCutList(v).reduce((s, r) => s + r.cut, 0);
+    expect(total("v1")).toBe(610);
+    expect(total("v2")).toBe(1265);
+    for (const v of ["v1", "v2"] as const) {
+      for (const r of wireCutList(v)) {
+        expect(r.cut % 5).toBe(0);
+        expect(r.cut).toBeGreaterThan(r.path + 12);
+      }
+    }
+  });
+});
+
+describe("pads e rede esperada", () => {
+  it("todo pad da placa tem um pino do esquemático", async () => {
+    const { PAD_PIN } = await import("../src/index.ts");
+    for (const v of ["v1", "v2"] as const) {
+      expect(Object.keys(PAD_PIN[v]).sort()).toEqual(Object.keys(PCB[v].pads).sort());
+      const { pins } = nets(v);
+      for (const pin of Object.values(PAD_PIN[v])) expect(pins.has(pin), `${v} ${pin}`).toBe(true);
+    }
+  });
+});

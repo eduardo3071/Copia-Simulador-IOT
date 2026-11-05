@@ -1,0 +1,23 @@
+{
+ "version": "v2",
+ "pads": {
+  "J1.VIN": "N1",
+  "J1.GND": "N2",
+  "SW1.A": "N3",
+  "SW1.B": "N4",
+  "D1.ANODO": "N5",
+  "D1.CATODO": "N2",
+  "RV1.pin1": "N6",
+  "RV1.pin2": "N5",
+  "RV1.pin3": "N5",
+  "U1.ADJ": "N5",
+  "U1.OUT": "N7",
+  "U1.IN": "N4",
+  "C1.pin1": "N4",
+  "C1.pin2": "N2",
+  "R1.pin1": "N7",
+  "R1.pin2": "N6",
+  "D2.pin1": "N1",
+  "D2.pin2": "N3"
+ }
+}

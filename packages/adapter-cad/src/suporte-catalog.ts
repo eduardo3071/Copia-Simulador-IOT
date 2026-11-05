@@ -118,7 +118,7 @@ export const SUPORTE_PARTS: SuportePart[] = [
 
   // ---- consumables ---------------------------------------------------------------------------------
   { id: "W1", name: "Fio flexível 24 AWG (vermelho, preto e mais uma cor)", kind: "comprada", versions: both, qty: 1, evidence: "calculado",
-    spec: "v1: 6 fios de 10 a 25 cm; v2: 9 fios de 10 a 45 cm; pontas estanhadas",
+    spec: "v1: 6 fios de 65 a 130 mm (0,6 m no total); v2: 9 fios de 85 a 170 mm (1,3 m no total); pontas estanhadas (ver a lista de corte no manual)",
     criterion: "Fio fino e flexível passa pelo furo do porta-LED e entre as peças sem forçar os terminais da placa. Vermelho no positivo, preto no GND e outra cor nos demais." },
   { id: "W2", name: "Tubo termorretrátil ⌀ 2 a 3 mm", kind: "comprada", versions: both, qty: 1, evidence: "calculado",
     spec: "10 cm, uma luva de 1 cm por emenda",

@@ -430,3 +430,9 @@ a.button.primary { background: #2b6fe0; border-color: #2b6fe0; color: #fff; }
 @media print {
   @page { @bottom-center { content: "PREGOSCÓPIO 显微镜 · Pregoscope · Rev. A · " counter(page) " / " counter(pages); font: 8px sans-serif; color: #555; } }
 }
+
+.swatch { display:inline-block; width:10px; height:10px; border:1px solid #555; border-radius:2px; vertical-align:middle; }
+
+.pcb-figs { display:flex; gap:12px; align-items:flex-start; }
+.pcb-figs figure { margin:0; flex:1 1 0; min-width:0; text-align:center; }
+.pcb-figs img { max-width:100%; max-height:60mm; object-fit:contain; background:#fff; border:1px solid #ccc; }

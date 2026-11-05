@@ -1,13 +1,13 @@
-G04 Simulador-IOT | Luz do pregoscopio v1 (pilha 9 V) | revisão 2*
+G04 Simulador-IOT | Luz do pregoscopio v1 (pilha 9 V) | revisão 3*
 %TF.GenerationSoftware,tscircuit,circuit-json-to-gerber,0.0.112*%
-%TF.CreationDate,2026-11-03T12:35:16.089Z*%
+%TF.CreationDate,2026-11-04T20:54:27.414Z*%
 %TF.SameCoordinates,Original*%
 %TF.FileFunction,Soldermask,Top*%
 %TF.FilePolarity,Negative*%
 %FSLAX46Y46*%
 %MOMM*%
 G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
-G04 Created by tscircuit (builder) date 2026-11-03T12:35:16.089Z*
+G04 Created by tscircuit (builder) date 2026-11-04T20:54:27.414Z*
 G01*
 %LPD*%
 G75*
@@ -67,6 +67,7 @@ G04 aperture START LIST*
 %ADD16C,0.100000*%
 %ADD17C,1.400000*%
 %ADD18C,3.200000*%
+%ADD19C,0.099000*%
 %TD*%
 G04 aperture END LIST*
 D11*

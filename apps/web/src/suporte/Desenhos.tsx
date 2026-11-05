@@ -226,7 +226,7 @@ function PlantaInterior({ g, version, sheet, total }: { g: G; version: SuporteVe
       <DimH v={v} u1={box.xMin} u2={box.xMax} w={box.yMin} off={-8} />
       <DimV v={v} w1={box.yMin} w2={box.yMax} u={box.xMin} off={-9} />
       <DimH v={v} u1={board.xMin} u2={board.xMax} w={board.yMax} off={7} />
-      <DimV v={v} w1={board.yMin} w2={board.yMax} u={board.xMax} off={9} />
+      <DimV v={v} w1={board.yMin} w2={board.yMax} u={board.xMax} off={v2 ? 4 : 9} />
       <Balloon v={v} at={[0, 0]} dx={v2 ? -2 : 20} dy={v2 ? 22 : -14} id="D1" />
       <Balloon v={v} at={[bx + bw / 2, by]} dx={13} dy={0} id="PCB1" />
       <Balloon v={v} at={[u1.x, u1.y]} dx={v2 ? -6 : -14} dy={v2 ? -18 : 28} id="U1" />
@@ -327,7 +327,7 @@ function CorteLongitudinal({ g, version, sheet, total }: { g: G; version: Suport
       <Shape v={d} segs={[["M", -2.5, 33.1], ["A", 2.5, 2.5, 33.1, 0], ["Z"]]} fill="#fffbe6" />
       <DimV v={d} w1={post.ledTop} w2={cav.top} u={-18} off={-8} text={f(cav.top - post.ledTop)} />
       <DimV v={d} w1={cav.top} w2={roofTop} u={-18} off={-8} text={f(wall)} />
-      <DimV v={d} w1={slideTop} w2={tube.noseZ} u={tube.objectiveRadius} off={14} text="0,8" />
+      <Lead v={d} at={[tube.objectiveRadius, (slideTop + tube.noseZ) / 2]} dx={-14} dy={-8} text="0,8" />
       <DimH v={d} u1={-p.ledWindowDiameter / 2} u2={p.ledWindowDiameter / 2} w={roofTop} off={9} text={`janela ⌀${f(p.ledWindowDiameter)}`} />
       <DimH v={d} u1={-seat.diameter / 2} u2={seat.diameter / 2} w={cav.top} off={-9} text={`assento ⌀${f(seat.diameter)} (*)`} />
       <DimH v={d} u1={-(p.slideWidth + p.slideFit) / 2} u2={(p.slideWidth + p.slideFit) / 2} w={roofTop} off={19} text={`canal ${f(p.slideWidth + p.slideFit)} (*)`} />
@@ -383,8 +383,6 @@ function M1Externa({ g, version, sheet, total }: { g: G; version: SuporteVersion
       <DimH v={front} u1={-win.width / 2} u2={win.width / 2} w={win.zMin} off={-5} text={f(win.width)} />
       <DimH v={front} u1={-earX - earHalf} u2={earX + earHalf} w={col.top} off={9} />
       <DimH v={front} u1={-45} u2={45} w={0} off={-7} />
-      <Lead v={front} at={[sw.x - sw.width / 2, 24]} dx={-8} dy={-14} text={`recorte ${f(sw.width)} × ${f(sw.height)} (*)`} />
-      <DimH v={front} u1={0} u2={sw.x} w={20 - sw.height / 2} off={-3} text={f(Math.abs(sw.x))} />
       {g.v2 && <Lead v={front} at={[p.knobX + 3, 22]} dx={10} dy={-12} text={`⌀${f(p.knobDiameter)} (*), x = ${f(p.knobX)}`} />}
       <ViewTitle x={front.ox} y={118} text="Vista frontal · 正视图" scale="1:3" />
       <Rect v={side} u1={box.yMin} u2={box.yMax} w1={0} w2={box.height} r={1.5} />
@@ -459,7 +457,15 @@ function M1Cortes({ g, version, sheet, total }: { g: G; version: SuporteVersion;
       <Lead v={a} at={[col.yMin - 4, ring.bottom - 6]} dx={20} dy={10} text={`R${f(p.columnRound)}`} />
       <CutMark v={a} a={[box.yMax + 10, 20]} b={[box.yMin - 10, 20]} letter="B" dir={[0, 1]} />
       <ViewTitle x={a.ox - 6} y={146} text="Corte A–A (x = 0) · 剖视 A–A" scale="1:2" />
-      <Block x={30} y={156} lines={[{ t: "Teto, assento do difusor e canal: detalhe H (DT-03) e detalhe G (DT-09). · 顶板详见 DT-03、DT-09。" }]} />
+      <Block
+        x={30}
+        y={156}
+        lines={[
+          { t: `Postes: 4× ⌀8, piloto ⌀${f(p.pilotHole)} (*) · 立柱：4× ⌀8，底孔 ⌀${f(p.pilotHole)} (*)` },
+          { t: "Teto, assento do difusor e canal: detalhe H (DT-03) e detalhe G (DT-09). · 顶板详见 DT-03、DT-09。" },
+        ]}
+        pitch={3.8}
+      />
       <Solid v={b} ds={[ring2]} evenodd />
       {L.posts.map((q, i) => <Solid key={i} v={b} ds={[[...circleSegs(q.x, q.y, 4), ...circleSegs(q.x, q.y, p.pilotHole / 2)]]} evenodd />)}
       <Void v={b} u1={sw.x - sw.width / 2} u2={sw.x + sw.width / 2} w1={box.yMin} w2={box.yMin + wall} open="tb" />
@@ -470,11 +476,18 @@ function M1Cortes({ g, version, sheet, total }: { g: G; version: SuporteVersion;
       <DimV v={b} w1={box.yMin} w2={box.yMax} u={box.xMax} off={9} />
       <DimV v={b} w1={L.posts[0]!.y} w2={L.posts[1]!.y} u={L.posts[0]!.x} off={-8} />
       {g.v2 && <DimV v={b} w1={p.jackY - p.jackDiameter / 2} w2={p.jackY + p.jackDiameter / 2} u={box.xMax} off={-14} text={`⌀${f(p.jackDiameter)} (*)`} />}
-      <Lead v={b} at={[L.posts[3]!.x + 4, L.posts[3]!.y]} dx={-3} dy={-12} text={`4× ⌀8, piloto ⌀${f(p.pilotHole)} (*)`} />
-      <CutMark v={b} a={[0, box.yMax + 5]} b={[0, box.yMin - 8]} letter="A" dir={[1, 0]} />
-      <ViewTitle x={b.ox} y={160} text="Corte B–B (z = 20) · 剖视 B–B" scale="1:1" />
+      <CutMark v={b} a={[0, box.yMax + 5]} b={[0, box.yMin - 14]} letter="A" dir={[1, 0]} />
+      <ViewTitle x={b.ox} y={158} text="Corte B–B (z = 20) · 剖视 B–B" scale="1:1" />
     </Sheet>
   );
+}
+
+/** One line of text written out in all three languages (not through the dictionary). */
+function FitRow({ y, pt, zh, en }: { y: number; pt: string; zh: string; en: string }) {
+  const lang = useLang();
+  const clean = (s: string) => (lang === "pt" || lang === "bi" ? s : s.replace(/(\d),(\d)/g, "$1.$2"));
+  const text = lang === "pt" ? pt : lang === "zh" ? zh : lang === "en" ? en : `${pt} · ${zh}`;
+  return <text className="dt-t dt-tn" x={172} y={y}>{clean(text)}</text>;
 }
 
 /* ================= DT-06 ================= */
@@ -491,6 +504,12 @@ function M1Detalhes({ g, version, sheet, total }: { g: G; version: SuporteVersio
     ["Janela da coluna", `${f(p.windowWidth)} × ${f(L.columnWindow!.zMax - L.columnWindow!.zMin)}, passante em y`, `z = ${f(L.columnWindow!.zMin)} a ${f(L.columnWindow!.zMax)}`],
     ["Postes da tampa", `4× ⌀8, piloto ⌀${f(p.pilotHole)} (*)`, `x = ±${f(L.posts[2]!.x)} ; y = ${f(L.posts[0]!.y)} e ${f(L.posts[1]!.y)}`],
     ["Piloto da abraçadeira", `2× ⌀${f(p.pilotHole)} (*) × 8 de prof., em y`, `x = ±${f(earX)} ; z = ${f(ring.bottom + p.ringHeight / 2)}`],
+  ];
+  const fits: [string, string, string][] = [
+    [`Tubo ⌀${f(p.tubeDiameter)} no furo ⌀${f(bore * 2)}: folga ${f(bore * 2 - p.tubeDiameter)}`, `镜筒 ⌀${f(p.tubeDiameter)} 配孔 ⌀${f(bore * 2)}：间隙 ${f(bore * 2 - p.tubeDiameter)}`, `Tube ⌀${f(p.tubeDiameter)} in bore ⌀${f(bore * 2)}: clearance ${f(bore * 2 - p.tubeDiameter)}`],
+    [`Lâmina ${f(p.slideWidth)} no canal ${f(p.slideWidth + p.slideFit)}: folga ${f(p.slideFit)}`, `载玻片 ${f(p.slideWidth)} 配槽 ${f(p.slideWidth + p.slideFit)}：间隙 ${f(p.slideFit)}`, `Slide ${f(p.slideWidth)} in channel ${f(p.slideWidth + p.slideFit)}: clearance ${f(p.slideFit)}`],
+    [`Difusor ⌀${f(p.diffuserDiameter)} no assento ⌀${f(L.diffuserSeat.diameter)}`, `扩散片 ⌀${f(p.diffuserDiameter)} 配座 ⌀${f(L.diffuserSeat.diameter)}`, `Diffuser ⌀${f(p.diffuserDiameter)} in seat ⌀${f(L.diffuserSeat.diameter)}`],
+    [`Parafuso M3: passante ⌀${f(p.screwHole)}, piloto ⌀${f(p.pilotHole)}`, `M3 螺钉：通孔 ⌀${f(p.screwHole)}，底孔 ⌀${f(p.pilotHole)}`, `M3 screw: through ⌀${f(p.screwHole)}, pilot ⌀${f(p.pilotHole)}`],
   ];
   return (
     <Sheet info={info(version, "DT-06", "M1: detalhe do anel e recortes", "M1 支架：抱箍环详图与开孔表", "M1", "2:1", sheet, total)}>
@@ -509,20 +528,23 @@ function M1Detalhes({ g, version, sheet, total }: { g: G; version: SuporteVersio
       <DimV v={v} w1={0} w2={10} u={-earX - earHalf} off={-8} text={f(10)} />
       <DimV v={v} w1={0} w2={armLen} u={22} off={10} text={f(armLen)} />
       <DimH v={v} u1={earX - earHalf} u2={earX + earHalf} w={10} off={6} text={f(earHalf * 2)} />
-      <Lead v={v} at={[earX, 4]} dx={12} dy={20} text={`piloto ⌀${f(p.pilotHole)} (*) × 8`} />
+      <Lead v={v} at={[earX, 4]} dx={16} dy={-10} text={`⌀${f(p.pilotHole)} (*) × 8`} />
       <Lead v={v} at={[-R, 6]} dx={-8} dy={-16} text={`R ext. ${f(R)}`} dot={false} />
       <ViewTitle x={v.ox} y={150} text="Detalhe E: planta do anel em z = 199,2 · 局部详图 E" scale="2:1" />
      <g className="dt-table">
-        <T className="dt-t dt-tnh" x={160} y={16}>Tabela de recortes e furos do M1 · M1 开孔表</T>
-        <line className="dt-thin" x1={160} x2={290} y1={18.5} y2={18.5} />
+        <T className="dt-t dt-tnh" x={172} y={16}>Tabela de recortes e furos do M1 · M1 开孔表</T>
+        <line className="dt-thin" x1={172} x2={290} y1={18.5} y2={18.5} />
         {rows.map(([a, b, c], i) => (
           <g key={a}>
-            <T className="dt-t dt-tv" x={160} y={25 + i * 12.5}>{a}</T>
-            <T className="dt-t dt-tn" x={160} y={29.6 + i * 12.5}>{b}</T>
-            <T className="dt-t dt-tn dt-tzh" x={160} y={33.6 + i * 12.5}>{c}</T>
+            <T className="dt-t dt-tv" x={172} y={25 + i * 11.5}>{a}</T>
+            <T className="dt-t dt-tn" x={172} y={29.3 + i * 11.5}>{b}</T>
+            <T className="dt-t dt-tn dt-tzh" x={172} y={33 + i * 11.5}>{c}</T>
           </g>
         ))}
-        <T className="dt-t dt-tn" x={160} y={160}>(*) a confirmar com os gabaritos G1 a G3. · 以校准件 G1~G3 核实。</T>
+        <line className="dt-thin" x1={172} x2={290} y1={135} y2={135} />
+        <T className="dt-t dt-tnh" x={172} y={133}>Ajustes e folgas · 配合与间隙</T>
+        {fits.map(([pt, zh, en], i) => <FitRow key={pt} y={140 + i * 4.5} pt={pt} zh={zh} en={en} />)}
+        <T className="dt-t dt-tn" x={172} y={160}>(*) a confirmar com os gabaritos G1 a G3. · 以校准件 G1~G3 核实。</T>
       </g>
     </Sheet>
   );
@@ -630,15 +652,14 @@ function M3Tampa({ g, version, sheet, total }: { g: G; version: SuporteVersion; 
       <DimH v={plan} u1={box.xMin} u2={box.xMax} w={box.yMin} off={-8} />
       <DimV v={plan} w1={box.yMin} w2={box.yMax} u={box.xMin} off={-9} />
       <DimH v={plan} u1={L.lid.holes[0]!.x} u2={L.lid.holes[2]!.x} w={L.lid.holes[0]!.y} off={-4} text={f(L.lid.holes[2]!.x * 2)} />
-      <DimV v={plan} w1={L.lid.holes[0]!.y} w2={L.lid.holes[1]!.y} u={L.lid.holes[2]!.x} off={8} text={f(L.lid.holes[1]!.y - L.lid.holes[0]!.y)} />
+      <DimV v={plan} w1={L.lid.holes[0]!.y} w2={L.lid.holes[1]!.y} u={L.lid.holes[2]!.x} off={14} text={f(L.lid.holes[1]!.y - L.lid.holes[0]!.y)} />
       <DimH v={plan} u1={L.boardPosts[0]!.x} u2={L.boardPosts[2]!.x} w={L.boardPosts[0]!.y} off={-4} text={f(L.boardPosts[2]!.x - L.boardPosts[0]!.x)} />
       <DimV v={plan} w1={L.boardPosts[0]!.y} w2={L.boardPosts[1]!.y} u={L.boardPosts[0]!.x} off={-8} text={f(L.boardPosts[1]!.y - L.boardPosts[0]!.y)} />
       {L.cradle && <DimV v={plan} w1={L.cradle.yMin} w2={L.cradle.yMax} u={L.cradle.xMax} off={8} text={f(L.cradle.yMax - L.cradle.yMin)} />}
       {L.cradle && <DimH v={plan} u1={L.cradle.xMin} u2={L.cradle.xMax} w={L.cradle.yMax} off={6} text={f(L.cradle.xMax - L.cradle.xMin)} />}
       <Lead v={plan} at={[post.diameter / 2, 3]} dx={10} dy={-10} text={`⌀${f(post.diameter)} · ⌀${f(post.seatDiameter)} (*)`} />
-      <Lead v={plan} at={[board.xMax, board.yMax]} dx={8} dy={-8} text="PCB1" dot={false} />
       <Lead v={plan} at={[box.xMin + 4, box.yMin + 4]} dx={-6} dy={14} text={`R${f(p.cornerRadius)}`} />
-      <CutMark v={plan} a={[0, box.yMax + 6]} b={[0, box.yMin - 8]} letter="C" dir={[-1, 0]} />
+      <CutMark v={plan} a={[0, box.yMax + 6]} b={[0, box.yMin - 4]} letter="C" dir={[-1, 0]} />
       <CutMark v={plan} a={[box.xMin - 8, bpy]} b={[box.xMax + 8, bpy]} letter="D" dir={[0, 1]} />
       <ViewTitle x={plan.ox + 34} y={160} text="Vista superior (orientação de impressão) · 俯视图（打印方向）" scale="1:1" />
       <Solid v={cc} ds={[rectSegs(box.yMin, box.yMax, -wall, 0), rectSegs(-post.diameter / 2, post.diameter / 2, -0.2, post.top), ...(L.cradle ? [rectSegs(L.cradle.yMin, L.cradle.yMin + p.cradleWall, 0, L.cradle.height), rectSegs(L.cradle.yMax - p.cradleWall, L.cradle.yMax, 0, L.cradle.height)] : [])]} />
@@ -646,7 +667,7 @@ function M3Tampa({ g, version, sheet, total }: { g: G; version: SuporteVersion; 
       <Void v={cc} u1={-post.legHole / 2} u2={post.legHole / 2} w1={1} w2={post.top - post.seatDepth} />
       <Void v={cc} u1={post.slot.dir > 0 ? 0 : -(post.diameter / 2 + 1)} u2={post.slot.dir > 0 ? post.diameter / 2 + 1 : 0} w1={0} w2={post.slot.height} open="b" />
       <Line v={cc} a={[0, -wall - 3]} b={[0, post.top + 5]} c="ctr" />
-      <DimV v={cc} w1={-wall} w2={0} u={box.yMin} off={-6} text={f(wall)} />
+      <Lead v={cc} at={[box.yMin + 6, -wall / 2]} dx={12} dy={11} text={f(wall)} />
       <DimV v={cc} w1={0} w2={post.top} u={post.diameter / 2} off={-16} u2={-post.diameter / 2} text={f(post.top)} />
       <DimV v={cc} w1={0} w2={post.slot.height} u={slotU} off={post.slot.dir > 0 ? -8 : 8} text={f(post.slot.height)} />
       {L.cradle && <DimV v={cc} w1={0} w2={L.cradle.height} u={L.cradle.yMax} off={-8} text={f(L.cradle.height)} />}
@@ -767,6 +788,26 @@ export function DrawingCheck({ version }: { version: SuporteVersion }) {
           if (!c) return;
           items.push({ box: mm((c as SVGCircleElement).getBoundingClientRect()), label: `(${el.textContent})`, kind: "balloon" });
         });
+        // lines that run over a text: outlines, section lines, and dimension lines or leaders of another dimension
+        const labels = [...svg.querySelectorAll<SVGTextElement>("text")].filter((el) => !el.closest(".dt-title") && !el.closest(".dt-notes") && !el.closest(".dt-balloon") && (el.textContent ?? "").trim());
+        const lines = [...svg.querySelectorAll<SVGGeometryElement>(".dt-vis, .dt-thin, .dt-dim, g[stroke='#111'] > path")].filter((el) => !el.classList.contains("dt-frame") && !el.closest(".dt-title") && !el.closest(".dt-sym") && !el.closest("defs"));
+        for (const el of labels) {
+          const b = mm(el.getBoundingClientRect());
+          const own = el.closest(".dt-dimg");
+          const box = { l: b.l + 0.3, r: b.r - 0.3, t: b.t + 0.45, b: b.b - 0.45 };
+          let crossed: string | null = null;
+          for (const ln of lines) {
+            if (own && own.contains(ln)) continue;
+            const length = ln.getTotalLength?.() ?? 0;
+            if (!length || length > 4000) continue;
+            for (let d = 0; d <= length && !crossed; d += 0.35) {
+              const p = ln.getPointAtLength(d);
+              if (p.x > box.l && p.x < box.r && p.y > box.t && p.y < box.b) crossed = ln.getAttribute("class") ?? ln.tagName;
+            }
+            if (crossed) break;
+          }
+          if (crossed) out.push(`${code} linha sobre o texto: ${(el.textContent ?? "").trim().slice(0, 50)} (${crossed})`);
+        }
         const hit = (a: Box, b: Box) => Math.min(a.r, b.r) - Math.max(a.l, b.l) > 0.6 && Math.min(a.b, b.b) - Math.max(a.t, b.t) > 0.6;
         for (let i = 0; i < items.length; i++) {
           const a = items[i]!;

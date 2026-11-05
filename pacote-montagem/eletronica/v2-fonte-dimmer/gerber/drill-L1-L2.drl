@@ -1,8 +1,8 @@
 M48
-; Simulador-IOT | Luz do pregoscopio v2 (fonte + dimmer) | revisão 2
-; DRILL file {tscircuit} date 2026-11-03T12:35:19.193Z
+; Simulador-IOT | Luz do pregoscopio v2 (fonte + dimmer) | revisão 3
+; DRILL file {tscircuit} date 2026-11-04T20:54:31.165Z
 ; FORMAT={-:-/ absolute / metric / decimal}
-; #@! TF.CreationDate,2026-11-03T12:35:19.193Z
+; #@! TF.CreationDate,2026-11-04T20:54:31.165Z
 ; #@! TF.GenerationSoftware,tscircuit
 ; #@! TF.FileFunction,Plated,1,2,PTH
 FMAT,2

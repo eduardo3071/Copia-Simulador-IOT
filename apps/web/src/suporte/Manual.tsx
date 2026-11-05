@@ -1,7 +1,7 @@
 import { Component, useMemo, useState, type ReactNode } from "react";
 import {
   HINT_TEXT, manualBom, manualFiles, manualSteps, masterPlan, netList, partName, partsUpToStep, screwPositions, STANDARD_SIZE, TEST_TEXT, testPlan, wiringOrder,
-  type Bilingual, type ManualStep, type SuporteVersion,
+  kindLabel, PRINT, QA, SAFETY, STATUS, TOOLS, versionName, wireCutList, WIRE_COLOR_NAME, type Bilingual, type ManualStep, type SuporteVersion,
 } from "@simiot/adapter-cad";
 import { ASSETS, NOMINAL_RETRACT, SuporteScene, type Fit, type Layer } from "./Scene.tsx";
 import { DOC_DATE, DOC_REV, Desenhos } from "./Desenhos.tsx";
@@ -13,58 +13,11 @@ export { DOC_REV as REVISION, DOC_DATE as REVISION_DATE };
 
 const T = (pt: string, zh: string, en: string): Bilingual => ({ pt, zh, en });
 
-const versionName = (v: SuporteVersion): Bilingual =>
-  v === "v1"
-    ? T("Versão 1 — alimentada por pilha de 9 V", "版本 1 — 9 V 电池供电", "Version 1 — powered by a 9 V battery")
-    : T("Versão 2 — fonte 12 V com ajuste de brilho (dimmer)", "版本 2 — 12 V 电源，亮度可调（调光）", "Version 2 — 12 V supply with brightness control (dimmer)");
-
 export const stepImage = (version: SuporteVersion, n: number) => `${ASSETS}manual/${version}-passo-${String(n).padStart(2, "0")}.png`;
 export const overviewImage = (version: SuporteVersion) => `${ASSETS}manual/${version}-visao-geral.png`;
 /** PDF of one edition: the original (Portuguese with Chinese) or a single language. */
 export const pdfUrl = (version: SuporteVersion, lang: DocLang = "bi") => `${ASSETS}MANUAL-${version}${lang === "bi" ? "" : `-${lang}`}.pdf`;
 const docCode = (v: SuporteVersion, lang: DocLang) => `MAN-PREG-${v.toUpperCase()}${lang === "bi" ? "" : `-${lang.toUpperCase()}`}`;
-
-const TOOLS: Bilingual[] = [
-  T("Impressora 3D FDM, mesa de pelo menos 300 mm, PLA", "FDM 3D 打印机，打印平台不小于 300 mm，PLA 耗材", "FDM 3D printer, bed of at least 300 mm, PLA filament"),
-  T("Ferro de soldar 30 a 40 W, solda 0,8 mm, alicate descascador", "30~40 W 电烙铁，0.8 mm 焊锡，剥线钳", "30 to 40 W soldering iron, 0.8 mm solder, wire stripper"),
-  T("Multímetro (tensão e corrente contínua)", "万用表（直流电压和电流）", "Multimeter (DC voltage and current)"),
-  T("Pistola de cola quente, soprador ou isqueiro para o termorretrátil", "热熔胶枪，热风枪或打火机（用于热缩管）", "Hot-glue gun, heat gun or lighter for the heat-shrink"),
-  T("Chave Phillips pequena; broca de 3 mm; lixa fina; paquímetro", "小号十字螺丝刀；3 mm 钻头；细砂纸；游标卡尺", "Small Phillips screwdriver; 3 mm drill bit; fine sandpaper; caliper"),
-];
-
-const PRINT: { part: string; text: Bilingual }[] = [
-  { part: "M1", text: T("arquivo -impressao, deitado nas costas; suportes só dentro da caixa", "使用 -impressao 文件，背面朝下打印；仅在盒内加支撑", "file -impressao, lying on its back; supports only inside the box") },
-  { part: "M2", text: T("arquivo -impressao, abre para cima; sem suportes", "使用 -impressao 文件，开口朝上；不需要支撑", "file -impressao, opening upward; no supports") },
-  { part: "M3", text: T("já plana; sem suportes", "已是平板；不需要支撑", "already flat; no supports") },
-  { part: "M4", text: T("plano, PLA natural ou branco, 1 a 2 camadas; sem suportes", "平放，本色或白色 PLA，1~2 层；不需要支撑", "flat, natural or white PLA, 1 to 2 layers; no supports") },
-];
-
-const STATUS: Bilingual[] = [
-  T("Tubo externo: o STEP dizia 30 mm e o paquímetro 33,5 mm. O 3D e o furo da abraçadeira usam 33,5 mm; confirmar com o gabarito G1.", "外镜筒：STEP 为 30 mm，卡尺测量为 33.5 mm。3D 和抱箍孔按 33.5 mm 设计，需用校准件 G1 确认。", "Outer tube: the STEP said 30 mm and the caliper 33.5 mm. The 3D and the clamp bore use 33.5 mm; confirm with jig G1."),
-  T("Objetiva: 38 mm de comprimento total (dado do fabricante) e 35 mm abaixo do tubo interno (medido); a distância de trabalho real (0,4 a 0,8 mm) depende do modelo e deve ser conferida no foco.", "物镜：总长 38 mm（厂家数据），内镜筒下方露出 35 mm（实测）；实际工作距离（0.4~0.8 mm）取决于型号，需在对焦时核实。", "Objective: 38 mm total length (manufacturer data) and 35 mm below the inner tube (measured); the real working distance (0.4 to 0.8 mm) depends on the model and must be checked while focusing."),
-  T("Recortes do interruptor, conector e botão, flange do LED, lâmina e parafusos: confirmar com o gabarito G2; pilha de 9 V com o G3.", "开关、插座和旋钮开孔、LED 法兰、载玻片和螺钉：用校准件 G2 确认；9 V 电池用 G3。", "Cut-outs of the switch, jack and knob, LED flange, slide and screws: confirm with jig G2; the 9 V battery with G3."),
-  T("As trilhas e a máscara das placas passaram numa verificação automática, mas não foram vistas num programa de PCB.", "电路板走线和阻焊层已通过自动检查，但尚未在 PCB 软件中人工查看。", "The traces and the solder mask of the boards passed an automatic check but have not been looked at in PCB software."),
-  T("O texto em chinês e em inglês foi escrito sem tradutor técnico e precisa de revisão por um falante nativo.", "中文和英文内容未经专业技术翻译，需由母语人员审校。", "The Chinese and English text was written without a technical translator and needs review by a native speaker."),
-];
-
-const SAFETY: Bilingual[] = [
-  T("Ferro de soldar a cerca de 300 °C: use o suporte, ventile o local, não toque na ponta.", "烙铁温度约 300 °C：使用烙铁架，保持通风，勿触碰烙铁头。", "Soldering iron at about 300 °C: use the stand, ventilate the room, never touch the tip."),
-  T("Cola quente e termorretrátil queimam: espere esfriar antes de manusear.", "热熔胶和热缩管会烫伤：冷却后再触碰。", "Hot glue and heat-shrink burn: let them cool before handling."),
-  T("Confira a polaridade antes de ligar (LED, diodo, bateria, plugue de centro positivo). Ligação invertida queima componentes.", "通电前核对极性（LED、二极管、电池、中心正极插头）。接反会烧坏元件。", "Check the polarity before powering up (LED, diode, battery, positive-centre plug). A reversed connection burns components."),
-  T("Use somente a fonte de 12 V indicada (v2) e pilha alcalina nova de 9 V (v1). Não use baterias recarregáveis de lítio.", "仅使用指定的 12 V 电源（v2）和新的 9 V 碱性电池（v1）。不要使用锂充电电池。", "Use only the 12 V supply listed (v2) and a new 9 V alkaline battery (v1). Do not use rechargeable lithium batteries."),
-  T("Não aperte demais os parafusos em PLA e não force o vidro da lâmina.", "PLA 上的螺钉不要拧得过紧，不要用力挤压载玻片。", "Do not overtighten screws in PLA and do not force the glass slide."),
-];
-
-const QA: Bilingual[] = [
-  T("A lâmina L1 desliza no canal sem esforço e sem folga lateral visível.", "载玻片 L1 在槽道内滑动顺畅，侧向无明显间隙。", "The slide L1 moves in the channel without effort and without visible side play."),
-  T("O tubo do pregoscópio entra no anel e fica preso pela M2 sem rachar o PLA.", "显微镜镜筒装入环中，由 M2 夹紧，PLA 无开裂。", "The pregoscope tube fits the ring and is held by M2 without cracking the PLA."),
-  T("Com o tubo interno estendido 19 mm na escala, a lente fica a cerca de 0,8 mm da lâmina e a imagem foca.", "内镜筒按刻度伸出 19 mm 时，镜头距载玻片约 0.8 mm 且图像可对焦。", "With the inner tube pulled out 19 mm on its scale the lens is about 0.8 mm from the slide and the image focuses."),
-  T("O LED acende e a luz é uniforme sobre a janela, sem ponto quente.", "LED 点亮，光窗光线均匀，无亮斑。", "The LED lights and the light is even over the window, with no hot spot."),
-  T("Corrente do LED medida dentro da faixa do teste elétrico.", "LED 电流在电气测试范围内。", "LED current measured inside the range of the electrical test."),
-  T("Tampa fechada com 4 parafusos, sem fio preso e sem folga maior que 0,5 mm.", "底盖用 4 颗螺钉关紧，无夹线，间隙不大于 0.5 mm。", "Lid closed with 4 screws, no trapped wire and no gap larger than 0.5 mm."),
-  T("Interruptor trava a pressão; na v2 o botão gira suave e o plugue encaixa.", "开关卡扣牢固；v2 的旋钮转动顺滑，插头插入到位。", "The switch snaps in; on v2 the knob turns smoothly and the plug seats."),
-  T("Nada solto ao sacudir de leve; sem rebarbas nas peças impressas.", "轻轻晃动无松动部件；打印件无毛刺。", "Nothing loose when shaken gently; no burrs on the printed parts."),
-];
 
 /** Camera that frames what is on screen at a step, so every picture is as large as it can be. */
 function fitFor(version: SuporteVersion, step: ManualStep, only: Set<string>): Fit {
@@ -116,9 +69,6 @@ function sceneFor(version: SuporteVersion, step: ManualStep) {
   const fit: Fit = overview ? { center: [0, 12, 120], radius: 190, dir: [0.55, -0.68, 0.42] } : fitFor(version, step, only!);
   return { only, highlight, ids, qty, fit, arrows: overview ? [] : arrowsFor(step), explode: overview ? 38 : 0 };
 }
-
-const kindLabel = (kind: string): Bilingual =>
-  kind === "impressa" ? T("impressa", "3D 打印", "printed") : kind === "referencia" ? T("fornecido (pregoscópio)", "客供（显微镜）", "supplied (pregoscope)") : T("comprada", "外购", "purchased");
 
 /** The document: cover, drawings, bill of materials, wiring, assembly steps, tests and inspection. */
 export function Manual({ version, lang = "bi" }: { version: SuporteVersion; lang?: DocLang }) {
@@ -263,6 +213,30 @@ function Doc({ version }: { version: SuporteVersion }) {
         <ol className="wiring-list">{wiring.map((w) => <li key={w.pt}><Bi t={w} /></li>)}</ol>
         <h4><Tx pt="Ligações do circuito (referência para placa perfurada)" zh="电路连接（万用板参考）" en="Circuit connections (reference for perforated board)" /></h4>
         <ol className="wiring-list">{nets.map((w) => <li key={w.pt}><Bi t={w} /></li>)}</ol>
+        <h4><Tx pt="Lista de corte dos fios" zh="导线下料表" en="Wire cut list" /></h4>
+        <table className="data">
+          <thead><tr><th>ID</th><th><Tx pt="Cor" zh="颜色" en="Colour" /></th><th><Tx pt="Extremidade livre" zh="自由端" en="Free end" /></th><th><Tx pt="Pad na placa" zh="板上焊盘" en="Board pad" /></th><th><Tx pt="Trajeto (mm)" zh="走线长度 (mm)" en="Path (mm)" /></th><th><Tx pt="Cortar (mm)" zh="下料长度 (mm)" en="Cut to (mm)" /></th></tr></thead>
+          <tbody>
+            {wireCutList(version).map((r) => (
+              <tr key={r.id}>
+                <td className="mono">{r.id}</td>
+                <td><span className="swatch" style={{ background: r.colorHex }} /> <Tx pt={WIRE_COLOR_NAME[r.colorHex]?.pt ?? ""} zh={WIRE_COLOR_NAME[r.colorHex]?.zh ?? ""} en={WIRE_COLOR_NAME[r.colorHex]?.en ?? ""} /></td>
+                <td className="mono">{r.from}</td>
+                <td className="mono">{r.pad.replace("ANODO", tx("ANODO", "阳极", "ANODE")).replace("CATODO", tx("CATODO", "阴极", "CATHODE"))}</td>
+                <td className="mono">{r.path}</td>
+                <td className="mono"><b>{r.cut}</b></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="small muted"><Bi t={T("Corte = trajeto + 12 mm de pontas descascaradas (6 mm em cada lado) + folga (15 mm; 70 mm nos fios da tampa, para abri-la sem desligar nada). Fio flexível 24 AWG.", "下料长度 = 走线长度 + 12 mm 剥线（两端各 6 mm）+ 余量（15 mm；盖板导线 70 mm，以便开盖时不必断线）。导线为 24 AWG 软线。", "Cut = path + 12 mm of stripped ends (6 mm each side) + slack (15 mm; 70 mm on the lid wires, so the lid opens without disconnecting anything). 24 AWG flexible wire.")} /></p>
+        <p className="small"><Bi t={T("Orientação da placa: a seta \"FRENTE / FRONT\" na serigrafia aponta para a frente da caixa (lado do interruptor); solde a placa com a seta nesse sentido.", "电路板方向：丝印上的“FRENTE / FRONT”箭头指向盒子正面（开关一侧）；请按此方向安装电路板。", "Board orientation: the \"FRENTE / FRONT\" arrow on the silkscreen points to the front of the box (switch side); mount the board with the arrow that way.")} /></p>
+        <h4><Tx pt="Placa de circuito (arquivos Gerber)" zh="电路板（Gerber 文件）" en="Circuit board (Gerber files)" /></h4>
+        <div className="pcb-figs">
+          <figure><img src={`${ASSETS}eletronica/${version}-placa-frente.png`} alt="" /><figcaption className="small"><Tx pt="Face superior (componentes)" zh="顶层（元件面）" en="Top side (components)" /></figcaption></figure>
+          <figure><img src={`${ASSETS}eletronica/${version}-placa-verso.png`} alt="" /><figcaption className="small"><Tx pt="Face inferior (trilhas)" zh="底层（走线面）" en="Bottom side (traces)" /></figcaption></figure>
+        </div>
+        <p className="small muted"><Bi t={T("Desenhado a partir dos próprios arquivos Gerber, com um programa independente do que os gerou. A conectividade do cobre foi conferida contra o esquemático: nenhuma trilha aberta e nenhum curto.", "图像直接由 Gerber 文件绘制，所用程序独立于生成文件的软件。铜层连通性已与原理图核对：无断路，无短路。", "Drawn from the Gerber files themselves with a program independent of the one that made them. The copper connectivity was checked against the schematic: no open traces and no shorts.")} /></p>
         <p className="small muted"><Bi t={T("Fio vermelho = positivo, preto = GND. O LM317 mantém 1,25 V sobre R1, então a corrente do LED fica fixa.", "红线为正极，黑线为地。LM317 在 R1 上保持 1.25 V，因此 LED 电流恒定。", "Red wire = positive, black = GND. The LM317 holds 1.25 V across R1, so the LED current stays fixed.")} /></p>
       </section>
 
@@ -318,6 +292,15 @@ function Doc({ version }: { version: SuporteVersion }) {
             <tbody>{j.series.map((sr) => <tr key={sr.name}><td><span className="mono">{sr.id}</span> <Bi t={jt(sr.name)} /></td><td className="mono">{sr.sizes.map((x) => (comma ? x : x.replace(",", "."))).join(" · ")}</td><td className="small"><Bi t={jt(sr.param)} /></td></tr>)}</tbody>
           </table>
         ))}
+        <h4><Tx pt="Ficha de registro da calibração" zh="校准记录表" en="Calibration record sheet" /></h4>
+        <table className="data">
+          <thead><tr><th><Tx pt="Gabarito / série" zh="校准件 / 系列" en="Jig / series" /></th><th><Tx pt="Peça real medida" zh="实测零件" en="Real part measured" /></th><th><Tx pt="Medida real (mm)" zh="实测尺寸 (mm)" en="Real size (mm)" /></th><th><Tx pt="Furo escolhido (mm)" zh="选定孔径 (mm)" en="Chosen hole (mm)" /></th><th><Tx pt="Data / responsável" zh="日期 / 负责人" en="Date / person" /></th></tr></thead>
+          <tbody>
+            {JIGS.filter((j) => j.id !== "G3" || version === "v1").flatMap((j) => j.series.map((sr) => (
+              <tr key={sr.id}><td><span className="mono">{sr.id}</span> <Bi t={jt(sr.name)} /></td><td className="blank" /><td className="blank" /><td className="blank" /><td className="blank" /></tr>
+            )))}
+          </tbody>
+        </table>
         <p className="small muted"><Bi t={T("Depois de escolher os valores, atualize os parâmetros em holder.ts, gere os arquivos de novo e emita a revisão B.", "选定数值后更新 holder.ts 中的参数，重新生成文件并发布 B 版。", "After choosing the values, update the parameters in holder.ts, regenerate the files and issue revision B.")} /></p>
       </section>
 

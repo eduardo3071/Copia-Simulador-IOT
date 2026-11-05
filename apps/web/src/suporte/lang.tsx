@@ -22,7 +22,7 @@ export function splitText(s: string): { pt: string; zh: string } {
 }
 
 /** Portuguese phrase, Chinese, English. Longest phrases are applied first, so a whole sentence wins over its words. */
-const DICT: [string, string, string][] = [
+export const DICT: [string, string, string][] = [
   ["Objetiva P9 (total / abaixo do tubo)", "物镜 P9（总长 / 管下露出）", "Objective P9 (total / below the tube)"],
   ["Arquivo suporte-base-coluna-impressao.stl: deitado nas costas; suportes só dentro da caixa.", "使用 suporte-base-coluna-impressao.stl：背面朝下打印；仅在盒内加支撑。", "File suporte-base-coluna-impressao.stl: lying on its back; supports only inside the box."],
   ["Impressão do M1", "M1 打印", "Printing M1"],

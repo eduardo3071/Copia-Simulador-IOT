@@ -21,6 +21,14 @@ const pos = (x: number, y: number) => (AUTOPACK ? {} : { pcbX: x, pcbY: y });
 const net = (name: string, ...ports: string[]): Node[] => [h("net", { name }), ...ports.map((port) => h("trace", { from: port, to: `net.${name}` }))];
 const header = (name: string, labels: string[], x: number, y = 0): Node =>
   h("pinheader", { name, pinCount: labels.length, footprint: `pinrow${labels.length}`, pinLabels: labels, ...pos(x, y) });
+/**
+ * Orientation mark on the silkscreen: an arrow pointing to the front wall of the box (-y in the drawings) and the word FRENTE / FRONT.
+ * `x` is the left edge region of the board.
+ */
+const front = (x: number): Node[] => [
+  h("silkscreentext", { text: "FRENTE / FRONT", pcbX: x - 1.6, pcbY: 0, pcbRotation: 90, fontSize: 1.1 }),
+  h("silkscreenpath", { route: [{ x, y: 6 }, { x, y: -6 }, { x: x - 1, y: -4.2 }, { x, y: -6 }, { x: x + 1, y: -4.2 }] }),
+];
 const holes = (width: number, depth: number, inset = 3.5): Node[] =>
   [-1, 1].flatMap((sx) => [-1, 1].map((sy) => h("hole", { name: `MH${sx}${sy}`, diameter: 3.2, pcbX: (sx * (width - 2 * inset)) / 2, pcbY: (sy * (depth - 2 * inset)) / 2 })));
 // the LM317 and C1 keep fixed positions; the rest is packed by tscircuit (the packer alone puts C1 on top of U1 on the 70 mm board)
@@ -35,7 +43,7 @@ async function render(name: string, title: string, children: Node[], board: { wi
   const errors = json.filter((e) => e.type.endsWith("_error")).map((e) => `${e.type}: ${String((e as { message?: unknown }).message ?? "")}`);
   mkdirSync(new URL(`${name}/`, out), { recursive: true });
   writeFileSync(new URL(`${name}/esquematico.svg`, out), convertCircuitJsonToSchematicSvg(json));
-  const files = await fabricationFiles(json, { title, revision: 2 });
+  const files = await fabricationFiles(json, { title, revision: 3 });
   for (const f of files) {
     const url = new URL(`${name}/${f.path}`, out);
     mkdirSync(new URL("./", url), { recursive: true });
@@ -54,6 +62,7 @@ const results = [
     h("resistor", { name: "R1", resistance: R1_OHMS, footprint: "axial_p0.4in", ...pos(7, 2), pcbRotation: 90 }),
     header("D1", ["ANODO", "CATODO"], 12, -8),
     ...holes(40, 25),
+    ...front(-17.2),
     ...net("VBAT", ".BT1 > .pin1", ".SW1 > .pin1"),
     ...net("VIN", ".SW1 > .pin2", ".U1 > .pin3", ".C1 > .pin1"),
     ...net("VOUT", ".U1 > .pin2", ".R1 > .pin1"),
@@ -72,6 +81,7 @@ const results = [
     h("potentiometer", { name: "RV1", maxResistance: RHEOSTAT_OHMS, footprint: "pinrow3", pinVariant: "three_pin", ...pos(14, -7) }),
     header("D1", ["ANODO", "CATODO"], 24, 4),
     ...holes(70, 25),
+    ...front(-32.4),
     ...net("VJ1", ".J1 > .pin1", ".D2 > .pin1"),
     ...net("VD", ".D2 > .pin2", ".SW1 > .pin1"),
     ...net("VIN", ".SW1 > .pin2", ".U1 > .pin3", ".C1 > .pin1"),

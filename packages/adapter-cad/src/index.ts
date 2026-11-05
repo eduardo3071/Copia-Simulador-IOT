@@ -9,3 +9,4 @@ export * from "./stl.ts";
 export * from "./suporte-manual.ts";
 export * from "./suporte-wiring.ts";
 export * from "./suporte-pcb.ts";
+export * from "./suporte-textos.ts";

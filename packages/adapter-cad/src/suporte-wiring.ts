@@ -231,3 +231,56 @@ export function routeIsClear(version: SuporteVersion, wire: RoutedWire): boolean
   const t = terminals(version)[`${wire.spec.part}:${wire.spec.pin}`]!;
   return hits(wire.path, obstacles(version), wire.from, wire.to, t.free) === null;
 }
+
+/** Colour names of the wires in the three languages. */
+export const WIRE_COLOR_NAME: Record<string, { pt: string; zh: string; en: string }> = {
+  "#ff8a1f": { pt: "laranja", zh: "橙色", en: "orange" },
+  "#222222": { pt: "preto", zh: "黑色", en: "black" },
+  "#d92d20": { pt: "vermelho", zh: "红色", en: "red" },
+  "#e0c200": { pt: "amarelo", zh: "黄色", en: "yellow" },
+  "#2e9e4f": { pt: "verde", zh: "绿色", en: "green" },
+  "#2f6fdb": { pt: "azul", zh: "蓝色", en: "blue" },
+};
+
+export interface CutRow {
+  id: string;
+  colorHex: string;
+  /** Free end, e.g. "SW1 terminal 1". */
+  from: string;
+  /** Pad on the board, e.g. "SW1 A". */
+  pad: string;
+  /** Length of the path between the two ends (mm). */
+  path: number;
+  /** Length to cut, with slack and stripped ends, rounded up to 5 mm. */
+  cut: number;
+}
+
+const pathLength = (p: Vec3[]) => p.slice(1).reduce((s, q, i) => s + Math.hypot(q[0] - p[i]![0], q[1] - p[i]![1], q[2] - p[i]![2]), 0);
+
+/**
+ * What to cut: the routed path, 6 mm stripped at each end and slack. The wires to the panel parts (switch, jack, rheostat)
+ * get 70 mm more so the lid can be pulled 60 mm away from the box with everything still connected.
+ */
+export function wireCutList(version: SuporteVersion): CutRow[] {
+  return wires(version).map((w) => {
+    const panel = !(w.spec.part === "D1" || w.spec.part === "BT1");
+    const path = pathLength(w.path);
+    const cut = Math.ceil((path + 12 + (panel ? 70 : 15)) / 5) * 5;
+    return { id: w.id, colorHex: w.spec.color, from: `${w.spec.part} ${w.spec.pin}`, pad: w.spec.pad.replace(".", " "), path: Math.round(path), cut };
+  });
+}
+
+/** Every pad of the driver board and the pin of the simulator project it stands for (the jack J1 is the supply PS1 plugged in). */
+export const PAD_PIN: Record<SuporteVersion, Record<string, string>> = {
+  v1: {
+    ...PAD_TO_PIN.v1,
+    "U1.ADJ": "U1:ADJ", "U1.OUT": "U1:OUT", "U1.IN": "U1:IN",
+    "C1.pin1": "C1:1", "C1.pin2": "C1:2", "R1.pin1": "R1:1", "R1.pin2": "R1:2",
+  },
+  v2: {
+    ...PAD_TO_PIN.v2,
+    "U1.ADJ": "U1:ADJ", "U1.OUT": "U1:OUT", "U1.IN": "U1:IN",
+    "C1.pin1": "C1:1", "C1.pin2": "C1:2", "R1.pin1": "R1:1", "R1.pin2": "R1:2",
+    "D2.pin1": "D2:A", "D2.pin2": "D2:K",
+  },
+};

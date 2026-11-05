@@ -151,7 +151,7 @@ export function masterPlan(version: SuporteVersion): PlacedPart[] {
       put("J1", box.xMax - p.wall / 2, p.jackY, swZ, [p.wall + 10, p.jackDiameter, p.jackDiameter], bi("furo da parede direita, porca por fora", "右壁开孔，螺母在外侧", "right-wall hole, nut outside")),
       put("RV1", p.knobX, box.yMin + p.wall / 2, swZ, [14, 8, 14], bi("furo da parede frontal, porca por fora", "前壁开孔，螺母在外侧", "front-wall hole, nut outside")),
       put("D2", d2[0], d2[1], top + 1.6, [5.2, 2.7, 2.7], bi("soldado na PCB1, faixa para o lado do pad pin2", "焊在 PCB1 上，色环端朝向 pin2 焊盘", "soldered to PCB1, band toward the pin2 pad"), true),
-      put("PS1", box.xMax + 40, 0, swZ, [38, 26, 24], bi("fora da caixa, cabo ao conector J1", "位于盒外，电缆接 J1", "outside the box, cable to the jack J1")),
+      put("PS1", box.xMax + 40, 0, swZ, [38, 26, 24], bi("fora da caixa, cabo ao conector J1", "位于盒外，电缆接插座 J1", "outside the box, cable to the jack J1")),
     );
   }
   return parts;
@@ -404,12 +404,12 @@ export function wiringOrder(version: SuporteVersion): Bilingual[] {
 export function netList(version: SuporteVersion): Bilingual[] {
   return version === "v1"
     ? [
-        bi("Fio vermelho do clipe BT1 ao terminal 1 do interruptor SW1.", "电池扣红线接开关 SW1 的端子 1。", "Red wire of clip BT1 to terminal 1 of switch SW1."),
+        bi("Fio vermelho do clipe BT1 ao terminal 1 do interruptor SW1.", "电池扣 BT1 的红线接开关 SW1 的端子 1。", "Red wire of clip BT1 to terminal 1 of switch SW1."),
         bi("Terminal 2 do SW1 ao pino IN do U1 (LM317T de frente, letras para você: ADJ, OUT, IN da esquerda para a direita).", "SW1 端子 2 接 U1 的 IN 脚（LM317T 正面朝向自己，从左到右依次为 ADJ、OUT、IN）。", "Terminal 2 of SW1 to pin IN of U1 (LM317T seen from the front, letters toward you: ADJ, OUT, IN from left to right)."),
         bi("C1 (100 nF) entre o pino IN do U1 e o GND, soldado perto do U1.", "C1 (100 nF) 接在 U1 的 IN 脚与地之间，靠近 U1 焊接。", "C1 (100 nF) between pin IN of U1 and GND, soldered close to U1."),
         bi("Pino OUT do U1 a uma ponta de R1 (68 Ω).", "U1 的 OUT 脚接 R1 (68 Ω) 的一端。", "Pin OUT of U1 to one end of R1 (68 Ω)."),
         bi("Outra ponta de R1 ao pino ADJ do U1 e ao ânodo (perna longa) do D1: os três no mesmo ponto.", "R1 另一端、U1 的 ADJ 脚和 D1 阳极（长脚）接在同一点。", "The other end of R1 to pin ADJ of U1 and to the anode (long leg) of D1: all three at the same point."),
-        bi("Cátodo (perna curta) do D1 ao fio preto do clipe BT1 (GND). O outro terminal do C1 também vai ao GND.", "D1 阴极（短脚）接电池扣黑线（地）。C1 的另一端也接地。", "Cathode (short leg) of D1 to the black wire of clip BT1 (GND). The other terminal of C1 also goes to GND."),
+        bi("Cátodo (perna curta) do D1 ao fio preto do clipe BT1 (GND). O outro terminal do C1 também vai ao GND.", "D1 阴极（短脚）接电池扣 BT1 的黑线（地）。C1 的另一端也接地。", "Cathode (short leg) of D1 to the black wire of clip BT1 (GND). The other terminal of C1 also goes to GND."),
       ]
     : [
         bi("Fonte PS1 (12 V) no conector J1. Confirme com o multímetro que o centro do plugue é positivo.", "12 V 电源 PS1 接插座 J1。用万用表确认插头中心为正极。", "Supply PS1 (12 V) into jack J1. Confirm with the multimeter that the plug centre is positive."),
