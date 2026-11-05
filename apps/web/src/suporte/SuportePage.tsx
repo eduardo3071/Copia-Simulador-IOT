@@ -4,6 +4,7 @@ import {
   type PartKind, type SuportePart, type SuporteVersion,
 } from "@simiot/adapter-cad";
 import { JIGS } from "./jigs.ts";
+import { SimulatedTest, TubeOptics } from "./TesteSimulado.tsx";
 import { DrawingCheck } from "./Desenhos.tsx";
 import { LANG_LABEL, LangContext, type DocLang } from "./lang.tsx";
 import { Manual, pdfUrl, StepShot, StepViewer } from "./Manual.tsx";
@@ -250,6 +251,8 @@ function Eletronica({ version, selected, setSelected }: { version: SuporteVersio
         </figure>
         <Calculator version={version} />
         <TestPlan version={version} />
+        <SimulatedTest version={version} />
+        <TubeOptics />
         <section className="calc">
           <h4>No simulador</h4>
           <p className="small">

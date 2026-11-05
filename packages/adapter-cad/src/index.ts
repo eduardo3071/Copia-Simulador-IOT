@@ -10,3 +10,5 @@ export * from "./suporte-manual.ts";
 export * from "./suporte-wiring.ts";
 export * from "./suporte-pcb.ts";
 export * from "./suporte-textos.ts";
+export * from "./suporte-optica.ts";
+export * from "./suporte-teste.ts";

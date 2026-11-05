@@ -91,8 +91,8 @@ export function testPlan(version: "v1" | "v2"): TestRow[] {
     return [
       row("Pilha BT1: positivo para negativo", 9, 8.4, 9.7, "V", "Pilha fraca, clipe mal encaixado ou ligação invertida."),
       row("Entrada do U1 (depois do SW1) para GND", 9, 8.3, 9.7, "V", "Interruptor aberto, solda fria no SW1 ou fio solto."),
-      row("Saída do U1 (OUT) para GND", LED_VF + LM317_VREF, 4.1, 4.6, "V", "R1 aberto ou LED invertido: a saída sobe até perto da entrada."),
-      row("Ânodo do D1 (pino ADJ) para GND", LED_VF, 2.8, 3.4, "V", "LED invertido (lê 0 V) ou queimado (lê mais que 3,4 V)."),
+      row("Saída do U1 (OUT) para GND", LED_VF + LM317_VREF, 3.9, 4.8, "V", "R1 aberto ou LED invertido: a saída sobe até perto da entrada."),
+      row("Ânodo do D1 (pino ADJ) para GND", LED_VF, 2.7, 3.4, "V", "LED invertido ou aberto: lê quase o mesmo que a saída do U1; em curto lê perto de 0 V."),
       row("Sobre R1 (entre OUT e ADJ)", LM317_VREF, 1.2, 1.3, "V", "Fora de 1,25 V o LM317 é falso ou está fora de regulação."),
       row("Corrente do LED, multímetro em série", l.currentmA, 17.4, 19.4, "mA", "R1 errado (confira as faixas 68 Ω: azul-cinza-preto) ou LM317 sem regulação."),
     ];
@@ -103,10 +103,10 @@ export function testPlan(version: "v1" | "v2"): TestRow[] {
     row("Fonte no J1: positivo para negativo, sem carga", 12, 11.5, 15, "V", "Fonte não regulada pode ler até 15 V sem carga; abaixo de 11,5 V a fonte é fraca."),
     row("Depois do D2 para GND", 12 - DIODE_DROP_V, 11, 11.8, "V", "Diodo invertido (lê 0 V) ou queda acima de 0,5 V (diodo errado)."),
     row("Entrada do U1 (depois do SW1) para GND", 12 - DIODE_DROP_V, 10.9, 11.8, "V", "Interruptor aberto ou solda fria."),
-    row("Saída do U1 (OUT) para GND", LED_VF + LM317_VREF, 4.1, 4.6, "V", "R1 ou RV1 abertos: a saída sobe até perto da entrada."),
-    row("Ânodo do D1 (pino ADJ) para GND", LED_VF, 2.8, 3.4, "V", "LED invertido ou queimado."),
+    row("Saída do U1 (OUT) para GND", LED_VF + LM317_VREF, 3.9, 4.8, "V", "R1 ou RV1 abertos: a saída sobe até perto da entrada."),
+    row("Ânodo do D1 (pino ADJ) para GND", LED_VF, 2.7, 3.4, "V", "LED invertido ou aberto: lê quase o mesmo que a saída do U1; em curto lê perto de 0 V."),
     row("Sobre R1 + RV1 (entre OUT e ADJ)", LM317_VREF, 1.2, 1.3, "V", "Fora de 1,25 V o LM317 é falso ou está fora de regulação."),
     row("Corrente do LED com RV1 no mínimo (0 Ω)", bright.currentmA, 17.0, 19.4, "mA", "R1 errado (68 Ω) ou o cursor do RV1 não liga ao pino 2 e 3."),
-    row("Corrente do LED com RV1 no máximo (220 Ω)", dim.currentmA, 3.9, 4.8, "mA", "Abaixo de 3,5 mA o LM317 pode oscilar: confira o RV1 (220 Ω, não 250 Ω ou mais)."),
+    row("Corrente do LED com RV1 no máximo (220 Ω)", dim.currentmA, 3.5, 5.5, "mA", "Abaixo de 3,5 mA o LM317 pode oscilar: confira o RV1 (220 Ω, não 250 Ω ou mais)."),
   ];
 }
