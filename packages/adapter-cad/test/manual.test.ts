@@ -40,7 +40,7 @@ describe("manual de montagem", () => {
         expect(p.y, p.id).toBeGreaterThanOrEqual(-60);
         expect(p.y, p.id).toBeLessThanOrEqual(75);
         expect(p.z, p.id).toBeGreaterThanOrEqual(-3);
-        expect(p.z, p.id).toBeLessThanOrEqual(215);
+        expect(p.z, p.id).toBeLessThanOrEqual(235);
       }
     });
   }

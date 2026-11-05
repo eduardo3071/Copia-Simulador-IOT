@@ -102,5 +102,5 @@ export function opticsAt(extension: number): OpticsReport {
   };
 }
 
-/** Extension of the inner tube at the working position (lens 0.8 mm over the slide) with the current holder: 19 mm. */
-export const NOMINAL_EXTENSION = 19;
+/** Extension of the inner tube at the working position (lens 0.8 mm over the slide) with the current holder: 37 mm (sleeve 9 + pull 28). */
+export const NOMINAL_EXTENSION = 37;

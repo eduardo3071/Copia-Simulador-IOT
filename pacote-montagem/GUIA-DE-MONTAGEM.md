@@ -41,7 +41,7 @@ Os arquivos `*-impressao.stl` já estão deitados sobre a face de trás da colun
 | Interruptor de balancim KCD1-101 (furo) | 21,2 × 15,0 mm | guia da LCSC; **não conferido** |
 | Conector DC-022B (furo) | 7,8 mm | anúncios de venda; **não conferido** |
 
-Alturas resultantes: lente frontal a 0,8 mm acima da lâmina, tubo externo de z = 95,2 a 210,2 mm, anel da abraçadeira (22 mm) no topo.
+Alturas resultantes: lente frontal a 0,8 mm acima da lâmina, tubo externo de z = 113,2 a 228,2 mm, anel da abraçadeira (22 mm) no topo.
 
 ## 4. Lista de materiais
 A lista completa de compras, com o que digitar na loja e a confiança em cada número, está em `lista-de-compras-v1.csv` e `lista-de-compras-v2.csv` (abrem no Excel). Resumo:

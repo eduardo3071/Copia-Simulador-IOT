@@ -13,7 +13,7 @@ type Vec3 = [number, number, number];
 export const ASSETS = `${import.meta.env.BASE_URL}suporte/`;
 
 /** Heights from the holder layout: ring top = underside of the pregoscopio head; the slide sits 40.4 mm above the box floor. */
-export const HEAD_Z = 210.2;
+export const HEAD_Z = 228.2;
 export const SLIDE_Z = 40.4;
 /** STEP V1: the lower end of the sleeve is 156.5 mm under the head; the objective hangs 35 mm below it. */
 export const SLEEVE_DEPTH = 156.5;
@@ -391,7 +391,7 @@ function Assembly({ options, registry }: { options: SceneOptions; registry: Regi
       )}
       <Primitive {...base} id="L1" layer="lamina" shape={{ kind: "box", size: [76, 26, 1] }} color={COLORS.glass} opacity={0.4} position={[0, 0, 39.9 + e * 1.1]} />
       {[-24.4, 24.4].map((x) => (
-        <PartGroup key={x} {...base} id="H2" layer="parafusos" position={[x, -12.8 - e * 0.9, 199.2]} rotation={[Math.PI / 2, 0, 0]} label={[0, 0, 2]}>
+        <PartGroup key={x} {...base} id="H2" layer="parafusos" position={[x, -12.8 - e * 0.9, 217.2]} rotation={[Math.PI / 2, 0, 0]} label={[0, 0, 2]}>
           <Screw r={2.8} />
         </PartGroup>
       ))}

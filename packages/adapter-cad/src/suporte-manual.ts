@@ -308,13 +308,13 @@ export function manualSteps(version: SuporteVersion): ManualStep[] {
       title: bi(v1 ? "Foco e uso" : "Ligar a fonte, foco e brilho (PS1)", v1 ? "对焦与使用" : "连接电源、对焦与亮度调节 (PS1)", v1 ? "Focus and use" : "Connect the supply, focus and brightness (PS1)"),
       text: bi(
         v1
-          ? "Ligue o interruptor SW1. Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno P3, até a lâmina ficar nítida. Foco nominal: a lente a 0,8 mm da lâmina, com o tubo interno estendido 19 mm (leia a escala impressa no tubo, na borda do tubo externo). A ponta da objetiva tem mola, mas não force contra o vidro."
+          ? "Ligue o interruptor SW1. Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno P3, até a lâmina ficar nítida. Foco nominal: a lente a 0,8 mm da lâmina, com o tubo interno estendido 37 mm (leia a escala impressa no tubo, na borda do tubo externo). A ponta da objetiva tem mola, mas não force contra o vidro."
           : "Ligue a fonte de 12 V (PS1) ao conector J1 e o interruptor SW1. Gire o botão RV1 para ajustar o brilho. Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno P3, até a lâmina ficar nítida. Foco nominal: a lente a 0,8 mm da lâmina.",
         v1
-          ? "打开开关 SW1。松开抱箍并滑动外镜筒，或拉出内镜筒 P3，直到载玻片图像清晰。标称对焦：镜头距载玻片 0.8 mm，内镜筒伸出 19 mm（读取镜筒上印的刻度，位于外镜筒端口处）。物镜前端带弹簧，但不要顶压玻片。"
+          ? "打开开关 SW1。松开抱箍并滑动外镜筒，或拉出内镜筒 P3，直到载玻片图像清晰。标称对焦：镜头距载玻片 0.8 mm，内镜筒伸出 37 mm（读取镜筒上印的刻度，位于外镜筒端口处）。物镜前端带弹簧，但不要顶压玻片。"
           : "将 12 V 电源 (PS1) 接到插座 J1 并打开开关 SW1。旋转 RV1 旋钮调节亮度。松开抱箍并滑动外镜筒，或拉出内镜筒 P3，直到载玻片图像清晰。标称对焦：镜头距载玻片 0.8 mm。",
         v1
-          ? "Switch SW1 on. Loosen the clamp and slide the outer tube, or pull the inner tube P3, until the slide is sharp. Nominal focus: the lens 0.8 mm from the slide, with the inner tube pulled out 19 mm (read the scale printed on the tube, at the edge of the outer tube). The tip of the objective is spring-loaded, but do not push it against the glass."
+          ? "Switch SW1 on. Loosen the clamp and slide the outer tube, or pull the inner tube P3, until the slide is sharp. Nominal focus: the lens 0.8 mm from the slide, with the inner tube pulled out 37 mm (read the scale printed on the tube, at the edge of the outer tube). The tip of the objective is spring-loaded, but do not push it against the glass."
           : "Plug the 12 V supply (PS1) into the jack J1 and switch SW1 on. Turn the knob RV1 to set the brightness. Loosen the clamp and slide the outer tube, or pull the inner tube P3, until the slide is sharp. Nominal focus: the lens 0.8 mm from the slide.",
       ),
       adds: v1 ? [] : ["PS1"], also: ["L1"], lidDrop: 0, view: "iso", lightOn: true,

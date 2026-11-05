@@ -113,7 +113,7 @@ export const DEFAULT_HOLDER_PARAMS: HolderParams = {
   tubeLength: 115,
   sleeveDiameter: 22.5,
   sleeveLength: 9,
-  innerPull: 10,
+  innerPull: 28,
   objectiveDiameter: 20,
   objectiveLength: 35,
   workingDistance: 0.8,

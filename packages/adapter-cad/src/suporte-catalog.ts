@@ -36,7 +36,7 @@ const both: SuporteVersion[] = ["v1", "v2"];
 export const SUPORTE_PARTS: SuportePart[] = [
   // ---- printed ---------------------------------------------------------------------------
   { id: "M1", name: "Suporte: caixa luminosa, coluna e braço", kind: "impressa", versions: both, qty: 1, evidence: "calculado",
-    spec: "PLA, base 90 × 115 × 40 mm, 210,2 mm de altura, cantos de 6 mm, janela de alívio de 30 mm na coluna",
+    spec: "PLA, base 90 × 115 × 40 mm, 228,2 mm de altura, cantos de 6 mm, janela de alívio de 30 mm na coluna",
     criterion: "Uma peça só mantém a luz alinhada com a objetiva. A janela corta metade do material e é um furo vertical quando a peça é impressa deitada, sem suportes nela.",
     file: "mecanica/{v}/suporte-base-coluna-impressao.stl" },
   { id: "M2", name: "Abraçadeira do tubo", kind: "impressa", versions: both, qty: 1, evidence: "medido",

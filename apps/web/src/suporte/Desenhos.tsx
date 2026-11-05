@@ -138,7 +138,7 @@ function Conjunto({ g, version, sheet, total }: { g: G; version: SuporteVersion;
       <Balloon v={front} at={[45, 30]} dx={14} dy={-8} id="M1" />
       <Balloon v={front} at={[-40, -1.2]} dx={-12} dy={10} id="M3" />
       <Balloon v={front} at={[earX + earHalf, ring.top - 14]} dx={15} dy={6} id="M2" />
-      <Balloon v={front} at={[-25, tube.top + 7.5]} dx={-14} dy={-4} id="P1" />
+      <Balloon v={front} at={[-25, tube.top + 7.5]} dx={-14} dy={8} id="P1" />
       <Balloon v={front} at={[tube.radius, 150]} dx={15} dy={0} id="P2" />
       <Balloon v={front} at={[tube.objectiveRadius, 58]} dx={17} dy={0} id="P9" />
       <Balloon v={front} at={[sw.x - sw.width / 2, 22]} dx={-14} dy={-14} id="SW1" />
@@ -435,7 +435,7 @@ function M1Cortes({ g, version, sheet, total }: { g: G; version: SuporteVersion;
   const { L, p, box, cav, wall, col, ring, sw } = g;
   const win = L.columnWindow!;
   const seat = L.diffuserSeat;
-  const a: V = { ox: 88, oy: 134, s: 0.5, fx: -1 };
+  const a: V = { ox: 88, oy: 138, s: 0.5, fx: -1 };
   const b: V = { ox: 214, oy: 88, s: 1 };
   const roofTop = box.height;
   const ring2: Seg[] = [...roundedSegs(box.xMin, box.xMax, box.yMin, box.yMax, p.cornerRadius), ...roundedSegs(cav.xMin, cav.xMax, cav.yMin, cav.yMax, p.cornerRadius - wall)];
@@ -456,10 +456,10 @@ function M1Cortes({ g, version, sheet, total }: { g: G; version: SuporteVersion;
       <DimH v={a} u1={-g.bore} u2={g.bore} w={ring.top} off={14} text={`furo ⌀${f(g.bore * 2)} (*)`} />
       <Lead v={a} at={[col.yMin - 4, ring.bottom - 6]} dx={20} dy={10} text={`R${f(p.columnRound)}`} />
       <CutMark v={a} a={[box.yMax + 10, 20]} b={[box.yMin - 10, 20]} letter="B" dir={[0, 1]} />
-      <ViewTitle x={a.ox - 6} y={146} text="Corte A–A (x = 0) · 剖视 A–A" scale="1:2" />
+      <ViewTitle x={a.ox - 6} y={150} text="Corte A–A (x = 0) · 剖视 A–A" scale="1:2" />
       <Block
         x={30}
-        y={156}
+        y={158}
         lines={[
           { t: `Postes: 4× ⌀8, piloto ⌀${f(p.pilotHole)} (*) · 立柱：4× ⌀8，底孔 ⌀${f(p.pilotHole)} (*)` },
           { t: "Teto, assento do difusor e canal: detalhe H (DT-03) e detalhe G (DT-09). · 顶板详见 DT-03、DT-09。" },
@@ -530,7 +530,7 @@ function M1Detalhes({ g, version, sheet, total }: { g: G; version: SuporteVersio
       <DimH v={v} u1={earX - earHalf} u2={earX + earHalf} w={10} off={6} text={f(earHalf * 2)} />
       <Lead v={v} at={[earX, 4]} dx={16} dy={-10} text={`⌀${f(p.pilotHole)} (*) × 8`} />
       <Lead v={v} at={[-R, 6]} dx={-8} dy={-16} text={`R ext. ${f(R)}`} dot={false} />
-      <ViewTitle x={v.ox} y={150} text="Detalhe E: planta do anel em z = 199,2 · 局部详图 E" scale="2:1" />
+      <ViewTitle x={v.ox} y={150} text="Detalhe E: planta do anel em z = 217,2 · 局部详图 E" scale="2:1" />
      <g className="dt-table">
         <T className="dt-t dt-tnh" x={172} y={16}>Tabela de recortes e furos do M1 · M1 开孔表</T>
         <line className="dt-thin" x1={172} x2={290} y1={18.5} y2={18.5} />
@@ -589,7 +589,7 @@ function M2Abracadeira({ g, version, sheet, total }: { g: G; version: SuporteVer
       <DimV v={plan} w1={-gap - 10} w2={-gap} u={earX + earHalf} off={9} text={f(10)} />
       <DimH v={plan} u1={earX - earHalf} u2={earX + earHalf} w={-gap - 10} off={-6} text={f(earHalf * 2)} />
       <Lead v={plan} at={[0, -R]} dx={22} dy={4} text={`R ext. ${f(R)}`} />
-      <ViewTitle x={plan.ox} y={160} text="Corte C–C (z = 199,2) · 剖视 C–C" scale="2:1" />
+      <ViewTitle x={plan.ox} y={160} text="Corte C–C (z = 217,2) · 剖视 C–C" scale="2:1" />
       <Block
         x={168}
         y={96}

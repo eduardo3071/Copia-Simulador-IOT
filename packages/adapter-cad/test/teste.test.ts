@@ -48,7 +48,7 @@ describe("óptica do tubo", () => {
   it("160 mm só seria atingido com 45 mm de extensão, e o tubo interno sai 40", () => {
     expect(EXTENSION_FOR_STANDARD).toBe(45);
     expect(opticsAt(40).tubeLength).toBe(155);
-    expect(opticsAt(NOMINAL_EXTENSION).tubeLength).toBe(134);
+    expect(opticsAt(NOMINAL_EXTENSION).tubeLength).toBe(152);
   });
   it("o ocular de 23,2 mm não cabe no tubo interno de 22,5 mm, mas cabe no externo", () => {
     const o = opticsAt(19);
