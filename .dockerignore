@@ -8,3 +8,7 @@ fabricacao
 *.log
 .vite
 .claude
+shots
+pacote-montagem
+docs
+apps/web/public/suporte
