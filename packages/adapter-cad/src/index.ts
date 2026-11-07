@@ -12,3 +12,4 @@ export * from "./suporte-pcb.ts";
 export * from "./suporte-textos.ts";
 export * from "./suporte-optica.ts";
 export * from "./suporte-teste.ts";
+export * from "./suporte-preco.ts";
