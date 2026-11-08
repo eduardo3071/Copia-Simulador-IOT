@@ -4,7 +4,7 @@ import { createRequire } from "node:module";
 import opencascade from "replicad-opencascadejs";
 import { setOC, type Shape3D } from "replicad";
 import { stlOf } from "../packages/adapter-cad/src/geometry.ts";
-import { buildHolder, holderOnBack } from "../packages/adapter-cad/src/holder-geometry.ts";
+import { apertureWheelOnBed, buildHolder, holderOnBack } from "../packages/adapter-cad/src/holder-geometry.ts";
 import { DEFAULT_HOLDER_PARAMS, holderLayout, layoutEconomica1000x, withStlHeader } from "../packages/adapter-cad/src/index.ts";
 
 const require = createRequire(import.meta.url);
@@ -48,5 +48,8 @@ for (const variant of ["pilha", "fonte"] as const) {
   await write(`${tag}/abracadeira-tubo.stl`, shapes.clamp);
   await write(`${tag}/abracadeira-tubo-impressao.stl`, holderOnBack(shapes.clamp));
   if (shapes.lightTube) await write(`${tag}/tubo-de-luz.stl`, shapes.lightTube);
+  if (shapes.wheel) await write(`${tag}/roda-de-aberturas.stl`, shapes.wheel);
+  const flat = apertureWheelOnBed(layout);
+  if (flat) await write(`${tag}/roda-de-aberturas-impressao.stl`, flat);
   console.log(`${tag}: altura total ${layout.totalHeight} mm`);
 }

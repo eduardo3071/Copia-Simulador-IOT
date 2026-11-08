@@ -118,17 +118,21 @@ export const COST_LINES: CostLine[] = [
 
 /** Solid volume of the printed parts of the economical 1000x version in cm3 (a test keeps them in sync with the STL files). */
 export const PRINT_VOLUME_1000X: { id: string; label: string; cm3: number }[] = [
-  { id: "M1", label: "Base e coluna (M1)", cm3: 243.9 },
+  { id: "M1", label: "Base e coluna (M1)", cm3: 243.5 },
   { id: "M2", label: "Abraçadeira do tubo (M2)", cm3: 9.6 },
   { id: "M3", label: "Tampa de fundo (M3)", cm3: 25.2 },
   { id: "M4", label: "Difusor (M4)", cm3: 0.4 },
-  { id: "M5", label: "Tubo de luz (M5)", cm3: 11.4 },
+  { id: "M5", label: "Tubo de luz (M5)", cm3: 10.2 },
+  { id: "AP1", label: "Roda de aberturas (AP1)", cm3: 5.9 },
 ];
 
 /** Lines that the economical 1000x version shares with the v2 (same store, same price). */
 const SHARED_1000X = ["SW1", "J1", "PS1", "D2", "PCB1", "H1", "H2", "H3", "W1-v2", "W2", "W3", "L1"];
 
-/** What the economical 1000x version adds or changes: the objective, the oil, the 3 W LED and its driver. No LM317, R1, C1 or rheostat. */
+/**
+ * What the economical 1000x version adds or changes: the objective, the oil, the 3 W LED and its driver. No LM317, R1, C1 or rheostat.
+ * The aperture wheel replaces a mechanical iris (US$ 52,95 + US$ 4,49 shipping at Fruugo, about R$ 287): it is printed, so it only costs filament.
+ */
 const NEW_1000X: CostLine[] = [
   { id: "P9", label: "Objetiva 100x/1,25 em óleo, 160/0,17, RMS", versions: ["v2"], perUnit: 1, unit: "un",
     source: { store: "Amazon.com.br", url: "https://www.amazon.com.br/microsc%C3%B3pio-RMS-microscopia-laborat%C3%B3rio-comprimento/dp/B0GHRJPSYM", price: 86.68, pack: 1, confidence: "anuncio", note: "anúncios genéricos de R$ 66,26 a R$ 86,68, usado o maior; NA 1,25 e 160/0,17 não conferidos; de marca (eBay, usada) sai de US$ 55 a US$ 180 mais frete e imposto" } },
@@ -140,8 +144,6 @@ const NEW_1000X: CostLine[] = [
     source: { store: "Shopee", url: "https://shopee.com.br/amp/Dissipador-De-Calor-De-Alumínio-Para-Dissipador-De-Calor-De-Alta-Potência-Led-Ic-Chip-Cooler-Radiador-i.308439905.10545998578", price: 19.97, pack: 1, confidence: "proxy", note: "dissipador genérico de LED de R$ 10,16 a R$ 29,78 conforme o tamanho (usado o meio); não achei o redondo de ⌀ 30 mm. Um quadrado de 40 × 40 mm não cabe no tubo de luz" } },
   { id: "DR1", label: "Driver de corrente constante de 350 mA (2 módulos)", versions: ["v2"], perUnit: 1, unit: "conjunto",
     source: { store: "Shopee", url: "", price: 23.1, pack: 1, confidence: "proxy", note: "módulo de corrente constante de 30 a 1500 mA com PWM, R$ 15,83, que só aceita 2,8 a 6 V, mais um módulo step-down LM2596 de R$ 7,27 para baixar os 12 V a ≈ 5 V; não achei um driver pronto de 350 mA para 12 V. Alternativa: LM317T (R$ 4,09) com resistor de 3,6 Ω, mas dissipa 2,4 W e pede dissipador" } },
-  { id: "IR1", label: "Diafragma de íris mecânico 1,5 a 25 mm", versions: ["v2"], perUnit: 1, unit: "un",
-    source: { store: "Fruugo (loja internacional, enviada da China)", url: "https://www.fruugo.us/iris-aperture-diaphragm-1525mm-adjustable-optical-lens-for-microscope-and-camera-aluminum/p-459351954", price: 287.2, pack: 1, confidence: "estimativa", note: "US$ 52,95 + US$ 4,49 de frete, a R$ 5,00 por dólar (o dólar fechou em R$ 5,008 em 07/10/2026), sem imposto. É o item que mais pesa e o preço mais incerto: os anúncios da Amazon.com.br não abriram. Alternativa: um disco impresso de aberturas fixas, de custo de filamento" } },
   { id: "CV1", label: "Lamínula 22 × 22 mm de 0,17 mm", versions: ["v2"], perUnit: 1, unit: "un",
     source: { store: "Magazine Luiza (Knittel 102222)", url: "https://www.magazineluiza.com.br/busca/laminula/", price: 64, pack: 100, confidence: "anuncio", note: "caixa de 100 a R$ 64,00 no Pix; a Precission de 100 sai por R$ 15,20, sem espessura informada" } },
 ];

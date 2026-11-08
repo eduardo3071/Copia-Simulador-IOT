@@ -165,17 +165,49 @@ export function buildHolderDiffuser(layout: HolderLayout): Shape3D {
 }
 
 /**
- * 1000x version: a tube that stands on the lid around the LED and its heatsink, up to the ceiling under the diffuser. It holds the
- * iris against a stop ring at the top (the iris is pushed in from below) and keeps the stray light off the slide. Print it black.
+ * 1000x version: a tube that stands on the lid around the LED and its heatsink, up to just under the aperture wheel. A round boss on its
+ * rim carries the pin the wheel turns on, and keeps the wheel off the rim; the tube keeps the stray light off the slide. Print it black.
  */
 export function buildLightTube(layout: HolderLayout): Shape3D | null {
   const t = layout.lightTube;
   if (!t) return null;
   const height = t.top - t.bottom;
   let tube: Shape3D = makeCylinder(t.outerDiameter / 2, height, [0, 0, t.bottom]).cut(makeCylinder(t.innerDiameter / 2, height + 2, [0, 0, t.bottom - 1]));
-  // stop ring at the top, with a bore that leaves the whole 25 mm opening of the iris free
-  tube = tube.fuse(makeCylinder(t.innerDiameter / 2 + EMBED, t.stopThickness, [0, 0, t.top - t.stopThickness]).cut(makeCylinder(t.stopBore / 2, t.stopThickness + 2, [0, 0, t.top - t.stopThickness - 1])));
+  // boss with its pin: from inside the wall up to the underside of the wheel, then the pin through the wheel
+  const bossBottom = t.top - 3;
+  const boss = makeCylinder(t.boss.diameter / 2, t.boss.top - bossBottom, [t.boss.x, 0, bossBottom]);
+  const pin = makeCylinder(t.pin.diameter / 2, t.pin.top - t.boss.top + EMBED, [t.boss.x, 0, t.boss.top - EMBED]);
+  tube = tube.fuse(boss).fuse(pin);
   return tube;
+}
+
+/**
+ * Aperture wheel: a flat disc with five holes on a circle around its pivot; the hole facing the optical axis sets the opening.
+ * Drawn in its assembled place (pivot on the pin) and turned so the first hole faces the axis; print it flat.
+ */
+export function buildApertureWheel(layout: HolderLayout, hole = 0): Shape3D | null {
+  const t = layout.lightTube;
+  if (!t) return null;
+  const w = t.wheel;
+  let disc: Shape3D = makeCylinder(w.radius, w.thickness, [0, 0, 0]);
+  disc = disc.cut(makeCylinder(w.pinHole / 2, w.thickness + 2, [0, 0, -1]));
+  for (const h of w.holes) disc = disc.cut(makeCylinder(h.diameter / 2, w.thickness + 2, [h.x, h.y, -1]));
+  // grip: twelve shallow notches on the rim
+  for (let k = 0; k < 24; k++) {
+    const a = (k / 24) * Math.PI * 2;
+    disc = disc.cut(makeCylinder(1, w.thickness + 2, [Math.cos(a) * (w.radius + 0.2), Math.sin(a) * (w.radius + 0.2), -1]));
+  }
+  // turn so that hole `hole` faces the optical axis (which is at 180 degrees from the pin), then put the pivot on the pin
+  const turn = (Math.PI - w.holes[hole]!.angle) * (180 / Math.PI);
+  return disc.rotate(turn, [0, 0, 0], [0, 0, 1]).translate(w.pivotX, 0, w.bottom);
+}
+
+/** The wheel lying flat at the origin, for printing. */
+export function apertureWheelOnBed(layout: HolderLayout): Shape3D | null {
+  const t = layout.lightTube;
+  if (!t) return null;
+  const w = buildApertureWheel(layout);
+  return w ? w.translate(-t.wheel.pivotX, 0, -t.wheel.bottom) : null;
 }
 
 export interface HolderShapes {
@@ -184,8 +216,9 @@ export interface HolderShapes {
   lid: Shape3D;
   diffuser: Shape3D;
   lightTube: Shape3D | null;
+  wheel: Shape3D | null;
 }
 
 export function buildHolder(layout: HolderLayout): HolderShapes {
-  return { body: buildHolderBody(layout), clamp: buildHolderClamp(layout), lid: buildHolderLid(layout), diffuser: buildHolderDiffuser(layout), lightTube: buildLightTube(layout) };
+  return { body: buildHolderBody(layout), clamp: buildHolderClamp(layout), lid: buildHolderLid(layout), diffuser: buildHolderDiffuser(layout), lightTube: buildLightTube(layout), wheel: buildApertureWheel(layout) };
 }

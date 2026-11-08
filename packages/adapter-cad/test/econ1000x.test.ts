@@ -18,18 +18,37 @@ describe("versão 1000x econômica", () => {
     expect(layout.tube.noseZ - layout.samplePlane).toBeCloseTo(0.18 + COVER_GLASS, 6);
   });
 
-  it("o tubo de luz, o dissipador e a íris cabem um dentro do outro", () => {
+  it("o tubo de luz e o dissipador cabem um dentro do outro e a roda fica sob o teto", () => {
     const t = layout.lightTube!;
     const p = layout.params;
     expect(t.outerDiameter).toBeCloseTo(48.4, 6);
-    expect(t.innerDiameter).toBeCloseTo(p.irisDiameter + p.irisFit, 6);
+    expect(t.innerDiameter).toBeCloseTo(p.lightTubeInnerDiameter, 6);
     expect(p.heatsinkDiameter).toBeLessThan(t.innerDiameter - 4);
-    expect(t.stopBore).toBeGreaterThanOrEqual(26);
-    expect(t.emitterToIris).toBeGreaterThan(10);
-    // everything stays under the ceiling and the iris sits right under the diffuser
-    expect(t.top).toBeCloseTo(layout.cavity.top, 6);
-    expect(t.irisTop).toBeLessThan(t.top);
-    expect(t.emitterTop).toBeLessThan(t.irisBottom);
+    expect(t.emitterToWheel).toBeGreaterThan(10);
+    // tube < collar < wheel < ceiling, with air above the wheel
+    expect(t.top).toBeLessThan(t.wheel.bottom);
+    expect(t.wheel.top).toBeLessThan(layout.cavity.top);
+    expect(layout.cavity.top - t.wheel.top).toBeCloseTo(p.wheelGap, 6);
+    expect(t.emitterTop).toBeLessThan(t.top);
+  });
+
+  it("a roda de aberturas: cinco furos de 2 a 24 mm, nenhum invade a janela quando outro está no eixo, e a borda sai pela fenda", () => {
+    const w = layout.lightTube!.wheel;
+    const p = layout.params;
+    expect(w.holes.map((h) => h.diameter).sort((a, b) => a - b)).toEqual([2, 5, 10, 16, 24]);
+    const r = p.ledWindowDiameter / 2;
+    for (const a of w.holes) {
+      for (const b of w.holes) {
+        if (a === b) continue;
+        expect(Math.hypot(a.x - b.x, a.y - b.y) - b.diameter / 2, `${b.diameter} com ${a.diameter} no eixo`).toBeGreaterThanOrEqual(r + 0.8);
+      }
+    }
+    // the hole that faces the axis is exactly on it
+    expect(w.pivotX + w.holes[0]!.x).toBeCloseTo(0, 6);
+    expect(w.radius).toBeGreaterThanOrEqual(p.wheelPivot + r + 1);
+    expect(w.protrusion).toBeGreaterThan(8);
+    expect(layout.cutouts.some((c) => c.id === "wheel-slot")).toBe(true);
+    expect(w.slotWidth).toBeGreaterThan(55);
   });
 
   it("a placa do driver fica atrás do tubo de luz e dentro da caixa", () => {
@@ -50,7 +69,7 @@ describe("versão 1000x econômica", () => {
 
   it("não tem o porta-LED nem o botão do reostato, mas tem o conector da fonte", () => {
     expect(layout.hasLedPost).toBe(false);
-    expect(layout.cutouts.map((c) => c.id).sort()).toEqual(["jack", "slide-channel", "switch", "window"]);
+    expect(layout.cutouts.map((c) => c.id).sort()).toEqual(["jack", "slide-channel", "switch", "wheel-slot", "window"]);
   });
 
   it("a 400x e a v2 continuam iguais", () => {
@@ -65,7 +84,8 @@ describe("versão 1000x econômica", () => {
     const list = componentes1000x(layout);
     const ids = list.map((c) => c.id);
     expect(new Set(ids).size).toBe(ids.length);
-    for (const id of ["P9", "D1", "HS1", "DR1", "IR1", "M5", "CV1", "OIL"]) expect(ids).toContain(id);
+    for (const id of ["P9", "D1", "HS1", "DR1", "AP1", "M5", "CV1", "OIL"]) expect(ids).toContain(id);
+    expect(ids).not.toContain("IR1");
     for (const c of list) {
       expect(c.dims.length, c.id).toBeGreaterThan(3);
       if (c.evidence === "suposto") expect(c.note.toLowerCase(), c.id).toMatch(/medir|tamanho|suposto/);
@@ -80,7 +100,7 @@ describe("versão 1000x econômica", () => {
   });
 
   it("os STL da versão estão no pacote", () => {
-    for (const f of ["suporte-base-coluna", "suporte-base-coluna-impressao", "tampa-fundo", "abracadeira-tubo", "tubo-de-luz"]) {
+    for (const f of ["suporte-base-coluna", "suporte-base-coluna-impressao", "tampa-fundo", "abracadeira-tubo", "tubo-de-luz", "roda-de-aberturas", "roda-de-aberturas-impressao"]) {
       expect(existsSync(new URL(`../../../pacote-montagem/mecanica/v2-1000x/${f}.stl`, import.meta.url)), f).toBe(true);
     }
   });

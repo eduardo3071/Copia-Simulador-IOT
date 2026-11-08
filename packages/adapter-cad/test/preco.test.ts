@@ -46,6 +46,7 @@ describe("custo", () => {
       M3: "v2-1000x/tampa-fundo.stl",
       M4: "comum/difusor.stl",
       M5: "v2-1000x/tubo-de-luz.stl",
+      AP1: "v2-1000x/roda-de-aberturas-impressao.stl",
     };
     for (const p of PRINT_VOLUME_1000X) expect(stlVolume(files[p.id]!), p.id).toBeCloseTo(p.cm3, 0);
   });
@@ -54,12 +55,12 @@ describe("custo", () => {
     const t = costTable1000x(1);
     const ids = t.rows.map((r) => r.id);
     for (const gone of ["U1", "R1", "C1", "RV1", "RV1-knob"]) expect(ids, gone).not.toContain(gone);
-    for (const kept of ["P9", "OIL", "D1", "HS1", "DR1", "IR1", "CV1", "PS1", "J1", "D2", "PLA"]) expect(ids, kept).toContain(kept);
+    for (const kept of ["P9", "OIL", "D1", "HS1", "DR1", "CV1", "PS1", "J1", "D2", "PLA"]) expect(ids, kept).toContain(kept);
+    // the aperture wheel is printed: no iris to buy
+    expect(ids).not.toContain("IR1");
     expect(t.missing).toEqual([]);
-    const iris = t.rows.find((r) => r.id === "IR1")!;
-    expect(iris.confidence).toBe("estimativa");
-    // the iris is the dearest item after the filament: it decides whether dropping the condenser saves money
-    expect(iris.used!).toBeGreaterThan(100);
+    const pla = t.rows.find((r) => r.id === "PLA")!;
+    expect(pla.label).toContain("AP1");
   });
 
   it("a versão 1000x custa mais que a v2 e o filamento segue contado pela massa", () => {

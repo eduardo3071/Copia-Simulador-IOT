@@ -103,6 +103,8 @@ Alternativa sem óleo: objetiva 60x/0,85 a seco, 600x no total (faixa útil de 4
 
 ## 8. A versão econômica no 3D (2026-11-08)
 
+> Atualização: a íris mecânica citada nesta seção foi trocada por uma **roda de aberturas impressa** (seção 10).
+
 Abra a aba 3D, v2, e clique em **1000x econômico**. A cena troca a cabeça do suporte (237,6 mm de altura, contra 228,2 mm), a objetiva (100x de 44,8 mm sob o ombro), e põe sob o difusor o conjunto de iluminação. A tabela ao lado dá as dimensões de cada peça e diz de onde vieram.
 
 Decisões de projeto e por quê:
@@ -125,22 +127,24 @@ STLs em `pacote-montagem/mecanica/v2-1000x/`: base e coluna, tampa, abraçadeira
 
 Painel "Custo do suporte e da eletrônica", na aba Eletrônica da v2, botão **v2 · 1000x econômico**; planilhas `pacote-montagem/CUSTOS-v2-1000x-1un.csv` e `CUSTOS-v2-1000x-100un.csv`.
 
-| | v2 · 400x | v2 · 1000x econômico |
+| | v2 · 400x | v2 · 1000x econômico (com roda de aberturas impressa) |
 |---|---|---|
-| Só o que é usado, por unidade | R$ 89,04 | **R$ 550,23** |
-| Gasto para comprar tudo (1 protótipo) | R$ 217,89 | **R$ 733,24** |
-| Lote de 100, por unidade (pacotes inteiros, varejo) | R$ 89,05 | R$ 550,64 |
+| Só o que é usado, por unidade | R$ 89,04 | **R$ 263,67** |
+| Gasto para comprar tudo (1 protótipo) | R$ 217,89 | **R$ 446,04** |
+| Lote de 100, por unidade (pacotes inteiros, varejo) | R$ 89,05 | R$ 264,64 |
 
-Itens que entraram com preço em 2026-11-08:
+Itens com preço em 2026-11-08: objetiva 100x R$ 86,68 (anúncio genérico da Amazon; de R$ 66 a R$ 87), óleo R$ 47,38 (1 frasco por instrumento), fonte R$ 26,11, driver de 350 mA R$ 23,10 (2 módulos: corrente constante de 30 a 1500 mA para 2,8 a 6 V, R$ 15,83, mais step-down LM2596, R$ 7,27; não achei driver pronto de 350 mA para 12 V), dissipador R$ 19,97 (genérico de LED, de R$ 10,16 a R$ 29,78; o redondo de ⌀ 30 mm não achei), LED de 3 W R$ 4,17, lamínulas R$ 64,00 a caixa de 100 (Knittel; a Precission sai a R$ 15,20 sem espessura informada), fio 24 AWG R$ 0,96 por metro, filamento ≈ R$ 43 (362 g).
 
-| Item | Preço | Origem |
-|---|---|---|
-| Íris mecânica 1,5 a 25 mm | **R$ 287,20** | Fruugo (China): US$ 52,95 + US$ 4,49 de frete a R$ 5,00 por dólar, sem imposto. O preço mais incerto: as páginas brasileiras da Amazon não abriram |
-| Driver de 350 mA | R$ 23,10 | 2 módulos na Shopee: corrente constante de 30 a 1500 mA, 2,8 a 6 V (R$ 15,83) + step-down LM2596 (R$ 7,27). Não achei driver pronto de 350 mA para 12 V |
-| Dissipador | R$ 19,97 | dissipador genérico de LED na Shopee, de R$ 10,16 a R$ 29,78; o redondo de ⌀ 30 mm não achei |
-| Lamínulas de 0,17 mm | R$ 64,00 a caixa de 100 (R$ 0,64 cada) | Knittel 102222 no Magazine Luiza; a Precission de 100 sai a R$ 15,20, sem espessura informada |
-| Fio 24 AWG | R$ 0,96 por metro | Baú da Eletrônica, visto na busca; a página do vermelho estava indisponível |
+O frasco de óleo por instrumento é uma escolha conservadora: um frasco serve a muitos instrumentos.
 
-**A íris pesa mais que o condensador.** Com a íris a R$ 287, tirar o condensador (R$ 165 a R$ 200) **não** deixa a versão mais barata. Duas saídas: (1) comprar um condensador genérico de Abbe NA 1,25, que já traz a íris (R$ 165 na Amazon), e usá-lo no lugar da íris avulsa; (2) trocar a íris por um **disco impresso com aberturas fixas** (custo de filamento). Sem a íris, a versão 1000x fica em ≈ R$ 263 por unidade usada e ≈ R$ 446 para comprar tudo. Com o condensador no lugar dela, ≈ R$ 428 usado.
+## 10. Roda de aberturas impressa no lugar da íris (2026-11-08)
 
-O frasco de óleo por instrumento (R$ 47,38) é uma escolha conservadora: um frasco serve a muitos instrumentos.
+A íris mecânica de 1,5 a 25 mm custava R$ 287 (Fruugo, enviada da China: US$ 52,95 + US$ 4,49 de frete, a R$ 5,00 por dólar, sem imposto; os anúncios da Amazon.com.br não abriram), mais que um condensador genérico completo (R$ 165). Ela foi trocada por uma roda impressa:
+
+- **Disco de ⌀ 72 mm × 1,8 mm** que gira num pino do tubo de luz, logo sob o difusor. Cinco furos num círculo de 22 mm de raio em volta do pino: **24, 10, 2, 5 e 16 mm**. O furo que fica no eixo óptico define a abertura (24 mm é a janela inteira do LED, que tem 24 mm).
+- **Gira com o dedo:** a borda da roda sai 13 mm pela parede direita, por uma fenda de 61 × 2,6 mm, e tem 24 entalhes de pegada. A roda entra pela fenda, de lado, depois que o tubo de luz está montado.
+- **Sem estalo de posição:** nenhum furo trava; a roda fica onde você a deixa, por atrito leve. Se quiser pontos de parada, eu desenho um detente.
+- **Regras que a geometria confere:** nenhum furo invade a janela quando outro está no eixo (≥ 0,8 mm de parede), os furos ficam a mais de 1,2 mm um do outro e a mais de 2 mm da borda, a roda cobre a janela em todas as posições, e a roda cabe na caixa a 0,7 mm do poste do canto.
+- **O que mudou no tubo de luz:** ele termina 1 mm abaixo da roda (34,2 mm de altura), com uma base redonda de ⌀ 10 mm na borda e um pino de ⌀ 3 mm; o anel de apoio da íris desapareceu.
+- **Verificado por teste:** a roda, em duas posições, não encosta no corpo (a fenda basta), na tampa, no tubo de luz nem no difusor.
+- **O que a roda não faz:** a íris varia a abertura continuamente; a roda tem 5 passos. Para o contraste e o brilho na câmera isso deve bastar, mas não foi testado com uma lâmina.

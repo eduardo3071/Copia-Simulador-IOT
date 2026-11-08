@@ -4,7 +4,7 @@ const EVIDENCE: Record<Evidence1000, string> = { fonte: "de uma página", medido
 const fixed = (n: number, d = 1) => n.toFixed(d).replace(".", ",");
 
 /** Dimensions of every component of the economical 1000x version, as the 3D draws them, and what is still a guess. */
-export function Componentes1000x({ selected, onSelect }: { selected: string | null; onSelect(id: string | null): void }) {
+export function Componentes1000x({ selected, onSelect, aperture, onAperture }: { selected: string | null; onSelect(id: string | null): void; aperture: number; onAperture(k: number): void }) {
   const layout = layoutEconomica1000x();
   const list = componentes1000x(layout);
   const d = derived1000x(layout);
@@ -14,13 +14,19 @@ export function Componentes1000x({ selected, onSelect }: { selected: string | nu
     <section className="calc">
       <h4>Versão 1000x econômica: dimensões</h4>
       <p className="small muted">
-        Pregoscópio + objetiva 100x/1,25 em óleo + ocular WF10X, com LED de 3 W sob uma íris e o difusor, sem condensador. Cada medida diz de onde veio; as marcadas "suposto" precisam ser medidas na peça comprada.
+        Pregoscópio + objetiva 100x/1,25 em óleo + ocular WF10X, com LED de 3 W sob uma roda de aberturas impressa e o difusor, sem condensador. Cada medida diz de onde veio; as marcadas "suposto" precisam ser medidas na peça comprada.
       </p>
+      <div className="row">
+        <span className="small muted">Abertura no eixo:</span>
+        {layout.lightTube!.wheel.holes.map((h, k) => (
+          <button key={k} className={aperture === k ? "active" : ""} onClick={() => onAperture(k)}>{h.diameter} mm</button>
+        ))}
+      </div>
       <dl>
         <dt>Altura do suporte</dt><dd>{fixed(d.totalHeight)} mm (a versão 400x tem 228,2 mm)</dd>
         <dt>Tubo, do ombro da objetiva à borda</dt><dd>{fixed(d.tubeLength, 0)} mm de 160 mm</dd>
         <dt>Distância de trabalho (até a lamínula)</dt><dd>{fixed(d.workingDistance, 2)} mm, mais {fixed(COVER_GLASS, 2)} mm da lamínula</dd>
-        <dt>LED até a íris</dt><dd>{fixed(d.emitterToIris)} mm</dd>
+        <dt>LED até a roda de aberturas</dt><dd>{fixed(d.emitterToWheel)} mm</dd>
         <dt>LED a 350 mA</dt><dd>{fixed(d.ledWatts)} W elétricos, {fixed(d.heatWatts[0])} a {fixed(d.heatWatts[1])} W de calor (estimativa); folga do dissipador no tubo: {fixed(d.heatsinkClearance)} mm</dd>
       </dl>
       <table className="plan">

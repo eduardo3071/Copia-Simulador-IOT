@@ -146,12 +146,13 @@ function PartCard({ part, version }: { part: SuportePart; version: SuporteVersio
   );
 }
 
-const ECON_IDS = ["M1", "M2", "M3", "M4", "M5", "IR1", "HS1", "D1", "DR1", "PCB1", "D2", "SW1", "J1", "PS1", "L1", "CV1", "OIL", "P1", "P2", "P3", "P4", "P5", "P6", "P9", "P10"];
+const ECON_IDS = ["M1", "M2", "M3", "M4", "M5", "AP1", "HS1", "D1", "DR1", "PCB1", "D2", "SW1", "J1", "PS1", "L1", "CV1", "OIL", "P1", "P2", "P3", "P4", "P5", "P6", "P9", "P10"];
 
 /** startView: "iso", "front", "side", "top" or "inside" (the cutaway of the light box), from #suporte/3d/v2/inside. */
 function ThreeD({ version, selected, setSelected, startView }: { version: SuporteVersion; selected: string | null; setSelected(id: string | null): void; startView: string }) {
   const [explode, setExplode] = useState(0);
   const [econ, setEcon] = useState(startView === "1000x");
+  const [aperture, setAperture] = useState(0);
   const [retract, setRetract] = useState(startView === "1000x" ? econRetract() : Math.round(NOMINAL_RETRACT * 10) / 10);
   const [cut, setCut] = useState(startView === "inside" ? 0 : -50);
   const [lightOn, setLightOn] = useState(true);
@@ -181,7 +182,7 @@ function ThreeD({ version, selected, setSelected, startView }: { version: Suport
         <Guard><SuporteScene
           view={view}
           ids={ids}
-          options={{ version: econ ? "v2" : version, econ1000: econ, explode, retract, cut, lightOn, selected, layers, onPick: setSelected }}
+          options={{ version: econ ? "v2" : version, econ1000: econ, aperture, explode, retract, cut, lightOn, selected, layers, onPick: setSelected }}
         /></Guard>
         <div className="suporte-controls">
           <div className="row">
@@ -231,7 +232,7 @@ function ThreeD({ version, selected, setSelected, startView }: { version: Suport
         </div>
       </div>
       <aside className="suporte-side">
-        {econ && <Componentes1000x selected={selected} onSelect={setSelected} />}
+        {econ && <Componentes1000x selected={selected} onSelect={setSelected} aperture={aperture} onAperture={setAperture} />}
         {!econ && part && <PartCard part={part} version={version} />}
         {!econ && KIND_ORDER.map((kind) => {
           const group = lines.filter((l) => l.part.kind === kind);

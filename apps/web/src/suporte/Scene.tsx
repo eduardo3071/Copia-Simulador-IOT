@@ -7,7 +7,7 @@ import { toCreasedNormals } from "three/examples/jsm/utils/BufferGeometryUtils.j
 import { COVER_GLASS, DEFAULT_HOLDER_PARAMS, holderLayout, layoutEconomica1000x, padAt, PCB, wires as routeWires, type SuporteVersion } from "@simiot/adapter-cad";
 import { MatContext, type Mat } from "./mat.ts";
 import { Adapter, Battery, Ceramic, Diode, InnerTube, Led5, Objective, OuterTube, Pcb, Plug, Pot, PowerJack, Resistor, RockerSwitch, Screw, Sleeve, Solder, To220, Tube, type V3 } from "./parts3d.tsx";
-import { DriverModule, Heatsink, Iris, LedStar3W, Objective100 } from "./parts1000x.tsx";
+import { ApertureWheel, DriverModule, Heatsink, LedStar3W, Objective100 } from "./parts1000x.tsx";
 
 type Vec3 = [number, number, number];
 
@@ -51,8 +51,10 @@ function useStl(url: string) {
 
 export interface SceneOptions {
   version: SuporteVersion;
-  /** Economical 1000x version (v2 electronics, 100x objective, 3 W LED under an iris). */
+  /** Economical 1000x version (v2 electronics, 100x objective, 3 W LED under a printed aperture wheel). */
   econ1000?: boolean;
+  /** Which hole of the aperture wheel faces the optical axis (index into the wheel holes). */
+  aperture?: number;
   explode: number;
   retract: number;
   cut: number;
@@ -170,7 +172,7 @@ function PartGroup(props: PartProps & { position?: Vec3; rotation?: Vec3; label?
 
 /** Where each label hangs, in the part's own frame, so labels do not pile up in the middle of the model. */
 const LABEL_AT: Record<string, Vec3> = {
-  M5: [24, 0, 20],
+  M5: [24, 0, 20], AP1: [30, 0, 36],
   M1: [0, 60, 115], M2: [0, -21, 199], M3: [-38, -42, -1], M4: [13, 0, 38],
   P1: [-30, 0, 8], P4: [-60, 0, 34], P5: [60, 0, 34], P6: [79, 17, 10], P10: [-79, 17, 10],
 };
@@ -320,9 +322,9 @@ function Assembly1000({ options, registry }: { options: SceneOptions; registry: 
         <ArrowGuide key={i} from={arrow.from} to={arrow.to} material={{ roughness: 0.5, metalness: 0, emissive: new Color("#ff8a00"), emissiveIntensity: 0.25, clippingPlanes: [] }} />
       ))}
 
-      {/* iris, held against the stop ring of the light tube just under the diffuser */}
-      <PartGroup {...base} id="IR1" layer="eletronica" position={[0, 0, t.irisBottom + e * 0.5]} label={[24, 0, 3]}>
-        <Iris diameter={p.irisDiameter} thickness={p.irisThickness} />
+      {/* aperture wheel on the pin of the light tube, just under the diffuser; its edge comes out of the right wall */}
+      <PartGroup {...base} id="AP1" layer="impressa" position={[t.wheel.pivotX + e * 0.4, 0, t.wheel.bottom + e * 0.5]} rotation={[0, 0, Math.PI - t.wheel.holes[Math.min(options.aperture ?? 0, t.wheel.holes.length - 1)]!.angle]} label={[t.wheel.radius - 3, 0, 1]}>
+        <ApertureWheel radius={t.wheel.radius} thickness={t.wheel.thickness} pinHole={t.wheel.pinHole} holes={t.wheel.holes} />
       </PartGroup>
 
       {/* everything that rides on the lid */}

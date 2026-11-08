@@ -1,6 +1,6 @@
 /**
- * Economical 1000x version: 100x/1.25 oil objective + 10x eyepiece, 3 W LED on a heatsink under an iris diaphragm and the diffuser,
- * no condenser (see docs/projeto-1000x.md, section 7). Layout, dimensions of every component and the checks between them.
+ * Economical 1000x version: 100x/1.25 oil objective + 10x eyepiece, 3 W LED on a heatsink under a printed aperture wheel and the
+ * diffuser, no condenser (see docs/projeto-1000x.md, sections 7 and 10). Layout, dimensions of every component and the checks between them.
  * Every number says where it comes from: "fonte" (a page or datasheet), "medido" (caliper on the project's own parts),
  * "calculado" (from other numbers) or "suposto" (a guess that must be measured on the part that is bought).
  */
@@ -47,10 +47,10 @@ export function componentes1000x(layout: HolderLayout = layoutEconomica1000x()):
     { id: "OIL", name: "Gota de óleo de imersão", dims: `⌀ 5 × ${f(p.workingDistance - COVER_GLASS)} mm`, evidence: "fonte", note: "uma gota de ≈ 5 mm basta (guia da Kasvi); índice 1,518 no Zeiss Immersol 518 F" },
     { id: "L1", name: "Lâmina 76 × 26 × 1 mm", dims: "76 × 26 × 1 mm", evidence: "fonte", note: "ISO 8037/1" },
     { id: "M4", name: "Difusor de PLA", dims: `⌀ ${f(p.diffuserDiameter)} × ${f(p.diffuserThickness)} mm`, evidence: "medido", note: "impresso, igual ao da v1 e da v2", printed: true },
-    { id: "IR1", name: "Diafragma de íris mecânico, 1,5 a 25 mm", dims: `⌀ ${f(p.irisDiameter)} × ${f(p.irisThickness)} mm, abertura de 1,5 a 25 mm`, evidence: "suposto",
-      note: "só a faixa de abertura vem do anúncio (eBay); o corpo é suposto. Medir diâmetro externo e espessura" },
-    { id: "M5", name: "Tubo de luz (impresso, preto)", dims: `⌀ ${f(t.outerDiameter)} ext. / ${f(t.innerDiameter)} int. × ${f(t.top - t.bottom)} mm, anel de apoio de ${f(t.stopThickness)} mm com furo de ${f(t.stopBore)} mm`, evidence: "calculado",
-      note: "segue o diâmetro da íris + 0,4 mm de folga; 12 furos de ventilação de 3,4 mm na tampa em volta do dissipador", printed: true },
+    { id: "AP1", name: "Roda de aberturas (impressa)", dims: `⌀ ${f(t.wheel.radius * 2)} × ${f(t.wheel.thickness)} mm, furos de ${t.wheel.holes.map((h) => f(h.diameter)).join(", ")} mm num círculo de raio ${f(p.wheelPivot)} mm`, evidence: "calculado",
+      note: `gira num pino do tubo de luz; a borda sai ${f(t.wheel.protrusion)} mm por uma fenda de ${f(t.wheel.slotWidth)} × ${f(t.wheel.slotHeight)} mm na parede direita. Troca a íris mecânica, que custaria R$ 287`, printed: true },
+    { id: "M5", name: "Tubo de luz com pino da roda (impresso, preto)", dims: `⌀ ${f(t.outerDiameter)} ext. / ${f(t.innerDiameter)} int. × ${f(t.top - t.bottom)} mm, base de ⌀ ${f(t.boss.diameter)} mm e pino de ⌀ ${f(t.pin.diameter)} mm em x = ${f(t.boss.x)} mm`, evidence: "calculado",
+      note: "sustenta a roda 1 mm acima da borda; 12 furos de ventilação de 3,4 mm na tampa em volta do dissipador", printed: true },
     { id: "D1", name: "LED branco frio de 3 W em estrela de alumínio", dims: `estrela ⌀ ${f(p.ledStarDiameter)} × ${f(p.ledStarThickness)} mm, emissor ≈ ⌀ 6 × 3,2 mm`, evidence: "suposto",
       note: "3,3 a 3,6 V, 700 mA, 240 a 300 lm (Usinainfo); operado a 350 mA. A página dá ≈ 15 × 8 × 5 mm sem dizer o que é; medir a estrela" },
     { id: "HS1", name: "Dissipador redondo de alumínio", dims: `⌀ ${f(p.heatsinkDiameter)} × ${f(p.heatsinkHeight)} mm`, evidence: "suposto", note: "o tamanho é suposto; precisa caber no tubo de luz (≤ 40 mm) e levar a estrela com pasta térmica" },
@@ -72,7 +72,7 @@ export interface Derived1000 {
   totalHeight: number;
   /** Gap between the objective tip and the cover glass at best focus. */
   workingDistance: number;
-  emitterToIris: number;
+  emitterToWheel: number;
   /** Electrical power of the LED at the chosen current and the heat it leaves in the box, as a range (W). */
   ledWatts: number;
   heatWatts: [number, number];
@@ -92,7 +92,7 @@ export function derived1000x(layout: HolderLayout = layoutEconomica1000x()): Der
     tubeTopOverSpecimen: layout.tube.top - layout.samplePlane,
     totalHeight: layout.totalHeight,
     workingDistance: p.workingDistance - COVER_GLASS,
-    emitterToIris: t.emitterToIris,
+    emitterToWheel: t.emitterToWheel,
     ledWatts: watts,
     // a white LED turns about 20 to 40 % of the power into light (general figure), the rest is heat
     heatWatts: [watts * 0.6, watts * 0.8],

@@ -105,11 +105,18 @@ export interface HolderParams {
   screwHole: number;
   /** Pilot for a self-tapping M3: 80 % of the screw hole. */
   pilotHole: number;
-  /** 1000x version: iris diaphragm under the diffuser, held in a printed light tube that stands on the lid. */
-  irisDiameter: number;
-  irisThickness: number;
-  irisFit: number;
+  /** 1000x version: printed light tube that stands on the lid around the LED, with an aperture wheel above it, under the diffuser. */
+  lightTubeInnerDiameter: number;
   lightTubeWall: number;
+  /** Aperture wheel: a printed disc that turns on a pin of the light tube; its edge sticks out of a slot in the right wall. */
+  wheelRadius: number;
+  wheelThickness: number;
+  /** Distance from the pin to the optical axis; the holes lie on a circle of this radius around the pin. */
+  wheelPivot: number;
+  /** Air above the wheel under the ceiling. */
+  wheelGap: number;
+  /** Hole diameters in the order they sit around the wheel, mm. */
+  wheelApertures: number[];
   /** Round aluminium heatsink under the 3 W LED star, inside the light tube. */
   heatsinkDiameter: number;
   heatsinkHeight: number;
@@ -182,10 +189,14 @@ export const DEFAULT_HOLDER_PARAMS: HolderParams = {
   diffuserFit: 0.4,
   screwHole: 3.4,
   pilotHole: 2.6,
-  irisDiameter: 44,
-  irisThickness: 6,
-  irisFit: 0.4,
+  lightTubeInnerDiameter: 44.4,
   lightTubeWall: 2,
+  // 36 mm of radius clears the corner post of the box by 0.7 mm; the window of the LED (24 mm) is the light path the wheel has to cover
+  wheelRadius: 36,
+  wheelThickness: 1.8,
+  wheelPivot: 22,
+  wheelGap: 0.6,
+  wheelApertures: [24, 10, 2, 5, 16],
   heatsinkDiameter: 30,
   heatsinkHeight: 12,
   ledStarDiameter: 20,
@@ -250,17 +261,30 @@ export interface HolderLayout {
     innerDiameter: number;
     bottom: number;
     top: number;
-    /** Ring at the top that the iris is pushed against. */
-    stopBore: number;
-    stopThickness: number;
-    irisBottom: number;
-    irisTop: number;
+    /** Round boss on the rim that carries the wheel, and the pin up through it. */
+    boss: { x: number; diameter: number; top: number };
+    pin: { diameter: number; top: number };
     heatsinkTop: number;
     /** Top of the LED star board and of the emitter dome over it. */
     starTop: number;
     emitterTop: number;
-    /** Distance from the emitter to the iris plane. */
-    emitterToIris: number;
+    /** Distance from the emitter to the underside of the wheel. */
+    emitterToWheel: number;
+    wheel: {
+      pivotX: number;
+      radius: number;
+      bottom: number;
+      top: number;
+      thickness: number;
+      pinHole: number;
+      /** Hole centres and diameters in the wheel frame (pivot at the origin, wheel not yet turned). */
+      holes: { angle: number; x: number; y: number; diameter: number }[];
+      /** Slot in the right wall for the part of the wheel that sticks out. */
+      slotWidth: number;
+      slotHeight: number;
+      /** How far the wheel reaches past the outer face of the right wall. */
+      protrusion: number;
+    };
   } | null;
   /** Seat cut into the ceiling around the window, from inside. */
   diffuserSeat: { diameter: number; bottom: number; top: number; discDiameter: number; discThickness: number };
@@ -319,7 +343,7 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
     postYs.map((y) => ({ x, y, outerDiameter: 8, pilotDiameter: p.pilotHole, bottom: 0, top: cavity.top + EMBED })),
   );
   const econ = p.variant === "fonte1000";
-  const ventRadius = (p.heatsinkDiameter + (p.irisDiameter + p.irisFit)) / 4;
+  const ventRadius = (p.heatsinkDiameter + p.lightTubeInnerDiameter) / 4;
   const vents = econ
     ? Array.from({ length: 12 }, (_, k) => ({ x: Math.cos((k / 12) * Math.PI * 2) * ventRadius, y: Math.sin((k / 12) * Math.PI * 2) * ventRadius, diameter: 3.4 }))
     : [];
@@ -363,24 +387,44 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
 
   const lightTube = econ
     ? (() => {
-        const inner = p.irisDiameter + p.irisFit;
-        const stopThickness = 1.5;
+        const inner = p.lightTubeInnerDiameter;
         const starTop = p.heatsinkHeight + p.ledStarThickness;
         const emitterTop = starTop + 3.2;
-        const irisTop = cavity.top - stopThickness;
+        const wheelTop = cavity.top - p.wheelGap;
+        const wheelBottom = wheelTop - p.wheelThickness;
+        const collar = 1;
+        const top = wheelBottom - collar;
+        const n = p.wheelApertures.length;
+        const holes = p.wheelApertures.map((diameter, k) => {
+          // the hole that faces the optical axis sits at 180 degrees: the axis is at -wheelPivot from the pin
+          const angle = Math.PI + (k * 2 * Math.PI) / n;
+          return { angle, x: Math.cos(angle) * p.wheelPivot, y: Math.sin(angle) * p.wheelPivot, diameter };
+        });
+        const wallInner = cavity.xMax;
+        const reachInner = Math.sqrt(Math.max(p.wheelRadius ** 2 - (wallInner - p.wheelPivot) ** 2, 0));
         return {
           outerDiameter: inner + 2 * p.lightTubeWall,
           innerDiameter: inner,
           bottom: 0,
-          top: cavity.top,
-          stopBore: inner - 4,
-          stopThickness,
-          irisBottom: irisTop - p.irisThickness,
-          irisTop,
+          top,
+          boss: { x: p.wheelPivot, diameter: 10, top: wheelBottom },
+          pin: { diameter: 3, top: wheelTop - 0.3 },
           heatsinkTop: p.heatsinkHeight,
           starTop,
           emitterTop,
-          emitterToIris: irisTop - p.irisThickness - emitterTop,
+          emitterToWheel: wheelBottom - emitterTop,
+          wheel: {
+            pivotX: p.wheelPivot,
+            radius: p.wheelRadius,
+            bottom: wheelBottom,
+            top: wheelTop,
+            thickness: p.wheelThickness,
+            pinHole: 3.4,
+            holes,
+            slotWidth: 2 * reachInner + 2,
+            slotHeight: p.wheelThickness + 0.8,
+            protrusion: p.wheelPivot + p.wheelRadius - box.xMax,
+          },
         };
       })()
     : null;
@@ -408,6 +452,17 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
       center: [p.switchCutout.x, box.yMin + p.wall / 2, switchZ],
       size: [p.switchCutout.width, p.wall + 2 * CUT_MARGIN, p.switchCutout.height],
     },
+    ...(lightTube
+      ? [
+          {
+            id: "wheel-slot",
+            shape: "rect" as const,
+            axis: "x" as const,
+            center: [box.xMax - p.wall / 2, 0, (lightTube.wheel.bottom + lightTube.wheel.top) / 2] as Vec3,
+            size: [p.wall + 2 * CUT_MARGIN, lightTube.wheel.slotWidth, lightTube.wheel.slotHeight] as Vec3,
+          },
+        ]
+      : []),
     ...(p.variant !== "pilha"
       ? [
           {
@@ -480,11 +535,29 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
     if (p.ledStarDiameter > p.heatsinkDiameter) {
       issues.push({ severity: "error", message: "A estrela do LED é maior que o dissipador." });
     }
-    if (lightTube.emitterToIris < 10) {
-      issues.push({ severity: "error", message: "O LED fica a menos de 10 mm da íris: a luz não se espalha pelo difusor." });
+    if (lightTube.emitterToWheel < 10) {
+      issues.push({ severity: "error", message: "O LED fica a menos de 10 mm da roda de aberturas: a luz não se espalha pelo difusor." });
     }
-    if (lightTube.stopBore < 26) {
-      issues.push({ severity: "error", message: "O anel de apoio da íris tapa parte da abertura máxima de 25 mm." });
+    const w = lightTube.wheel;
+    const lightR = p.ledWindowDiameter / 2;
+    // the wheel has to cover the whole window, and no other hole may open into the window when one hole faces the axis
+    if (w.radius < p.wheelPivot + lightR + 1) {
+      issues.push({ severity: "error", message: "A roda de aberturas não cobre a janela do LED em todas as posições." });
+    }
+    for (const a of w.holes) {
+      if (p.wheelPivot + a.diameter / 2 > w.radius - 2) issues.push({ severity: "error", message: `O furo de ${a.diameter} mm fica a menos de 2 mm da borda da roda.` });
+      for (const b of w.holes) {
+        if (a === b) continue;
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        if (d - b.diameter / 2 < lightR + 0.8) issues.push({ severity: "error", message: `O furo de ${b.diameter} mm invade a janela quando o de ${a.diameter} mm está no eixo.` });
+        if (d - a.diameter / 2 - b.diameter / 2 < 1.2) issues.push({ severity: "error", message: `Os furos de ${a.diameter} e ${b.diameter} mm ficam a menos de 1,2 mm um do outro.` });
+      }
+    }
+    if (p.wheelPivot - w.radius < cavity.xMin + 1 || w.radius > cavity.yMax - 0 || w.radius > -cavity.yMin) {
+      issues.push({ severity: "error", message: "A roda de aberturas não cabe na caixa." });
+    }
+    if (w.protrusion < 8) {
+      issues.push({ severity: "warning", message: "A roda sai menos de 8 mm da parede: fica difícil de girar com o dedo." });
     }
   }
   if (cradle && board.yMax > cradle.yMin - 2 && board.xMax > cradle.xMin && board.xMin < cradle.xMax) {

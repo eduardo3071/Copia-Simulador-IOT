@@ -2,7 +2,10 @@
  * Models of the parts of the economical 1000x version. Dimensions come from `componentes1000x()` (adapter-cad), where each one is
  * marked as taken from a page, measured, calculated or assumed. Every model is drawn in its own frame, +z up.
  */
-import { Ball, Box, Cyl, Lathe, type V3 } from "./parts3d.tsx";
+import { useMemo } from "react";
+import { DoubleSide, ExtrudeGeometry, Path, Shape } from "three";
+import { useMat } from "./mat.ts";
+import { Ball, Box, Cyl, type V3 } from "./parts3d.tsx";
 
 const METAL = { metal: 0.65, rough: 0.28 } as const;
 
@@ -86,16 +89,27 @@ export function DriverModule({ size }: { size: V3 }) {
   );
 }
 
-/** Mechanical iris diaphragm, 1.5 to 25 mm: origin at the underside, +z up; the blades leave a 14 mm opening in the picture. */
-export function Iris({ diameter, thickness }: { diameter: number; thickness: number }) {
-  const r = diameter / 2;
-  const ring: [number, number][] = [[r - 3, 0], [r, 0], [r, thickness], [r - 3, thickness]];
-  const blades: [number, number][] = [[7, thickness - 1.2], [r - 3, thickness - 1.2], [r - 3, thickness - 0.6], [7, thickness - 0.6]];
+/**
+ * Printed aperture wheel: a flat disc with a pin hole at the origin and one hole per aperture (positions in the wheel frame).
+ * Origin at the underside of the wheel, +z up.
+ */
+export function ApertureWheel({ radius, thickness, pinHole, holes }: { radius: number; thickness: number; pinHole: number; holes: { x: number; y: number; diameter: number }[] }) {
+  const m = useMat();
+  const geometry = useMemo(() => {
+    const shape = new Shape();
+    shape.absarc(0, 0, radius, 0, Math.PI * 2, false);
+    const cut = (x: number, y: number, r: number) => {
+      const path = new Path();
+      path.absarc(x, y, r, 0, Math.PI * 2, true);
+      shape.holes.push(path);
+    };
+    cut(0, 0, pinHole / 2);
+    for (const h of holes) cut(h.x, h.y, h.diameter / 2);
+    return new ExtrudeGeometry(shape, { depth: thickness, bevelEnabled: false, curveSegments: 48 });
+  }, [radius, thickness, pinHole, holes]);
   return (
-    <group>
-      <Lathe profile={ring} color="#2b3038" extra={METAL} />
-      <Lathe profile={blades} color="#9aa3ae" extra={METAL} />
-      <Box size={[7, 2.4, 1.6]} pos={[r + 2.2, 0, thickness / 2]} color="#1e2229" />
-    </group>
+    <mesh geometry={geometry}>
+      <meshStandardMaterial {...m("#8fb7e6", { rough: 0.6 })} side={DoubleSide} />
+    </mesh>
   );
 }
