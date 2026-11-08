@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import {
   EYEPIECE_SPEC, FAULT_LABEL, IMAGE_BELOW_SEAT, LM317_MIN_LOAD, NOMINAL_EXTENSION, NOMINAL_PARTS, PART_SPREAD, STANDARD_TUBE_LENGTH, SUPPLIES, TUBE_GEOMETRY,
   faultsFor, opticsAt, randomParts, runTest, seededRandom, type FaultId, type SimParts, type SimVersion,
+  FLUX_5MM_DIFFUSED_LM, OBJECTIVES, diffuserLuminance, objectiveReport, type Illumination, type ObjectiveId,
 } from "@simiot/adapter-cad";
 
 const fixed = (n: number, d: number) => n.toFixed(d).replace(".", ",");
@@ -109,6 +110,51 @@ export function SimulatedTest({ version }: { version: SimVersion }) {
           num regulador exigente o brilho mínimo pode oscilar ou a saída subir. O teste de bancada com o reostato no máximo mostra isso.
         </p>
       )}
+    </section>
+  );
+}
+
+const ILLUMINATIONS: Illumination[] = ["difusor", "condensador seco", "condensador com óleo"];
+
+/** 40x or 100x: what the objective and the illumination give, and what is still missing for 1000x. */
+export function Painel1000x() {
+  const [id, setId] = useState<ObjectiveId>("100x");
+  const [ill, setIll] = useState<Illumination>("difusor");
+  const [flux, setFlux] = useState(FLUX_5MM_DIFFUSED_LM);
+  const r = objectiveReport(id, ill);
+  const o = OBJECTIVES[id];
+  const nit = diffuserLuminance(flux, 26);
+  return (
+    <section className="calc">
+      <h4>Aumento, resolução e luz: 400x ou 1000x</h4>
+      <p className="small muted">
+        O ocular WF10X de 10x vezes a objetiva dá o aumento. Resolução = 1,22 × 0,55 µm ÷ (abertura da objetiva + abertura da iluminação). A luz que chega à imagem, com difusor e sem condensador, é da ordem da luminância do difusor.
+      </p>
+      <div className="row">
+        <label>Objetiva{" "}
+          <select value={id} onChange={(e) => setId(e.target.value as ObjectiveId)}>
+            <option value="40x">40x / 0,65 (a atual)</option>
+            <option value="100x">100x / 1,25 imersão em óleo</option>
+          </select>
+        </label>
+        <label>Iluminação{" "}
+          <select value={ill} onChange={(e) => setIll(e.target.value as Illumination)}>{ILLUMINATIONS.map((i) => <option key={i} value={i}>{i}</option>)}</select>
+        </label>
+        <label>Fluxo do LED: <b>{fixed(flux, 1)} lm</b>{" "}
+          <input type="range" min={0.5} max={300} step={0.5} value={flux} onChange={(e) => setFlux(Number(e.target.value))} />
+        </label>
+      </div>
+      <dl>
+        <dt>Aumento total</dt><dd><b>{fixed(o.magnification * 10, 0)}x</b> nominais; útil entre {fixed(r.useful.min, 0)}x e {fixed(r.useful.max, 0)}x <span className={r.magnificationIsUseful ? "" : "error"}>{r.magnificationIsUseful ? "dentro" : "fora"}</span></dd>
+        <dt>Resolução</dt><dd>{fixed(r.resolutionUm, 2)} µm com esta iluminação; {fixed(r.bestResolutionUm, 2)} µm no melhor caso (condensador igual à objetiva)</dd>
+        <dt>Campo visto</dt><dd>{fixed(r.fieldDiameterMm, 2)} mm de diâmetro na lâmina</dd>
+        <dt>Hemácia (7 µm) e anel de parasita (1,4 µm)</dt><dd>aparecem com {fixed(r.redCellMm, 1)} mm e {fixed(r.ringMm, 1)} mm na imagem</dd>
+        <dt>Distância de trabalho</dt><dd>{fixed(o.workingDistance.min, 2)} a {fixed(o.workingDistance.max, 2)} mm, ponta com mola{r.needsOil ? "; precisa de óleo de imersão entre a lâmina e a objetiva" : ""}</dd>
+        <dt>Brilho do difusor (26 mm)</dt><dd>cerca de {fixed(nit, 0)} cd/m² com {fixed(flux, 1)} lm espalhados; uma tela de celular comum fica na casa de 500 cd/m² (referência geral)</dd>
+      </dl>
+      <p className="small muted">
+        Para 1000x faltam, além da objetiva de 100x: um condensador com diafragma (a iluminação precisa de abertura perto de 1), um LED muito mais forte, óleo de imersão e o comprimento do tubo perto de 160 mm. O projeto detalhado está em docs/projeto-1000x.md.
+      </p>
     </section>
   );
 }

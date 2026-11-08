@@ -61,3 +61,41 @@ describe("óptica do tubo", () => {
     expect(tubeVerdict(134)).toBe("curto");
   });
 });
+
+import { FLUX_5MM_DIFFUSED_LM, diffuserLuminance, objectiveReport, resolutionUm, tubeTopOverSpecimen, usefulMagnification } from "../src/index.ts";
+
+describe("1000x", () => {
+  it("100x/1,25 com ocular de 10x dá 1000x nominais e fica dentro da ampliação útil", () => {
+    const r = objectiveReport("100x", "condensador com óleo", 40);
+    expect(r.objective.magnification * 10).toBe(1000);
+    expect(r.magnificationIsUseful).toBe(true);
+    expect(usefulMagnification(1.25)).toEqual({ min: 625, max: 1250 });
+  });
+  it("sem condensador a resolução teórica piora pouco; o que falta é brilho", () => {
+    const sem = objectiveReport("100x", "difusor");
+    const com = objectiveReport("100x", "condensador com óleo");
+    expect(sem.resolutionUm).toBeGreaterThan(com.resolutionUm);
+    expect(sem.resolutionUm).toBeLessThan(com.resolutionUm * 1.25);
+    expect(com.resolutionUm).toBeCloseTo(0.27, 2);
+    expect(resolutionUm(0.65, 0.65)).toBeCloseTo(0.52, 2);
+  });
+  it("um LED difuso de 5 mm num disco de 26 mm dá só cerca de 600 cd/m2", () => {
+    expect(FLUX_5MM_DIFFUSED_LM).toBeCloseTo(1.01, 1);
+    expect(diffuserLuminance(FLUX_5MM_DIFFUSED_LM, 26)).toBeGreaterThan(550);
+    expect(diffuserLuminance(FLUX_5MM_DIFFUSED_LM, 26)).toBeLessThan(700);
+    expect(diffuserLuminance(100, 26)).toBeCloseTo(diffuserLuminance(1, 26) * 100, 6);
+  });
+  it("a 40x em 400x não passa da ampliação útil de 0,65 de abertura", () => {
+    expect(objectiveReport("40x", "condensador seco").magnificationIsUseful).toBe(true);
+  });
+  it("o campo cai com a ampliação e um anel de 1,4 µm vira ≈ 1,4 mm a 1000x", () => {
+    const r = objectiveReport("100x", "condensador com óleo", 40);
+    expect(r.fieldDiameterMm).toBeCloseTo(0.18, 3);
+    expect(r.ringMm).toBeGreaterThan(1.2);
+    expect(r.redCellMm).toBeGreaterThan(6);
+  });
+  it("altura do topo do tubo sobre a lâmina para um tubo de 160 mm", () => {
+    expect(tubeTopOverSpecimen("100x", 160, 0.18)).toBeCloseTo(205.18, 2);
+    expect(tubeTopOverSpecimen("40x", 152, 0.8)).toBeCloseTo(187.8, 1);
+  });
+});

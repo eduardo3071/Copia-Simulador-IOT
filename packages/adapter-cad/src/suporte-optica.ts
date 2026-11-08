@@ -104,3 +104,119 @@ export function opticsAt(extension: number): OpticsReport {
 
 /** Extension of the inner tube at the working position (lens 0.8 mm over the slide) with the current holder: 37 mm (sleeve 9 + pull 28). */
 export const NOMINAL_EXTENSION = 37;
+
+// ---------------------------------------------------------------------------------------------------------------
+// 1000x: 100x/1.25 oil objective + the 10x eyepiece
+// ---------------------------------------------------------------------------------------------------------------
+
+export type ObjectiveId = "40x" | "100x";
+
+export interface ObjectiveModel {
+  id: ObjectiveId;
+  magnification: number;
+  na: number;
+  immersion: "ar" | "óleo";
+  /** Working distances found for objectives of this kind (mm). */
+  workingDistance: { min: number; max: number; typical: number };
+  /** Flange-to-nose length used for the design (mm); measured on the 40x, taken from the family on the 100x. */
+  belowShoulder: number;
+  spring: boolean;
+}
+
+/**
+ * 100x/1.25 oil objectives found: working distance 0.06 mm (Motic EA), 0.13 (Optika), 0.14 (Motic ASC), 0.165 (Motic SP),
+ * 0.18 (Optika/Micro-Pro) and 0.22 (Zeiss A-Plan, M27 thread); Bresser and Optika list 160 mm tube, 0.17 mm cover glass and 45 mm parfocal.
+ * The 40x bought here measures 35 mm under the shoulder: that is NOT the 45 mm parfocal of the standard family, so a 100x of the same
+ * brand may or may not match it. Measure the 100x before building (see docs/projeto-1000x.md).
+ */
+export const OBJECTIVES: Record<ObjectiveId, ObjectiveModel> = {
+  "40x": { id: "40x", magnification: 40, na: 0.65, immersion: "ar", workingDistance: { min: 0.4, max: 0.8, typical: 0.6 }, belowShoulder: 35, spring: true },
+  "100x": { id: "100x", magnification: 100, na: 1.25, immersion: "óleo", workingDistance: { min: 0.06, max: 0.22, typical: 0.16 }, belowShoulder: 45, spring: true },
+};
+
+/** Green light, the usual reference for resolution. */
+export const WAVELENGTH_UM = 0.55;
+
+/** Smallest distance resolved (Rayleigh with a condenser): 1.22 λ / (NA objective + NA condenser). Oil objectives need oil on the condenser to use NA above 1. */
+export function resolutionUm(naObjective: number, naCondenser: number): number {
+  return (1.22 * WAVELENGTH_UM) / (naObjective + naCondenser);
+}
+
+/** Useful magnification of an objective: 500 to 1000 times its NA (common rule; above that the image is only larger, not sharper). */
+export function usefulMagnification(na: number): { min: number; max: number } {
+  return { min: 500 * na, max: 1000 * na };
+}
+
+export type Illumination = "difusor" | "condensador seco" | "condensador com óleo";
+
+/** Numerical aperture the illumination can give the specimen. A diffuser disc without condenser is estimated from its geometry. */
+export function condenserNA(kind: Illumination, diffuserRadius = 13, distanceToSlide = 6): number {
+  if (kind === "condensador com óleo") return 1.25;
+  if (kind === "condensador seco") return 0.9;
+  return Math.sin(Math.atan(diffuserRadius / distanceToSlide));
+}
+
+export interface ObjectiveReport {
+  objective: ObjectiveModel;
+  illumination: Illumination;
+  naCondenser: number;
+  /** NA the pair really uses (a dry condenser or a diffuser cannot exceed 1). */
+  effectiveNA: number;
+  totalMagnification: number;
+  resolutionUm: number;
+  /** Resolution when the condenser matches the objective: the best this objective can do. */
+  bestResolutionUm: number;
+  useful: { min: number; max: number };
+  magnificationIsUseful: boolean;
+  /** Field of view on the specimen (mm) with the eyepiece field number. */
+  fieldDiameterMm: number;
+  /** Apparent size of a 7 µm red cell and of a 1.4 µm parasite ring as seen in the image plane (mm). */
+  redCellMm: number;
+  ringMm: number;
+  needsOil: boolean;
+}
+
+export function objectiveReport(id: ObjectiveId, illumination: Illumination, extension = NOMINAL_EXTENSION): ObjectiveReport {
+  const o = OBJECTIVES[id];
+  const nominal = o.magnification * EYEPIECE_SPEC.magnification;
+  const total = nominal * (tubeLengthAt(extension) / STANDARD_TUBE_LENGTH);
+  const naC = condenserNA(illumination);
+  const effective = Math.min(o.na, naC);
+  const useful = usefulMagnification(o.na);
+  return {
+    objective: o,
+    illumination,
+    naCondenser: naC,
+    effectiveNA: effective,
+    totalMagnification: total,
+    resolutionUm: resolutionUm(o.na, naC),
+    bestResolutionUm: resolutionUm(o.na, o.na),
+    useful,
+    magnificationIsUseful: nominal >= useful.min && nominal <= useful.max,
+    fieldDiameterMm: EYEPIECE_SPEC.fieldNumber / o.magnification,
+    redCellMm: (7 * total) / 1000,
+    ringMm: (1.4 * total) / 1000,
+    needsOil: o.immersion === "óleo",
+  };
+}
+
+/**
+ * Head height for an objective: the tube top must sit `tubeLength` over the objective shoulder, which sits `belowShoulder + workingDistance`
+ * over the specimen. Returns how far the tube top is over the specimen plane (mm) for a wanted tube length.
+ */
+export function tubeTopOverSpecimen(id: ObjectiveId, tubeLength: number, workingDistance = OBJECTIVES[id].workingDistance.typical): number {
+  return tubeLength + OBJECTIVES[id].belowShoulder + workingDistance;
+}
+
+/**
+ * Brightness of a diffuser disc lit by a LED of `flux` lumens, if all of it comes out evenly and Lambertian: L = flux / (π · area), in cd/m2 (nit).
+ * With a diffuser and no condenser the brightness of the image in brightfield is about this luminance times the transmission of the optics,
+ * whatever the magnification, so the LED flux and the disc size decide how bright the image is.
+ */
+export function diffuserLuminance(fluxLumens: number, diameterMm: number): number {
+  const area = Math.PI * (diameterMm / 2000) ** 2;
+  return fluxLumens / (Math.PI * area);
+}
+
+/** 5 mm diffused white LED of 1200 mcd and 60 degrees: 1.2 cd × 2π(1 − cos 30°) sr. */
+export const FLUX_5MM_DIFFUSED_LM = 1.2 * 2 * Math.PI * (1 - Math.cos((30 * Math.PI) / 180));
