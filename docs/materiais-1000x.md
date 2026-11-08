@@ -90,3 +90,19 @@ Uma gota de ≈ 5 mm de diâmetro basta, segundo o [guia da Kasvi](https://kasvi
 | Estrela do LED e dissipador | tamanho |
 | Driver | tamanho |
 | Lamínula | espessura |
+
+## Preços no Brasil (2026-11-08, anúncios vistos na busca; páginas bloqueadas, nenhum preço conferido na página)
+
+| Item | Preço visto | Fonte e ressalva |
+|---|---|---|
+| Objetiva 100x oil | R$ 66,26 e R$ 86,68 | anúncios genéricos da [Amazon.com.br](https://www.amazon.com.br/microsc%C3%B3pio-RMS-microscopia-laborat%C3%B3rio-comprimento/dp/B0GHRJPSYM); especificação (NA 1,25, 160/0,17) não conferida |
+| Kit 4x/10x/40x/100x "160/0,17" | R$ 190,50 | VAKUUM, [Amazon.com.br](https://www.amazon.com.br/microsc%C3%B3pio-laborat%C3%B3rio-objetiva-acrom%C3%A1tica-biol%C3%B3gico/dp/B0CGJ3ZJT7) |
+| Kit 4x/20x/40x/60x/100x | R$ 83,63 | Desiumite; a ficha diz NA 0,25 na 100x, provável erro |
+| Objetiva 100x "185" (Shopee) | não vi preço | **evitar**: 185 é outro comprimento de tubo |
+| Condensador Abbe NA 1,25 com íris | R$ 165,45 (USEEV), R$ 199,96 (VAKUUM), R$ 104,29 (Vee Gee, só para as séries 1210/1220/1230), R$ 557,80 (Veneziana, 37 mm) | [Amazon.com.br](https://www.amazon.com.br/Adaptador-microsc%C3%B3pio-condensador-condensadora-acess%C3%B3rios/dp/B0BX7L53QB) |
+| Condensador genérico, importado | ≈ US$ 14 | AliExpress; em reais depende do câmbio, do frete e do imposto (as fontes divergem: Imposto de Importação zero até US$ 50 ou 20 %; ICMS de 17 % a 20 % sempre) |
+| LED 3 W branco frio 700 mA | R$ 4,17 (Pix) | [Usinainfo](https://www.usinainfo.com.br/led-alto-brilho/led-smd-branco-frio-de-alto-brilho-3w-epistar-2788.html), na listagem; a página do produto não mostrou preço |
+| Driver de 700 mA (K2679) | não achei | o Mercado Livre bloqueou a leitura |
+| Dissipador de alumínio | não achei | |
+| Óleo de imersão 100 ml | R$ 36,72 a R$ 52,00 | Laborclin, Amazon.com.br e Magazine Luiza |
+| Lamínulas 22 × 22 mm de 0,17 mm | não achei o preço | Knittel e Laborglas |
