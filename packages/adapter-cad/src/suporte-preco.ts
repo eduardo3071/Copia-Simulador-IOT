@@ -122,7 +122,7 @@ export const PRINT_VOLUME_1000X: { id: string; label: string; cm3: number }[] = 
   { id: "M2", label: "Abraçadeira do tubo (M2)", cm3: 9.6 },
   { id: "M3", label: "Tampa de fundo (M3)", cm3: 25.2 },
   { id: "M4", label: "Difusor (M4)", cm3: 0.4 },
-  { id: "M5", label: "Tubo de luz (M5)", cm3: 10.2 },
+  { id: "M5", label: "Tubo de luz (M5)", cm3: 10.1 },
   { id: "AP1", label: "Roda de aberturas (AP1)", cm3: 5.9 },
 ];
 

@@ -12,13 +12,15 @@ for (const [source, target] of [
   ["eletronica/v2-fonte-dimmer/esquematico.svg", "eletronica/v2-esquematico.svg"],
   ...["v1", "v2"].flatMap((v) => ["frente", "verso"].map((s) => [`eletronica/${v}-placa-${s}.png`, `eletronica/${v}-placa-${s}.png`])),
   ["TRADUCAO-REVISAO.csv", "TRADUCAO-REVISAO.csv"],
+  ["eletronica/v2-1000x/esquematico.svg", "eletronica/v2-1000x-esquematico.svg"],
+  ["CUSTOS-v2-1000x-1un.csv", "CUSTOS-v2-1000x-1un.csv"],
 ]) {
   mkdirSync(new URL("eletronica/", to), { recursive: true });
   cpSync(new URL(source, from), new URL(target, to));
 }
 rmSync(new URL("manual/", to), { recursive: true, force: true });
 cpSync(new URL("manual/", from), new URL("manual/", to), { recursive: true });
-for (const v of ["v1", "v2"]) {
+for (const v of ["v1", "v2", "v2-1000x"]) {
   for (const l of ["", "-pt", "-zh", "-en"]) {
     try {
       cpSync(new URL(`MANUAL-${v}${l}.pdf`, from), new URL(`MANUAL-${v}${l}.pdf`, to));

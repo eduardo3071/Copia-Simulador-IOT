@@ -41,7 +41,7 @@ export const SAFETY: Bilingual[] = [
 export const QA: Bilingual[] = [
   T("A lâmina L1 desliza no canal sem esforço e sem folga lateral visível.", "载玻片 L1 在槽道内滑动顺畅，侧向无明显间隙。", "The slide L1 moves in the channel without effort and without visible side play."),
   T("O tubo do pregoscópio entra no anel e fica preso pela M2 sem rachar o PLA.", "显微镜镜筒装入环中，由 M2 夹紧，PLA 无开裂。", "The pregoscope tube fits the ring and is held by M2 without cracking the PLA."),
-  T("Com o tubo interno estendido 19 mm na escala, a lente fica a cerca de 0,8 mm da lâmina e a imagem foca.", "内镜筒按刻度伸出 19 mm 时，镜头距载玻片约 0.8 mm 且图像可对焦。", "With the inner tube pulled out 19 mm on its scale the lens is about 0.8 mm from the slide and the image focuses."),
+  T("Com o tubo interno estendido 37 mm na escala, a lente fica a cerca de 0,8 mm da lâmina e a imagem foca.", "内镜筒按刻度伸出 37 mm 时，镜头距载玻片约 0.8 mm 且图像可对焦。", "With the inner tube pulled out 37 mm on its scale the lens is about 0.8 mm from the slide and the image focuses."),
   T("O LED acende e a luz é uniforme sobre a janela, sem ponto quente.", "LED 点亮，光窗光线均匀，无亮斑。", "The LED lights and the light is even over the window, with no hot spot."),
   T("Corrente do LED medida dentro da faixa do teste elétrico.", "LED 电流在电气测试范围内。", "LED current measured inside the range of the electrical test."),
   T("Tampa fechada com 4 parafusos, sem fio preso e sem folga maior que 0,5 mm.", "底盖用 4 颗螺钉关紧，无夹线，间隙不大于 0.5 mm。", "Lid closed with 4 screws, no trapped wire and no gap larger than 0.5 mm."),

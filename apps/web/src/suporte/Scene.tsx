@@ -4,10 +4,10 @@ import { BufferGeometry, Color, DoubleSide, Group, Object3D, Plane, Quaternion, 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { toCreasedNormals } from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import { COVER_GLASS, DEFAULT_HOLDER_PARAMS, holderLayout, layoutEconomica1000x, padAt, PCB, wires as routeWires, type SuporteVersion } from "@simiot/adapter-cad";
+import { COVER_GLASS, d2Placement, DEFAULT_HOLDER_PARAMS, holderLayout, layoutEconomica1000x, padAt, PCB, wires as routeWires, wires1000x, type SuporteVersion } from "@simiot/adapter-cad";
 import { MatContext, type Mat } from "./mat.ts";
 import { Adapter, Battery, Ceramic, Diode, InnerTube, Led5, Objective, OuterTube, Pcb, Plug, Pot, PowerJack, Resistor, RockerSwitch, Screw, Sleeve, Solder, To220, Tube, type V3 } from "./parts3d.tsx";
-import { ApertureWheel, DriverModule, Heatsink, LedStar3W, Objective100 } from "./parts1000x.tsx";
+import { ApertureWheel, DiodeInline, DriverModule, Heatsink, LedStar3W, Objective100 } from "./parts1000x.tsx";
 
 type Vec3 = [number, number, number];
 
@@ -310,6 +310,8 @@ function Assembly1000({ options, registry }: { options: SceneOptions; registry: 
   const sample = layout.samplePlane - COVER_GLASS;
   const coverTop = sample + COVER_GLASS;
   const dir = "v2-1000x";
+  const wires = useMemo(() => wires1000x(), []);
+  const d2 = useMemo(() => d2Placement(), []);
   const dropZ = coverTop + (p.workingDistance - COVER_GLASS) / 2;
 
   return (
@@ -340,12 +342,17 @@ function Assembly1000({ options, registry }: { options: SceneOptions; registry: 
         <PartGroup {...base} id="PCB1" layer="eletronica" position={[bcx, bcy, bd.standoffHeight]} label={[bd.xMax - bcx - 4, bd.yMax - bcy - 3, 1.6]}>
           <Pcb width={bd.xMax - bd.xMin} height={bd.yMax - bd.yMin} pads={[]} holes={mountHoles} traces={[]} />
         </PartGroup>
-        <PartGroup {...base} id="DR1" layer="eletronica" position={[bcx - 4, bcy, bd.standoffHeight + 1.6]} label={[0, 0, 11]}>
+        <PartGroup {...base} id="DR1" layer="eletronica" position={[bcx, bcy, bd.standoffHeight + 1.6]} label={[0, 0, 11]}>
           <DriverModule size={[30, 20, 10]} />
         </PartGroup>
-        <PartGroup {...base} id="D2" layer="eletronica" position={[bcx + 14, bcy - 6, bd.standoffHeight + 1.6]} rotation={[0, 0, 0]} label={[0, 0, 4]}>
-          <Diode span={10} />
-        </PartGroup>
+        {/* the wires of the 1000x version, routed around the parts; the three that start on a part of the wall follow the box when the lid is pulled away */}
+        {wires.map((w) => (
+          <PartGroup key={w.spec.id} {...base} id="W1" layer="fios" needs={w.spec.panel ? "PCB1" : "D1"} label={w.path[Math.min(4, w.path.length - 1)]!}>
+            <Tube points={w.spec.panel ? dropped(w.path, -lidZ) : (w.path as V3[])} r={0.62} color={w.spec.color} round={3.2} />
+            <Solder pos={w.spec.panel ? [w.from[0], w.from[1], w.from[2] - lidZ] : [w.from[0], w.from[1], w.from[2]]} />
+            <Solder pos={[w.to[0], w.to[1], w.to[2]]} />
+          </PartGroup>
+        ))}
         {layout.boardPosts.map((q, i) => (
           <PartGroup key={i} {...base} id="H3" layer="parafusos" position={[q.x, q.y, bd.standoffHeight + 1.6]} label={[0, 0, 2]}>
             <Screw r={2.8} />
@@ -364,6 +371,10 @@ function Assembly1000({ options, registry }: { options: SceneOptions; registry: 
       </PartGroup>
       <PartGroup {...base} id="J1" layer="eletronica" position={[layout.box.xMax + e * 0.3, p.jackY, 20]} rotation={[0, 0, Math.PI / 2]} label={[0, -2, 4]}>
         <PowerJack />
+      </PartGroup>
+      {/* D2: anode soldered to the + lug of the jack, body in the air along +y, cathode wire to the switch */}
+      <PartGroup {...base} id="D2" layer="eletronica" position={[d2.anode[0] + e * 0.3, d2.anode[1], d2.anode[2]]} label={[0, 7, 3]}>
+        <DiodeInline length={d2.cathode[1] - d2.anode[1]} />
       </PartGroup>
       <PartGroup {...base} id="PS1" layer="eletronica" position={[0, 0, 0]} label={[90 + e * 0.3, 0, 28]}>
         <group position={[90 + e * 0.3, 0, 14]}><Adapter /></group>

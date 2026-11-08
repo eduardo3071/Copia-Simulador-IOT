@@ -178,6 +178,9 @@ export function buildLightTube(layout: HolderLayout): Shape3D | null {
   const boss = makeCylinder(t.boss.diameter / 2, t.boss.top - bossBottom, [t.boss.x, 0, bossBottom]);
   const pin = makeCylinder(t.pin.diameter / 2, t.pin.top - t.boss.top + EMBED, [t.boss.x, 0, t.boss.top - EMBED]);
   tube = tube.fuse(boss).fuse(pin);
+  // cable slot at the foot, on the +y side: the two wires of the LED come in here
+  const reach = t.outerDiameter / 2 + 1;
+  tube = tube.cut(box(-t.slot.halfWidth, t.slot.halfWidth, t.innerDiameter / 2 - 2, reach, t.bottom - 1, t.slot.height));
   return tube;
 }
 

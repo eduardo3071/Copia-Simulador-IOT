@@ -6,8 +6,8 @@ import {
   type Seg, type SheetInfo, type V,
 } from "./dt.tsx";
 
-export const DOC_REV = "A";
-export const DOC_DATE = "2026-11-03";
+export const DOC_REV = "B";
+export const DOC_DATE = "2026-11-08";
 
 const NOTES: SheetInfo["notes"] = [
   { pt: "Cotas em mm. Tolerância geral ±0,2 mm (ISO 2768-m). Folgas de encaixe conforme os gabaritos G1 a G3.", zh: "尺寸单位 mm。未注公差 ±0.2 mm（ISO 2768-m）。配合间隙以校准件 G1~G3 为准。" },

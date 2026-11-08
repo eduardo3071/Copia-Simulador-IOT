@@ -263,6 +263,8 @@ export interface HolderLayout {
     top: number;
     /** Round boss on the rim that carries the wheel, and the pin up through it. */
     boss: { x: number; diameter: number; top: number };
+    /** Slot at the foot of the tube, on the +y side (toward the driver board), where the wires of the LED come in. */
+    slot: { halfWidth: number; height: number };
     pin: { diameter: number; top: number };
     heatsinkTop: number;
     /** Top of the LED star board and of the emitter dome over it. */
@@ -408,6 +410,7 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
           bottom: 0,
           top,
           boss: { x: p.wheelPivot, diameter: 10, top: wheelBottom },
+          slot: { halfWidth: 3.5, height: 7 },
           pin: { diameter: 3, top: wheelTop - 0.3 },
           heatsinkTop: p.heatsinkHeight,
           starTop,

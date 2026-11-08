@@ -1,7 +1,7 @@
 import { Component, useMemo, useState, type ReactNode } from "react";
 import {
   HINT_TEXT, manualBom, manualFiles, manualSteps, masterPlan, netList, partName, partsUpToStep, screwPositions, STANDARD_SIZE, TEST_TEXT, testPlan, wiringOrder,
-  kindLabel, PRINT, QA, SAFETY, STATUS, TOOLS, versionName, wireCutList, WIRE_COLOR_NAME, type Bilingual, type ManualStep, type SuporteVersion,
+  kindLabel, objectiveReport, opticsAt, PRINT, QA, SAFETY, STATUS, TOOLS, versionName, wireCutList, WIRE_COLOR_NAME, type Bilingual, type ManualStep, type SuporteVersion,
 } from "@simiot/adapter-cad";
 import { ASSETS, NOMINAL_RETRACT, SuporteScene, type Fit, type Layer } from "./Scene.tsx";
 import { DOC_DATE, DOC_REV, Desenhos } from "./Desenhos.tsx";
@@ -130,7 +130,10 @@ function Doc({ version }: { version: SuporteVersion }) {
         <h4><Tx pt="Revisões" zh="版本记录" en="Revisions" /></h4>
         <table className="data mini">
           <thead><tr><th>Rev.</th><th><Tx pt="Data" zh="日期" en="Date" /></th><th><Tx pt="Descrição" zh="说明" en="Description" /></th></tr></thead>
-          <tbody><tr><td className="mono">{DOC_REV}</td><td className="mono">{DOC_DATE}</td><td><Bi t={T("Primeira emissão, pré-calibração", "首次发布（校准前）", "First issue, pre-calibration")} /></td></tr></tbody>
+          <tbody>
+            <tr><td className="mono">A</td><td className="mono">2026-11-03</td><td><Bi t={T("Primeira emissão, pré-calibração", "首次发布（校准前）", "First issue, pre-calibration")} /></td></tr>
+            <tr><td className="mono">{DOC_REV}</td><td className="mono">{DOC_DATE}</td><td><Bi t={T("Cabeça do suporte 18 mm mais alta (228,2 mm) para o tubo de 152 mm; lista de corte dos fios; seta de orientação e imagens da placa; faixas do teste elétrico corrigidas; tabela de ajustes no DT-06; ficha de calibração; seção de óptica", "支架头部升高 18 mm（228.2 mm），镜筒长度 152 mm；导线下料表；电路板方向箭头和图像；修正电气测试范围；DT-06 配合表；校准记录表；光学章节", "Head of the support 18 mm higher (228.2 mm) for the 152 mm tube; wire cut list; orientation arrow and images of the board; corrected ranges of the electrical test; table of fits in DT-06; calibration record sheet; optics section")} /></td></tr>
+          </tbody>
         </table>
       </section>
 
@@ -292,6 +295,17 @@ function Doc({ version }: { version: SuporteVersion }) {
             <tbody>{j.series.map((sr) => <tr key={sr.name}><td><span className="mono">{sr.id}</span> <Bi t={jt(sr.name)} /></td><td className="mono">{sr.sizes.map((x) => (comma ? x : x.replace(",", "."))).join(" · ")}</td><td className="small"><Bi t={jt(sr.param)} /></td></tr>)}</tbody>
           </table>
         ))}
+        <h4><Tx pt="Óptica e comprimento do tubo" zh="光学与镜筒长度" en="Optics and tube length" /></h4>
+        <table className="data mini">
+          <tbody>
+            <tr><th><Tx pt="Objetiva e ocular" zh="物镜与目镜" en="Objective and eyepiece" /></th><td className="mono">40x/0,65 · WF10X · {objectiveReport("40x", "difusor", 37).objective.magnification * 10}x</td></tr>
+            <tr><th><Tx pt="Tubo, do ombro da objetiva à borda" zh="物镜肩部到筒口" en="Tube, objective shoulder to rim" /></th><td className="mono">{opticsAt(37).tubeLength} mm {tx("de 160 mm (máximo possível 155 mm)", "（标称 160 mm，最大可达 155 mm）", "of 160 mm (155 mm is the most possible)")}</td></tr>
+            <tr><th><Tx pt="Aumento total estimado nesse comprimento" zh="该长度下的估计总放大倍数" en="Estimated total magnification at that length" /></th><td className="mono">≈ {Math.round(opticsAt(37).totalMagnification)}x</td></tr>
+            <tr><th><Tx pt="Resolução teórica (difusor)" zh="理论分辨率（扩散片）" en="Theoretical resolution (diffuser)" /></th><td className="mono">{objectiveReport("40x", "difusor", 37).resolutionUm.toFixed(2).replace(".", comma ? "," : ".")} µm</td></tr>
+            <tr><th><Tx pt="Ocular de ⌀ 23,2 mm" zh="⌀ 23.2 mm 目镜" en="Eyepiece of ⌀ 23.2 mm" /></th><td><Bi t={T("só cabe no tubo externo (o tubo interno tem ⌀ 22,5 mm)", "只能装入外镜筒（内镜筒为 ⌀ 22.5 mm）", "fits only the outer tube (the inner tube is ⌀ 22.5 mm)")} /></td></tr>
+          </tbody>
+        </table>
+        <p className="small muted"><Bi t={T("A objetiva 160/0,17 foi calculada para 160 mm entre o seu ombro e o ocular; com 152 mm a imagem fica um pouco mais mole. Confirme no pregoscópio real a distância do ombro da objetiva até a borda onde o ocular apoia.", "160/0.17 物镜按其肩部到目镜 160 mm 设计；152 mm 时图像略软。请在实物显微镜上核实物镜肩部到目镜支撑口的距离。", "The 160/0.17 objective was calculated for 160 mm between its shoulder and the eyepiece; at 152 mm the image is a little softer. Confirm on the real pregoscope the distance from the objective shoulder to the rim where the eyepiece rests.")} /></p>
         <h4><Tx pt="Ficha de registro da calibração" zh="校准记录表" en="Calibration record sheet" /></h4>
         <table className="data">
           <thead><tr><th><Tx pt="Gabarito / série" zh="校准件 / 系列" en="Jig / series" /></th><th><Tx pt="Peça real medida" zh="实测零件" en="Real part measured" /></th><th><Tx pt="Medida real (mm)" zh="实测尺寸 (mm)" en="Real size (mm)" /></th><th><Tx pt="Furo escolhido (mm)" zh="选定孔径 (mm)" en="Chosen hole (mm)" /></th><th><Tx pt="Data / responsável" zh="日期 / 负责人" en="Date / person" /></th></tr></thead>

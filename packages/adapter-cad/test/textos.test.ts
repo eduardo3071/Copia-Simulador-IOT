@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   GLOSSARY, HINT_TEXT, QA, SAFETY, STATUS, TEST_TEXT, TOOLS, PRINT, manualFiles, manualSteps, masterPlan, netList, wiringOrder,
+  QA_1000X, SAFETY_1000X, STATUS_1000X, TOOLS_1000X, PRINT_1000X, bom1000x, calibration1000x, files1000x, masterPlan1000x, netList1000x, steps1000x, testPlan1000x, wiringOrder1000x,
   type Bilingual,
 } from "../src/index.ts";
 
@@ -39,6 +40,18 @@ function everyText(): { where: string; t: Bilingual }[] {
   add("impressão", PRINT.map((p) => p.text));
   add("teste", Object.values(TEST_TEXT));
   add("dicas do teste", Object.values(HINT_TEXT));
+  add("1000x passos", steps1000x().flatMap((s) => [s.title, s.text, ...(s.check ? [s.check] : []), ...(s.warn ? [s.warn] : [])]));
+  add("1000x ligações", [...wiringOrder1000x(), ...netList1000x()]);
+  add("1000x teste", testPlan1000x().flatMap((r) => [r.point, r.hint]));
+  add("1000x status", STATUS_1000X);
+  add("1000x segurança", SAFETY_1000X);
+  add("1000x inspeção", QA_1000X);
+  add("1000x ferramentas", TOOLS_1000X);
+  add("1000x impressão", PRINT_1000X.map((p) => p.text));
+  add("1000x calibração", calibration1000x());
+  add("1000x posições", masterPlan1000x().map((p) => p.mount));
+  add("1000x arquivos", files1000x().map((f) => f.text));
+  add("1000x lista", bom1000x().map((b) => b.name));
   return out;
 }
 

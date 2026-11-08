@@ -113,3 +113,16 @@ export function ApertureWheel({ radius, thickness, pinHole, holes }: { radius: n
     </mesh>
   );
 }
+
+/** 1N5819 standing in the air between the + lug of the jack and its wire: origin at the anode end, the body along +y, `length` mm of leads and body. */
+export function DiodeInline({ length, bodyLength = 5.2 }: { length: number; bodyLength?: number }) {
+  const mid = length / 2;
+  return (
+    <group>
+      <Cyl r={1.35} len={bodyLength} axis="y" pos={[0, mid, 0]} color="#1d2027" extra={{ rough: 0.45 }} />
+      <Cyl r={1.4} len={0.9} axis="y" pos={[0, mid + bodyLength / 2 - 0.45, 0]} color="#d5dae0" extra={{ metal: 0.6 }} />
+      <Cyl r={0.3} len={mid - bodyLength / 2} axis="y" pos={[0, (mid - bodyLength / 2) / 2, 0]} color="#c9ced6" extra={METAL} />
+      <Cyl r={0.3} len={mid - bodyLength / 2} axis="y" pos={[0, length - (mid - bodyLength / 2) / 2, 0]} color="#c9ced6" extra={METAL} />
+    </group>
+  );
+}

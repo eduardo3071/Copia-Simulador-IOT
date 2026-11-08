@@ -32,6 +32,8 @@ export const ECONOMICA_1000X_PARAMS: HolderParams = {
   // flange-to-specimen of 45 mm (Bresser, Optika) minus the working distance: what hangs under the inner tube
   objectiveLength: OBJ.belowShoulder - OBJECTIVE_100X_WD,
   workingDistance: OBJECTIVE_100X_WD + COVER_GLASS,
+  // the jack goes behind the light tube: at the middle of the wall its lugs would touch the tube
+  jackY: 32,
 };
 
 export const layoutEconomica1000x = (): HolderLayout => holderLayout(ECONOMICA_1000X_PARAMS);

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 270" font-family="Arial, Helvetica, sans-serif">
+<rect width="760" height="270" fill="#fff"/>
+<text x="380" y="20" text-anchor="middle" font-size="14" font-weight="700">1000x · PS1 12 V → J1 → D2 → SW1 → DR1 (350 mA) → D1 (LED 3 W)</text>
+<rect x="14" y="56" width="86" height="64" rx="4" fill="#f4f6f9" stroke="#222" stroke-width="1.5"/><text x="57" y="76" text-anchor="middle" font-size="14" font-weight="700">J1</text><text x="57" y="93" text-anchor="middle" font-size="10" fill="#444">conector P4</text>
+<rect x="150" y="56" width="76" height="64" rx="4" fill="#f4f6f9" stroke="#222" stroke-width="1.5"/><text x="188" y="76" text-anchor="middle" font-size="14" font-weight="700">D2</text><text x="188" y="93" text-anchor="middle" font-size="10" fill="#444">1N5819</text>
+<rect x="270" y="56" width="76" height="64" rx="4" fill="#f4f6f9" stroke="#222" stroke-width="1.5"/><text x="308" y="76" text-anchor="middle" font-size="14" font-weight="700">SW1</text><text x="308" y="93" text-anchor="middle" font-size="10" fill="#444">chave</text>
+<rect x="400" y="40" width="150" height="120" rx="4" fill="#f4f6f9" stroke="#222" stroke-width="1.5"/><text x="475" y="60" text-anchor="middle" font-size="14" font-weight="700">DR1</text><text x="475" y="77" text-anchor="middle" font-size="10" fill="#444">driver 350 mA</text>
+<rect x="610" y="56" width="120" height="64" rx="4" fill="#f4f6f9" stroke="#222" stroke-width="1.5"/><text x="670" y="76" text-anchor="middle" font-size="14" font-weight="700">D1</text><text x="670" y="93" text-anchor="middle" font-size="10" fill="#444">LED 3 W + dissipador</text>
+<text x="14" y="52" font-size="11">+</text><text x="14" y="190" font-size="11">−</text>
+<polyline points="100,78 150,78" fill="none" stroke="#d92d20" stroke-width="2.4"/>
+<text x="125" y="72" text-anchor="middle" font-size="10">A</text>
+<polyline points="226,78 270,78" fill="none" stroke="#d92d20" stroke-width="2.4"/><text x="248" y="73" text-anchor="middle" font-size="11" fill="#d92d20">F1</text>
+<text x="226" y="72" font-size="10">K</text>
+<polyline points="346,78 400,78" fill="none" stroke="#ff8a1f" stroke-width="2.4"/><text x="373" y="73" text-anchor="middle" font-size="11" fill="#ff8a1f">F2</text>
+<text x="404" y="74" font-size="10" fill="#fff">IN+</text>
+<polyline points="550,78 610,78" fill="none" stroke="#e0c200" stroke-width="2.4"/><text x="580" y="73" text-anchor="middle" font-size="11" fill="#e0c200">F4</text>
+<text x="500" y="74" font-size="10" fill="#fff">LED+</text>
+<polyline points="550,128 580,128" fill="none" stroke="#2f6fdb" stroke-width="2.4"/><text x="565" y="123" text-anchor="middle" font-size="11" fill="#2f6fdb">F5</text><polyline points="580,128 580,108" fill="none" stroke="#2f6fdb" stroke-width="2.4"/><polyline points="580,108 610,108" fill="none" stroke="#2f6fdb" stroke-width="2.4"/>
+<text x="500" y="132" font-size="10" fill="#fff">LED−</text>
+<polyline points="60,120 60,200" fill="none" stroke="#222222" stroke-width="2.4"/><polyline points="60,200 430,200" fill="none" stroke="#222222" stroke-width="2.4"/><text x="245" y="195" text-anchor="middle" font-size="11" fill="#222">F3 (GND)</text><polyline points="430,200 430,150" fill="none" stroke="#222222" stroke-width="2.4"/>
+<text x="404" y="150" font-size="10" fill="#fff">IN−</text>
+<circle cx="60" cy="200" r="3.2" fill="#222"/>
+<text x="380" y="236" text-anchor="middle" font-size="11">D2: ânodo soldado direto no terminal + do J1 (sem fio). O ânodo do D2 fica no lado sem faixa.</text>
+<text x="380" y="252" text-anchor="middle" font-size="11">Cores dos fios: F1 vermelho · F2 laranja · F3 preto · F4 amarelo · F5 azul</text>
+</svg>
