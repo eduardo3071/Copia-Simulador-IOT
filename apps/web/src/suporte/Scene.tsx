@@ -4,9 +4,10 @@ import { BufferGeometry, Color, DoubleSide, Group, Object3D, Plane, Quaternion, 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { toCreasedNormals } from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import { DEFAULT_HOLDER_PARAMS, holderLayout, padAt, PCB, wires as routeWires, type SuporteVersion } from "@simiot/adapter-cad";
+import { COVER_GLASS, DEFAULT_HOLDER_PARAMS, holderLayout, layoutEconomica1000x, padAt, PCB, wires as routeWires, type SuporteVersion } from "@simiot/adapter-cad";
 import { MatContext, type Mat } from "./mat.ts";
 import { Adapter, Battery, Ceramic, Diode, InnerTube, Led5, Objective, OuterTube, Pcb, Plug, Pot, PowerJack, Resistor, RockerSwitch, Screw, Sleeve, Solder, To220, Tube, type V3 } from "./parts3d.tsx";
+import { DriverModule, Heatsink, Iris, LedStar3W, Objective100 } from "./parts1000x.tsx";
 
 type Vec3 = [number, number, number];
 
@@ -50,6 +51,8 @@ function useStl(url: string) {
 
 export interface SceneOptions {
   version: SuporteVersion;
+  /** Economical 1000x version (v2 electronics, 100x objective, 3 W LED under an iris). */
+  econ1000?: boolean;
   explode: number;
   retract: number;
   cut: number;
@@ -167,6 +170,7 @@ function PartGroup(props: PartProps & { position?: Vec3; rotation?: Vec3; label?
 
 /** Where each label hangs, in the part's own frame, so labels do not pile up in the middle of the model. */
 const LABEL_AT: Record<string, Vec3> = {
+  M5: [24, 0, 20],
   M1: [0, 60, 115], M2: [0, -21, 199], M3: [-38, -42, -1], M4: [13, 0, 38],
   P1: [-30, 0, 8], P4: [-60, 0, 34], P5: [60, 0, 34], P6: [79, 17, 10], P10: [-79, 17, 10],
 };
@@ -274,7 +278,136 @@ function GlueRing(props: Omit<PartProps, "id" | "layer"> & { position: Vec3 }) {
   );
 }
 
+/** Where the inner tube sits when the 100x objective is at its working distance in the 1000x version. */
+export function econRetract(): number {
+  const l = layoutEconomica1000x();
+  return Math.round((l.tube.sleeveBottom - l.totalHeight + SLEEVE_DEPTH) * 10) / 10;
+}
+
+/**
+ * The economical 1000x version: v2 box with a taller column, the 100x/1.25 oil objective, a 3 W LED on a heatsink under an iris
+ * inside a printed light tube, a driver module on a perforated board, a cover glass and a drop of oil. The dimensions are the ones of
+ * `componentes1000x()`; the wires are not drawn.
+ */
+function Assembly1000({ options, registry }: { options: SceneOptions; registry: Registry }) {
+  const { explode: e, retract } = options;
+  const plane = useMemo(() => new Plane(new Vector3(0, 1, 0), 0), []);
+  plane.constant = -options.cut;
+  const layout = useMemo(() => layoutEconomica1000x(), []);
+  const p = layout.params;
+  const t = layout.lightTube!;
+  const bd = layout.board;
+  const bcx = (bd.xMin + bd.xMax) / 2;
+  const bcy = (bd.yMin + bd.yMax) / 2;
+  const mountHoles: [number, number][] = layout.boardPosts.map((q) => [q.x - bcx, q.y - bcy]);
+  const base = { options, registry, plane };
+  const stl = (name: string) => `${ASSETS}mecanica/${name}`;
+  const pre = (n: number) => `${ASSETS}pregoscopio/pregoscopio-${n}.stl`;
+  const lidZ = -(options.lidDrop ?? e);
+  const headZ = layout.totalHeight + e * 1.5;
+  const sample = layout.samplePlane - COVER_GLASS;
+  const coverTop = sample + COVER_GLASS;
+  const dir = "v2-1000x";
+  const dropZ = coverTop + (p.workingDistance - COVER_GLASS) / 2;
+
+  return (
+    <>
+      <StlPart {...base} id="M1" layer="impressa" url={stl(`${dir}/suporte-base-coluna.stl`)} color={COLORS.body} />
+      <StlPart {...base} id="M2" layer="impressa" url={stl(`${dir}/abracadeira-tubo.stl`)} color={COLORS.clamp} position={[0, -e * 0.9, 0]} />
+      <StlPart {...base} id="M4" layer="impressa" url={stl("comum/difusor.stl")} color={COLORS.diffuser} opacity={0.8} position={[0, 0, 37.8 + e * 0.8]} />
+      <GlueRing {...base} position={[0, 0, 37.8 + e * 0.8]} />
+      {options.arrows?.map((arrow, i) => (
+        <ArrowGuide key={i} from={arrow.from} to={arrow.to} material={{ roughness: 0.5, metalness: 0, emissive: new Color("#ff8a00"), emissiveIntensity: 0.25, clippingPlanes: [] }} />
+      ))}
+
+      {/* iris, held against the stop ring of the light tube just under the diffuser */}
+      <PartGroup {...base} id="IR1" layer="eletronica" position={[0, 0, t.irisBottom + e * 0.5]} label={[24, 0, 3]}>
+        <Iris diameter={p.irisDiameter} thickness={p.irisThickness} />
+      </PartGroup>
+
+      {/* everything that rides on the lid */}
+      <group position={[0, 0, lidZ]}>
+        <StlPart {...base} id="M3" layer="impressa" url={stl(`${dir}/tampa-fundo.stl`)} color={COLORS.lid} />
+        <StlPart {...base} id="M5" layer="impressa" url={stl(`${dir}/tubo-de-luz.stl`)} color="#2c3138" />
+        <PartGroup {...base} id="HS1" layer="eletronica" position={[0, 0, 0]} label={[16, 0, 6]}>
+          <Heatsink diameter={p.heatsinkDiameter} height={p.heatsinkHeight} />
+        </PartGroup>
+        <PartGroup {...base} id="D1" layer="eletronica" position={[0, 0, p.heatsinkHeight]} label={[0, 0, 7]}>
+          <LedStar3W diameter={p.ledStarDiameter} thickness={p.ledStarThickness} lit={options.lightOn} />
+        </PartGroup>
+        <PartGroup {...base} id="PCB1" layer="eletronica" position={[bcx, bcy, bd.standoffHeight]} label={[bd.xMax - bcx - 4, bd.yMax - bcy - 3, 1.6]}>
+          <Pcb width={bd.xMax - bd.xMin} height={bd.yMax - bd.yMin} pads={[]} holes={mountHoles} traces={[]} />
+        </PartGroup>
+        <PartGroup {...base} id="DR1" layer="eletronica" position={[bcx - 4, bcy, bd.standoffHeight + 1.6]} label={[0, 0, 11]}>
+          <DriverModule size={[30, 20, 10]} />
+        </PartGroup>
+        <PartGroup {...base} id="D2" layer="eletronica" position={[bcx + 14, bcy - 6, bd.standoffHeight + 1.6]} rotation={[0, 0, 0]} label={[0, 0, 4]}>
+          <Diode span={10} />
+        </PartGroup>
+        {layout.boardPosts.map((q, i) => (
+          <PartGroup key={i} {...base} id="H3" layer="parafusos" position={[q.x, q.y, bd.standoffHeight + 1.6]} label={[0, 0, 2]}>
+            <Screw r={2.8} />
+          </PartGroup>
+        ))}
+        {layout.lid.holes.map((q, i) => (
+          <PartGroup key={i} {...base} id="H1" layer="parafusos" position={[q.x, q.y, -p.wall]} rotation={[Math.PI, 0, 0]} label={[0, 0, 2]}>
+            <Screw r={2.8} />
+          </PartGroup>
+        ))}
+      </group>
+
+      {/* on the box wall */}
+      <PartGroup {...base} id="SW1" layer="eletronica" position={[p.switchCutout.x, layout.box.yMin - e * 0.3, 20]} label={[0, -4, 0]}>
+        <RockerSwitch />
+      </PartGroup>
+      <PartGroup {...base} id="J1" layer="eletronica" position={[layout.box.xMax + e * 0.3, p.jackY, 20]} rotation={[0, 0, Math.PI / 2]} label={[0, -2, 4]}>
+        <PowerJack />
+      </PartGroup>
+      <PartGroup {...base} id="PS1" layer="eletronica" position={[0, 0, 0]} label={[90 + e * 0.3, 0, 28]}>
+        <group position={[90 + e * 0.3, 0, 14]}><Adapter /></group>
+        <group position={[layout.box.xMax + e * 0.3, p.jackY, 20]}><Plug /></group>
+        <Tube points={[[layout.box.xMax + 14 + e * 0.3, 0, 20], [layout.box.xMax + 19 + e * 0.3, 0, 20.5], [layout.box.xMax + 22 + e * 0.3, 0, 16], [layout.box.xMax + 24 + e * 0.3, 0, 12.2]]} r={1.6} color="#14171c" />
+      </PartGroup>
+
+      {/* slide, cover glass and the drop of oil between the cover glass and the objective */}
+      <Primitive {...base} id="L1" layer="lamina" shape={{ kind: "box", size: [76, 26, 1] }} color={COLORS.glass} opacity={0.4} position={[0, 0, sample - 0.5 + e * 1.1]} />
+      <Primitive {...base} id="CV1" layer="lamina" shape={{ kind: "box", size: [22, 22, COVER_GLASS] }} color="#dff3ff" opacity={0.6} position={[0, 0, sample + COVER_GLASS / 2 + e * 1.1]} />
+      <Primitive {...base} id="OIL" layer="lamina" shape={{ kind: "cyl", r: 2.5, len: Math.max(p.workingDistance - COVER_GLASS, 0.1), axis: "z" }} color="#9fe4ff" opacity={0.75} position={[0, 0, dropZ + e * 1.1]} />
+      {[-24.4, 24.4].map((x) => (
+        <PartGroup key={x} {...base} id="H2" layer="parafusos" position={[x, -12.8 - e * 0.9, (layout.ring.bottom + layout.ring.top) / 2]} rotation={[Math.PI / 2, 0, 0]} label={[0, 0, 2]}>
+          <Screw r={2.8} />
+        </PartGroup>
+      ))}
+
+      {/* the pregoscopio, from the STEP, with the 100x objective on the inner tube */}
+      <group position={[0, 0, headZ]}>
+        <StlPart {...base} id="P1" layer="pregoscopio" url={pre(1)} color={COLORS.head} />
+        <PartGroup {...base} id="P2" layer="pregoscopio" label={[0, -17, -70]}>
+          <OuterTube diameter={p.tubeDiameter} length={p.tubeLength} />
+        </PartGroup>
+        <StlPart {...base} id="P4" layer="pregoscopio" url={pre(4)} color={COLORS.hook} />
+        <StlPart {...base} id="P5" layer="pregoscopio" url={pre(5)} color={COLORS.hook} />
+        <StlPart {...base} id="P6" layer="pregoscopio" url={pre(6)} color={COLORS.knob} />
+        <StlPart {...base} id="P10" layer="pregoscopio" url={pre(9)} color={COLORS.knob} />
+        <group position={[0, 0, retract]}>
+          <PartGroup {...base} id="P3" layer="pregoscopio" position={[0, 0, -SLEEVE_DEPTH]} label={[0, -12, 6]}>
+            <InnerTube diameter={p.sleeveDiameter} length={80} reach={40} />
+          </PartGroup>
+          <PartGroup {...base} id="P9" layer="pregoscopio" position={[0, 0, -SLEEVE_DEPTH - p.objectiveLength]} label={[0, -10, 18]}>
+            <Objective100 length={p.objectiveLength} radius={p.objectiveDiameter / 2} />
+          </PartGroup>
+        </group>
+      </group>
+    </>
+  );
+}
+
 function Assembly({ options, registry }: { options: SceneOptions; registry: Registry }) {
+  if (options.econ1000) return <Assembly1000 options={options} registry={registry} />;
+  return <AssemblyClassic options={options} registry={registry} />;
+}
+
+function AssemblyClassic({ options, registry }: { options: SceneOptions; registry: Registry }) {
   const { version, explode: e, retract } = options;
   const plane = useMemo(() => new Plane(new Vector3(0, 1, 0), 0), []);
   plane.constant = -options.cut;
@@ -533,7 +666,7 @@ export function SuporteScene({ options, ids, view, hint = true, paper = false, q
   const registry: Registry = useRef(new Map());
   const nodes = useRef(new Map<string, HTMLElement>());
   const target = useMemo<Vec3>(() => [0, 0, 118], []);
-  const key = options.version;
+  const key = `${options.version}${options.econ1000 ? "-1000x" : ""}`;
   const { onPick } = options;
   return (
     <div className={`suporte-stage${paper ? " paper" : ""}`}>
@@ -547,7 +680,7 @@ export function SuporteScene({ options, ids, view, hint = true, paper = false, q
         <ambientLight intensity={0.85} />
         <directionalLight position={[300, -400, 500]} intensity={1.7} />
         <directionalLight position={[-300, 300, 200]} intensity={0.5} />
-        {options.lightOn && <pointLight position={[0, 0, 33 - options.explode]} intensity={900} distance={120} color="#ffe0a0" />}
+        {options.lightOn && <pointLight position={[0, 0, (options.econ1000 ? 30 : 33) - options.explode]} intensity={options.econ1000 ? 1400 : 900} distance={120} color="#ffe0a0" />}
         <Assembly options={options} registry={registry} />
         <Controls target={target} view={view} />
         <Projector registry={registry} nodes={nodes} cut={options.cut} />

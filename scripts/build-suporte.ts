@@ -5,7 +5,7 @@ import opencascade from "replicad-opencascadejs";
 import { setOC, type Shape3D } from "replicad";
 import { stlOf } from "../packages/adapter-cad/src/geometry.ts";
 import { buildHolder, holderOnBack } from "../packages/adapter-cad/src/holder-geometry.ts";
-import { DEFAULT_HOLDER_PARAMS, holderLayout, withStlHeader } from "../packages/adapter-cad/src/index.ts";
+import { DEFAULT_HOLDER_PARAMS, holderLayout, layoutEconomica1000x, withStlHeader } from "../packages/adapter-cad/src/index.ts";
 
 const require = createRequire(import.meta.url);
 setOC(await opencascade({ wasmBinary: readFileSync(require.resolve("replicad-opencascadejs/wasm")) }));
@@ -33,5 +33,20 @@ for (const variant of ["pilha", "fonte"] as const) {
   await write(`${tag}/suporte-base-coluna.stl`, shapes.body);
   await write(`${tag}/suporte-base-coluna-impressao.stl`, holderOnBack(shapes.body));
   await write(`${tag}/tampa-fundo.stl`, shapes.lid);
+  console.log(`${tag}: altura total ${layout.totalHeight} mm`);
+}
+
+// Economical 1000x version (100x oil objective, 3 W LED under an iris): its own body, lid, clamp (the ring sits higher) and light tube.
+{
+  const layout = layoutEconomica1000x();
+  for (const issue of layout.issues) console.warn(`1000x ${issue.severity}: ${issue.message}`);
+  const shapes = buildHolder(layout);
+  const tag = "v2-1000x";
+  await write(`${tag}/suporte-base-coluna.stl`, shapes.body);
+  await write(`${tag}/suporte-base-coluna-impressao.stl`, holderOnBack(shapes.body));
+  await write(`${tag}/tampa-fundo.stl`, shapes.lid);
+  await write(`${tag}/abracadeira-tubo.stl`, shapes.clamp);
+  await write(`${tag}/abracadeira-tubo-impressao.stl`, holderOnBack(shapes.clamp));
+  if (shapes.lightTube) await write(`${tag}/tubo-de-luz.stl`, shapes.lightTube);
   console.log(`${tag}: altura total ${layout.totalHeight} mm`);
 }

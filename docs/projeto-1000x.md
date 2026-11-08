@@ -100,3 +100,23 @@ O que **pode** ser dispensado, em teoria:
 Resultado: uma versão econômica seria **objetiva 100x/1,25 em óleo + LED de 3 W com driver de 700 mA e dimerização + difusor + íris**, sem o condensador (≈ R$ 165 a R$ 200 a menos). É uma conclusão de cálculo: só o teste com a lâmina mostra se o contraste serve.
 
 Alternativa sem óleo: objetiva 60x/0,85 a seco, 600x no total (faixa útil de 425x a 850x), resolução teórica de 0,40 µm. Não pesquisei preço.
+
+## 8. A versão econômica no 3D (2026-11-08)
+
+Abra a aba 3D, v2, e clique em **1000x econômico**. A cena troca a cabeça do suporte (237,6 mm de altura, contra 228,2 mm), a objetiva (100x de 44,8 mm sob o ombro), e põe sob o difusor o conjunto de iluminação. A tabela ao lado dá as dimensões de cada peça e diz de onde vieram.
+
+Decisões de projeto e por quê:
+
+- **Altura:** o tubo fica com 152 mm (115 do tubo externo + 37 de extensão), como na 400x. Com uma 100x de 45 mm de parafocal e 0,18 mm de trabalho, a cabeça sobe 9,4 mm; o tubo interno trabalha em 37 mm e sobram 3 mm de curso para o foco.
+- **Distância de trabalho:** a lente fica a 0,18 mm da lamínula, que fica 0,17 mm acima da lâmina; a gota de óleo ocupa esse espaço.
+- **LED de 3 W a 350 mA, não 700 mA:** a caixa é de PLA, que amolece perto de 60 °C, e o dissipador fica dentro dela. A 350 mA o LED consome ≈ 1,2 W e deixa ≈ 0,7 a 1,0 W de calor (estimativa: um LED branco converte 20 a 40 % da potência em luz). O brilho cai pela metade e continua mais de 100 vezes acima do LED de 5 mm. Isso muda o driver: precisa de 350 mA, não do K2679 de 700 mA. **Não verifiquei a temperatura real**: confirme na bancada, com o LED aceso por 30 minutos.
+- **Ventilação:** a tampa ganha 12 furos de 3,4 mm em volta do dissipador. A caixa continua sem aberturas na parede.
+- **Tubo de luz (M5, impresso em preto):** ⌀ 48,4 mm por fora, 44,4 mm por dentro e 37,6 mm de altura, apoiado na tampa até o teto. Segura a íris contra um anel de 1,5 mm sob o difusor e impede a luz de espalhar. A íris é empurrada por baixo; falta definir como prendê-la (cola quente ou 3 pontos de cola).
+- **Sem reostato nem LM317:** o brilho para a câmera se ajusta pela íris, não por um reostato. A placa de 40 × 25 mm leva só o driver e o diodo D2.
+- **Distância do LED à íris:** 13,3 mm, acima do mínimo de 10 mm que o projeto exige para a luz cobrir o difusor.
+
+Verificado por teste (238 passam): o layout não tem erros; o tubo do pregoscópio com a 100x não encosta em nenhuma peça impressa; o tubo de luz cabe na caixa e deixa a placa do driver atrás; os 12 furos ficam entre o dissipador e a parede do tubo; a v1 e a v2 continuam iguais.
+
+**O que ainda é suposição** (medir nas peças compradas): objetiva (diâmetro e comprimento), íris, estrela do LED, dissipador e driver. O 3D marca cada uma como "suposto". **Não está feito:** os fios, o ocular no 3D, o manual, a lista de compras e o plano de teste elétrico desta versão.
+
+STLs em `pacote-montagem/mecanica/v2-1000x/`: base e coluna, tampa, abraçadeira, tubo de luz.

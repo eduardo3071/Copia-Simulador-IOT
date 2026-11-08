@@ -7,8 +7,11 @@ import { CUT_MARGIN, EMBED, type Vec3 } from "./layout.ts";
  * The box extends toward -Y (front) and the column rises behind the tube (+Y).
  */
 
-/** "pilha": 9 V battery and an on/off switch. "fonte": DC jack, LM317 dimmer board and its knob. */
-export type HolderVariant = "pilha" | "fonte";
+/**
+ * "pilha": 9 V battery and an on/off switch. "fonte": DC jack, LM317 dimmer board and its knob.
+ * "fonte1000": the economical 1000x version: 100x/1.25 oil objective, 3 W LED on a heatsink under an iris, driver module, no knob.
+ */
+export type HolderVariant = "pilha" | "fonte" | "fonte1000";
 
 export interface DriverBoard {
   width: number;
@@ -102,6 +105,17 @@ export interface HolderParams {
   screwHole: number;
   /** Pilot for a self-tapping M3: 80 % of the screw hole. */
   pilotHole: number;
+  /** 1000x version: iris diaphragm under the diffuser, held in a printed light tube that stands on the lid. */
+  irisDiameter: number;
+  irisThickness: number;
+  irisFit: number;
+  lightTubeWall: number;
+  /** Round aluminium heatsink under the 3 W LED star, inside the light tube. */
+  heatsinkDiameter: number;
+  heatsinkHeight: number;
+  /** Aluminium star board of the LED. */
+  ledStarDiameter: number;
+  ledStarThickness: number;
 }
 
 /** The inner tube can be pulled 40 mm out of the outer one (155 mm in total, measured). */
@@ -148,6 +162,8 @@ export const DEFAULT_HOLDER_PARAMS: HolderParams = {
   driverBoards: {
     pilha: { width: 40, depth: 25, holeInset: 3.5, standoffHeight: 6, x: 8, y: -19 },
     fonte: { width: 70, depth: 25, holeInset: 3.5, standoffHeight: 6, x: 0, y: 38 },
+    // 40 x 25 mm perforated board that carries the driver module and D2, behind the light tube
+    fonte1000: { width: 40, depth: 25, holeInset: 3.5, standoffHeight: 6, x: 0, y: 42 },
   },
   batteryLength: 48.5,
   batteryWidth: 26.5,
@@ -166,6 +182,14 @@ export const DEFAULT_HOLDER_PARAMS: HolderParams = {
   diffuserFit: 0.4,
   screwHole: 3.4,
   pilotHole: 2.6,
+  irisDiameter: 44,
+  irisThickness: 6,
+  irisFit: 0.4,
+  lightTubeWall: 2,
+  heatsinkDiameter: 30,
+  heatsinkHeight: 12,
+  ledStarDiameter: 20,
+  ledStarThickness: 1.6,
 };
 
 export interface HolderCutout {
@@ -211,13 +235,33 @@ export interface HolderLayout {
   };
   /** Top of the slide when it sits in the channel; the objective focuses `workingDistance` above it. */
   samplePlane: number;
-  lid: { bottom: number; top: number; holes: { x: number; y: number }[] };
+  lid: { bottom: number; top: number; holes: { x: number; y: number }[]; /** Ventilation holes around the LED heatsink (1000x version). */ vents: { x: number; y: number; diameter: number }[] };
   /** Parts that stand on the lid, inside the box. */
   cradle: { xMin: number; xMax: number; yMin: number; yMax: number; height: number } | null;
   /** Standoffs and outline of the driver board, on the lid. */
   boardPosts: { x: number; y: number; outerDiameter: number; top: number }[];
   board: { xMin: number; xMax: number; yMin: number; yMax: number; standoffHeight: number };
   ledPost: { x: number; y: number; diameter: number; top: number; seatDiameter: number; seatDepth: number; legHole: number; ledTop: number; slot: { dir: 1 | -1; height: number } };
+  /** False in the 1000x version: the LED is a star on a heatsink, not a 5 mm LED on a post. */
+  hasLedPost: boolean;
+  /** 1000x version: printed tube that stands on the lid, holds the iris under the diffuser and shields the stray light. */
+  lightTube: {
+    outerDiameter: number;
+    innerDiameter: number;
+    bottom: number;
+    top: number;
+    /** Ring at the top that the iris is pushed against. */
+    stopBore: number;
+    stopThickness: number;
+    irisBottom: number;
+    irisTop: number;
+    heatsinkTop: number;
+    /** Top of the LED star board and of the emitter dome over it. */
+    starTop: number;
+    emitterTop: number;
+    /** Distance from the emitter to the iris plane. */
+    emitterToIris: number;
+  } | null;
   /** Seat cut into the ceiling around the window, from inside. */
   diffuserSeat: { diameter: number; bottom: number; top: number; discDiameter: number; discThickness: number };
   cutouts: HolderCutout[];
@@ -274,7 +318,12 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
   const posts: HolderPost[] = postXs.flatMap((x) =>
     postYs.map((y) => ({ x, y, outerDiameter: 8, pilotDiameter: p.pilotHole, bottom: 0, top: cavity.top + EMBED })),
   );
-  const lid = { bottom: -p.wall, top: 0, holes: posts.map(({ x, y }) => ({ x, y })) };
+  const econ = p.variant === "fonte1000";
+  const ventRadius = (p.heatsinkDiameter + (p.irisDiameter + p.irisFit)) / 4;
+  const vents = econ
+    ? Array.from({ length: 12 }, (_, k) => ({ x: Math.cos((k / 12) * Math.PI * 2) * ventRadius, y: Math.sin((k / 12) * Math.PI * 2) * ventRadius, diameter: 3.4 }))
+    : [];
+  const lid = { bottom: -p.wall, top: 0, holes: posts.map(({ x, y }) => ({ x, y })), vents };
 
   const cradleX = (p.batteryLength + p.batteryFit) / 2 + p.cradleWall;
   const cradleHalfY = (p.batteryWidth + p.batteryFit) / 2 + p.cradleWall;
@@ -312,6 +361,30 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
     discThickness: p.diffuserThickness,
   };
 
+  const lightTube = econ
+    ? (() => {
+        const inner = p.irisDiameter + p.irisFit;
+        const stopThickness = 1.5;
+        const starTop = p.heatsinkHeight + p.ledStarThickness;
+        const emitterTop = starTop + 3.2;
+        const irisTop = cavity.top - stopThickness;
+        return {
+          outerDiameter: inner + 2 * p.lightTubeWall,
+          innerDiameter: inner,
+          bottom: 0,
+          top: cavity.top,
+          stopBore: inner - 4,
+          stopThickness,
+          irisBottom: irisTop - p.irisThickness,
+          irisTop,
+          heatsinkTop: p.heatsinkHeight,
+          starTop,
+          emitterTop,
+          emitterToIris: irisTop - p.irisThickness - emitterTop,
+        };
+      })()
+    : null;
+
   const switchZ = box.height / 2;
   const cutouts: HolderCutout[] = [
     {
@@ -335,7 +408,7 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
       center: [p.switchCutout.x, box.yMin + p.wall / 2, switchZ],
       size: [p.switchCutout.width, p.wall + 2 * CUT_MARGIN, p.switchCutout.height],
     },
-    ...(p.variant === "fonte"
+    ...(p.variant !== "pilha"
       ? [
           {
             id: "jack",
@@ -344,13 +417,17 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
             center: [box.xMax - p.wall / 2, p.jackY, switchZ] as Vec3,
             size: [p.wall + 2 * CUT_MARGIN, p.jackDiameter, p.jackDiameter] as Vec3,
           },
-          {
-            id: "knob",
-            shape: "circle" as const,
-            axis: "y" as const,
-            center: [p.knobX, box.yMin + p.wall / 2, switchZ] as Vec3,
-            size: [p.knobDiameter, p.wall + 2 * CUT_MARGIN, p.knobDiameter] as Vec3,
-          },
+          ...(p.variant === "fonte"
+            ? [
+                {
+                  id: "knob",
+                  shape: "circle" as const,
+                  axis: "y" as const,
+                  center: [p.knobX, box.yMin + p.wall / 2, switchZ] as Vec3,
+                  size: [p.knobDiameter, p.wall + 2 * CUT_MARGIN, p.knobDiameter] as Vec3,
+                },
+              ]
+            : []),
         ]
       : []),
   ];
@@ -386,8 +463,29 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
     issues.push({ severity: "error", message: "A placa do driver não cabe na caixa." });
   }
   const ledGap = Math.hypot(Math.max(board.xMin - ledPost.x, 0, ledPost.x - board.xMax), Math.max(board.yMin - ledPost.y, 0, ledPost.y - board.yMax));
-  if (ledGap < ledPost.diameter / 2 + 1.5) {
+  if (!econ && ledGap < ledPost.diameter / 2 + 1.5) {
     issues.push({ severity: "error", message: "A placa do driver encosta no porta-LED." });
+  }
+  if (lightTube) {
+    const r = lightTube.outerDiameter / 2;
+    if (board.yMin < r + 2 || r > cavity.xMax) {
+      issues.push({ severity: "error", message: "A placa do driver encosta no tubo de luz." });
+    }
+    if (lightTube.outerDiameter < p.ledWindowDiameter + 2) {
+      issues.push({ severity: "error", message: "O tubo de luz é menor que a janela do LED." });
+    }
+    if (p.heatsinkDiameter > lightTube.innerDiameter - 4) {
+      issues.push({ severity: "error", message: "O dissipador não cabe dentro do tubo de luz." });
+    }
+    if (p.ledStarDiameter > p.heatsinkDiameter) {
+      issues.push({ severity: "error", message: "A estrela do LED é maior que o dissipador." });
+    }
+    if (lightTube.emitterToIris < 10) {
+      issues.push({ severity: "error", message: "O LED fica a menos de 10 mm da íris: a luz não se espalha pelo difusor." });
+    }
+    if (lightTube.stopBore < 26) {
+      issues.push({ severity: "error", message: "O anel de apoio da íris tapa parte da abertura máxima de 25 mm." });
+    }
   }
   if (cradle && board.yMax > cradle.yMin - 2 && board.xMax > cradle.xMin && board.xMin < cradle.xMax) {
     issues.push({ severity: "error", message: "A placa do driver encosta no berço da pilha." });
@@ -429,6 +527,8 @@ export function holderLayout(params: HolderParams = DEFAULT_HOLDER_PARAMS): Hold
     boardPosts,
     board,
     ledPost,
+    hasLedPost: !econ,
+    lightTube,
     diffuserSeat,
     cutouts,
     totalHeight: tubeTop,

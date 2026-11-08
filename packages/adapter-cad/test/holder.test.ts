@@ -5,7 +5,7 @@ import opencascade from "replicad-opencascadejs";
 import { makeCylinder, setOC, type Shape3D } from "replicad";
 import { buildHolder, buildTubeProxy, holderOnBack } from "../src/holder-geometry.ts";
 import { stlOf } from "../src/geometry.ts";
-import { DEFAULT_HOLDER_PARAMS, holderLayout, readBinaryStl, stlBounds, stlVolume } from "../src/index.ts";
+import { DEFAULT_HOLDER_PARAMS, holderLayout, layoutEconomica1000x, readBinaryStl, stlBounds, stlVolume } from "../src/index.ts";
 
 const require = createRequire(import.meta.url);
 
@@ -42,10 +42,31 @@ describe("holder (suporte do pregoscopio)", () => {
     const shapes = buildHolder(layout);
     const tube = buildTubeProxy(layout);
     for (const [name, part] of Object.entries(shapes)) {
+      if (!part) continue;
       const overlap = tube.clone().intersect(part.clone());
       const mesh = overlap.mesh({ tolerance: 0.02, angularTolerance: 0.1 });
       expect(mesh.triangles.length, `tube x ${name}`).toBe(0);
     }
+  });
+
+  it("1000x version: the pregoscopio with the 100x objective does not touch any printed part, light tube included, and the tube fits inside the box", async () => {
+    const econ = layoutEconomica1000x();
+    const shapes = buildHolder(econ);
+    const tube = buildTubeProxy(econ);
+    expect(shapes.lightTube).not.toBeNull();
+    for (const [name, part] of Object.entries(shapes)) {
+      if (!part) continue;
+      const mesh = tube.clone().intersect(part.clone()).mesh({ tolerance: 0.02, angularTolerance: 0.1 });
+      expect(mesh.triangles.length, `1000x tube x ${name}`).toBe(0);
+    }
+    // the light tube lies inside the cavity and does not touch the driver board standoffs
+    const [[x0, y0, z0], [x1, y1, z1]] = shapes.lightTube!.boundingBox.bounds;
+    expect(x0).toBeGreaterThan(econ.cavity.xMin);
+    expect(x1).toBeLessThan(econ.cavity.xMax);
+    expect(y0).toBeGreaterThan(econ.cavity.yMin);
+    expect(y1).toBeLessThan(econ.board.yMin);
+    expect(z0).toBeCloseTo(0, 6);
+    expect(z1).toBeCloseTo(econ.cavity.top, 6);
   });
 
   it("the objective's front lens sits one working distance above the slide and the slide channel is cut in the box top", async () => {

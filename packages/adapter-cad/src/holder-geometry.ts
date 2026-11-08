@@ -118,15 +118,21 @@ export function buildHolderLid(layout: HolderLayout): Shape3D {
     plate = plate.fuse(makeCylinder(post.outerDiameter / 2, post.top + EMBED, [post.x, post.y, lid.top - EMBED]));
     plate = plate.cut(makeCylinder(p.pilotHole / 2, post.top - 1, [post.x, post.y, lid.top + 1]));
   }
-  // LED post: a flange seat on top and a hole for the legs down through the lid.
-  plate = plate.fuse(makeCylinder(ledPost.diameter / 2, ledPost.top - lid.top + EMBED, [ledPost.x, ledPost.y, lid.top - EMBED]));
-  plate = plate.cut(makeCylinder(ledPost.seatDiameter / 2, ledPost.seatDepth + 1, [ledPost.x, ledPost.y, ledPost.top - ledPost.seatDepth]));
-  // the legs go down a blind hole and leave sideways, toward the driver board, through a slot at the foot of the post
-  // (a hole through the lid would drop them outside the closed box)
-  plate = plate.cut(makeCylinder(ledPost.legHole / 2, ledPost.top - lid.top, [ledPost.x, ledPost.y, lid.top + 1]));
-  const reach = ledPost.diameter / 2 + 1;
-  const slotY0 = ledPost.slot.dir > 0 ? ledPost.y : ledPost.y - reach;
-  plate = plate.cut(box(ledPost.x - ledPost.legHole / 2, ledPost.x + ledPost.legHole / 2, slotY0, slotY0 + reach, lid.top, lid.top + ledPost.slot.height));
+  if (layout.hasLedPost) {
+    // LED post: a flange seat on top and a hole for the legs down through the lid.
+    plate = plate.fuse(makeCylinder(ledPost.diameter / 2, ledPost.top - lid.top + EMBED, [ledPost.x, ledPost.y, lid.top - EMBED]));
+    plate = plate.cut(makeCylinder(ledPost.seatDiameter / 2, ledPost.seatDepth + 1, [ledPost.x, ledPost.y, ledPost.top - ledPost.seatDepth]));
+    // the legs go down a blind hole and leave sideways, toward the driver board, through a slot at the foot of the post
+    // (a hole through the lid would drop them outside the closed box)
+    plate = plate.cut(makeCylinder(ledPost.legHole / 2, ledPost.top - lid.top, [ledPost.x, ledPost.y, lid.top + 1]));
+    const reach = ledPost.diameter / 2 + 1;
+    const slotY0 = ledPost.slot.dir > 0 ? ledPost.y : ledPost.y - reach;
+    plate = plate.cut(box(ledPost.x - ledPost.legHole / 2, ledPost.x + ledPost.legHole / 2, slotY0, slotY0 + reach, lid.top, lid.top + ledPost.slot.height));
+  }
+  // 1000x version: air holes around the heatsink of the 3 W LED
+  for (const v of lid.vents) {
+    plate = plate.cut(makeCylinder(v.diameter / 2, lid.top - lid.bottom + 2, [v.x, v.y, lid.bottom - 1]));
+  }
   for (const hole of lid.holes) {
     plate = plate.cut(makeCylinder(p.screwHole / 2, lid.top - lid.bottom + 2, [hole.x, hole.y, lid.bottom - 1]));
   }
@@ -158,13 +164,28 @@ export function buildHolderDiffuser(layout: HolderLayout): Shape3D {
   return makeCylinder(d.discDiameter / 2, d.discThickness, [0, 0, 0]);
 }
 
+/**
+ * 1000x version: a tube that stands on the lid around the LED and its heatsink, up to the ceiling under the diffuser. It holds the
+ * iris against a stop ring at the top (the iris is pushed in from below) and keeps the stray light off the slide. Print it black.
+ */
+export function buildLightTube(layout: HolderLayout): Shape3D | null {
+  const t = layout.lightTube;
+  if (!t) return null;
+  const height = t.top - t.bottom;
+  let tube: Shape3D = makeCylinder(t.outerDiameter / 2, height, [0, 0, t.bottom]).cut(makeCylinder(t.innerDiameter / 2, height + 2, [0, 0, t.bottom - 1]));
+  // stop ring at the top, with a bore that leaves the whole 25 mm opening of the iris free
+  tube = tube.fuse(makeCylinder(t.innerDiameter / 2 + EMBED, t.stopThickness, [0, 0, t.top - t.stopThickness]).cut(makeCylinder(t.stopBore / 2, t.stopThickness + 2, [0, 0, t.top - t.stopThickness - 1])));
+  return tube;
+}
+
 export interface HolderShapes {
   body: Shape3D;
   clamp: Shape3D;
   lid: Shape3D;
   diffuser: Shape3D;
+  lightTube: Shape3D | null;
 }
 
 export function buildHolder(layout: HolderLayout): HolderShapes {
-  return { body: buildHolderBody(layout), clamp: buildHolderClamp(layout), lid: buildHolderLid(layout), diffuser: buildHolderDiffuser(layout) };
+  return { body: buildHolderBody(layout), clamp: buildHolderClamp(layout), lid: buildHolderLid(layout), diffuser: buildHolderDiffuser(layout), lightTube: buildLightTube(layout) };
 }

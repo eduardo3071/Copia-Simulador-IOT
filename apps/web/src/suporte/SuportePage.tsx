@@ -3,13 +3,15 @@ import {
   bom, bomCsv, EVIDENCE_LABEL, partFile, testPlan, v1Light, v2Light, LED_VF, BATTERY_MAH, R1_OHMS, RHEOSTAT_OHMS, DIODE_DROP_V,
   type PartKind, type SuportePart, type SuporteVersion,
 } from "@simiot/adapter-cad";
+import { layoutEconomica1000x } from "@simiot/adapter-cad";
 import { JIGS } from "./jigs.ts";
 import { Painel1000x, SimulatedTest, TubeOptics } from "./TesteSimulado.tsx";
 import { Custos } from "./Custos.tsx";
 import { DrawingCheck } from "./Desenhos.tsx";
 import { LANG_LABEL, LangContext, type DocLang } from "./lang.tsx";
 import { Manual, pdfUrl, StepShot, StepViewer } from "./Manual.tsx";
-import { ASSETS, HEAD_Z, INNER_TUBE_REACH, JigPreview, NOMINAL_RETRACT, OBJECTIVE_LENGTH, SLEEVE_DEPTH, SLIDE_Z, SuporteScene, type Layer } from "./Scene.tsx";
+import { ASSETS, econRetract, HEAD_Z, INNER_TUBE_REACH, JigPreview, NOMINAL_RETRACT, OBJECTIVE_LENGTH, SLEEVE_DEPTH, SLIDE_Z, SuporteScene, type Layer } from "./Scene.tsx";
+import { Componentes1000x } from "./Componentes1000x.tsx";
 
 type Tab = "3d" | "manual" | "eletronica" | "calibracao";
 const KIND_LABEL: Record<PartKind, string> = { impressa: "Peças impressas", referencia: "Pregoscópio (STEP V1)", comprada: "Peças compradas", calibracao: "Gabaritos" };
@@ -144,20 +146,34 @@ function PartCard({ part, version }: { part: SuportePart; version: SuporteVersio
   );
 }
 
+const ECON_IDS = ["M1", "M2", "M3", "M4", "M5", "IR1", "HS1", "D1", "DR1", "PCB1", "D2", "SW1", "J1", "PS1", "L1", "CV1", "OIL", "P1", "P2", "P3", "P4", "P5", "P6", "P9", "P10"];
+
 /** startView: "iso", "front", "side", "top" or "inside" (the cutaway of the light box), from #suporte/3d/v2/inside. */
 function ThreeD({ version, selected, setSelected, startView }: { version: SuporteVersion; selected: string | null; setSelected(id: string | null): void; startView: string }) {
   const [explode, setExplode] = useState(0);
-  const [retract, setRetract] = useState(Math.round(NOMINAL_RETRACT * 10) / 10);
+  const [econ, setEcon] = useState(startView === "1000x");
+  const [retract, setRetract] = useState(startView === "1000x" ? econRetract() : Math.round(NOMINAL_RETRACT * 10) / 10);
   const [cut, setCut] = useState(startView === "inside" ? 0 : -50);
   const [lightOn, setLightOn] = useState(true);
   const [labels, setLabels] = useState(true);
   const [view, setView] = useState({ name: ["iso", "front", "side", "top", "inside"].includes(startView) ? startView : "iso", n: 0 });
   const [layers, setLayers] = useState<Record<Layer, boolean>>({ impressa: true, pregoscopio: true, eletronica: true, parafusos: true, lamina: true, fios: true });
   const lines = useMemo(() => bom(version), [version]);
-  const ids = useMemo(() => (labels ? lines.map((l) => l.part.id).filter((id) => !id.startsWith("G")) : []), [lines, labels]);
+  const ids = useMemo(
+    () => (labels ? (econ ? ECON_IDS : lines.map((l) => l.part.id).filter((id) => !id.startsWith("G"))) : []),
+    [lines, labels, econ],
+  );
   const part = lines.find((l) => l.part.id === selected)?.part;
-  const nose = HEAD_Z - SLEEVE_DEPTH + retract - OBJECTIVE_LENGTH;
-  const gap = nose - SLIDE_Z;
+  const econLayout = useMemo(() => layoutEconomica1000x(), []);
+  const nose = econ
+    ? econLayout.totalHeight - SLEEVE_DEPTH + retract - econLayout.params.objectiveLength
+    : HEAD_Z - SLEEVE_DEPTH + retract - OBJECTIVE_LENGTH;
+  const gap = nose - (econ ? econLayout.samplePlane - 0.17 + 0.17 : SLIDE_Z);
+  const switchTo = (next: boolean) => {
+    setEcon(next);
+    setRetract(next ? econRetract() : Math.round(NOMINAL_RETRACT * 10) / 10);
+    setSelected(null);
+  };
 
   return (
     <div className="suporte-3d">
@@ -165,9 +181,13 @@ function ThreeD({ version, selected, setSelected, startView }: { version: Suport
         <Guard><SuporteScene
           view={view}
           ids={ids}
-          options={{ version, explode, retract, cut, lightOn, selected, layers, onPick: setSelected }}
+          options={{ version: econ ? "v2" : version, econ1000: econ, explode, retract, cut, lightOn, selected, layers, onPick: setSelected }}
         /></Guard>
         <div className="suporte-controls">
+          <div className="row">
+            <button className={!econ ? "primary" : ""} aria-pressed={!econ} onClick={() => switchTo(false)}>400x (atual)</button>
+            <button className={econ ? "primary" : ""} aria-pressed={econ} onClick={() => switchTo(true)}>1000x econômico</button>
+          </div>
           <div className="row">
             {(["iso", "front", "side", "top", "inside"] as const).map((name) => (
               <button key={name} onClick={() => { if (name === "inside" && cut <= -50) setCut(0); setView({ name, n: view.n + 1 }); }}>
@@ -185,7 +205,9 @@ function ThreeD({ version, selected, setSelected, startView }: { version: Suport
           <p className={`small ${gap < 0 ? "error" : "muted"}`}>
             {gap < 0
               ? `A objetiva bate na caixa: a lente ficaria ${Math.abs(gap).toFixed(1)} mm abaixo da lâmina. Puxe menos o tubo interno.`
-              : `Lente a ${gap.toFixed(1)} mm acima da lâmina${Math.abs(gap - 0.8) < 0.3 ? " (foco nominal de projeto; a distância de trabalho real da objetiva fica entre 0,4 e 0,8 mm)" : ""}.`}
+              : econ
+                ? `Lente a ${(gap - 0.17).toFixed(2)} mm acima da lamínula${Math.abs(gap - 0.35) < 0.15 ? " (foco nominal de projeto; a 100x trabalha entre 0,06 e 0,22 mm, com óleo)" : ""}.`
+                : `Lente a ${gap.toFixed(1)} mm acima da lâmina${Math.abs(gap - 0.8) < 0.3 ? " (foco nominal de projeto; a distância de trabalho real da objetiva fica entre 0,4 e 0,8 mm)" : ""}.`}
           </p>
           <div className="row">
             {(Object.keys(LAYER_LABEL) as Layer[]).map((l) => (
@@ -209,8 +231,9 @@ function ThreeD({ version, selected, setSelected, startView }: { version: Suport
         </div>
       </div>
       <aside className="suporte-side">
-        {part && <PartCard part={part} version={version} />}
-        {KIND_ORDER.map((kind) => {
+        {econ && <Componentes1000x selected={selected} onSelect={setSelected} />}
+        {!econ && part && <PartCard part={part} version={version} />}
+        {!econ && KIND_ORDER.map((kind) => {
           const group = lines.filter((l) => l.part.kind === kind);
           if (!group.length) return null;
           return (

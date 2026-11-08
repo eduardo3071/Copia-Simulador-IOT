@@ -13,3 +13,4 @@ export * from "./suporte-textos.ts";
 export * from "./suporte-optica.ts";
 export * from "./suporte-teste.ts";
 export * from "./suporte-preco.ts";
+export * from "./suporte-1000x.ts";
