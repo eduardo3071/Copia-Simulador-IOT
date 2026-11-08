@@ -90,8 +90,10 @@ export const COST_LINES: CostLine[] = [
     source: { store: usina, url: "https://www.usinainfo.com.br/parafuso-metalico-m3-a-m5/parafuso-philips-m3-x-20mm-metalico-kit-com-10-unidades-5546.html", price: 3.46, pack: 10, confidence: "proxy", note: "não achei M3 × 16: preço do M3 × 20" } },
   { id: "H3", label: "Parafuso M3 × 8 Phillips", versions: both, perUnit: 4, unit: "un",
     source: { store: usina, url: "https://www.usinainfo.com.br/parafuso-metalico-m3-a-m5/parafuso-philips-m3-x-8mm-metalico-kit-com-10-unidades-5541.html", price: 2.45, pack: 10, confidence: "pagina" } },
-  { id: "W1", label: "Fio flexível 24 AWG", versions: both, perUnit: 1, unit: "conjunto", source: null,
-    note: "sem preço: o fio 24 AWG da Baú da Eletrônica estava indisponível e não achei outro; custa centavos por unidade" },
+  { id: "W1", label: "Fio flexível 24 AWG (0,65 m)", versions: ["v1"], perUnit: 0.65, unit: "m",
+    source: { store: bau, url: "https://www.baudaeletronica.com.br/produto/cabo-flexivel-vermelho-24-awg-020mm-por-metro.html", price: 0.96, pack: 1, confidence: "anuncio", note: "R$ 0,96 por metro (Pix) visto na busca; a página do vermelho estava indisponível ao ler. Alternativa: rolo de 100 m da Tiaflex, R$ 113,68 (R$ 1,14 por metro, uma cor)" } },
+  { id: "W1-v2", label: "Fio flexível 24 AWG (1,3 m)", versions: ["v2"], perUnit: 1.3, unit: "m",
+    source: { store: bau, url: "https://www.baudaeletronica.com.br/produto/cabo-flexivel-vermelho-24-awg-020mm-por-metro.html", price: 0.96, pack: 1, confidence: "anuncio", note: "R$ 0,96 por metro (Pix) visto na busca; a página do vermelho estava indisponível ao ler. Alternativa: rolo de 100 m da Tiaflex, R$ 113,68 (R$ 1,14 por metro, uma cor)" } },
   { id: "W2", label: "Tubo termorretrátil 2 mm (10 cm)", versions: both, perUnit: 1, unit: "10 cm",
     source: { store: eletrogate, url: "https://www.eletrogate.com/tubo-termo-retratil-2mm-1-metro", price: 1.71, pack: 10, confidence: "pagina", note: "R$ 1,71 por 1 m = 10 pedaços de 10 cm" } },
   { id: "W3", label: "Cola quente (1/10 de bastão)", versions: both, perUnit: 1, unit: "1/10 bastão",
@@ -124,7 +126,7 @@ export const PRINT_VOLUME_1000X: { id: string; label: string; cm3: number }[] = 
 ];
 
 /** Lines that the economical 1000x version shares with the v2 (same store, same price). */
-const SHARED_1000X = ["SW1", "J1", "PS1", "D2", "PCB1", "H1", "H2", "H3", "W1", "W2", "W3", "L1"];
+const SHARED_1000X = ["SW1", "J1", "PS1", "D2", "PCB1", "H1", "H2", "H3", "W1-v2", "W2", "W3", "L1"];
 
 /** What the economical 1000x version adds or changes: the objective, the oil, the 3 W LED and its driver. No LM317, R1, C1 or rheostat. */
 const NEW_1000X: CostLine[] = [
@@ -134,10 +136,14 @@ const NEW_1000X: CostLine[] = [
     source: { store: "Amazon.com.br (Laborclin)", url: "https://www.amazon.com.br/Oleo-de-Imers%C3%A3o-100ml-Laborclin/dp/B0CJ19YC18", price: 47.38, pack: 1, confidence: "anuncio", note: "de R$ 36,72 a R$ 52,00 conforme a loja; peça o índice de refração (Zeiss 518 F: 1,518)" } },
   { id: "D1", label: "LED branco frio 3 W em estrela, 700 mA (operado a 350 mA)", versions: ["v2"], perUnit: 1, unit: "un",
     source: { store: usina, url: "https://www.usinainfo.com.br/led-alto-brilho/led-smd-branco-frio-de-alto-brilho-3w-epistar-2788.html", price: 4.17, pack: 1, confidence: "anuncio", note: "preço visto na listagem; a página do produto não mostrava preço" } },
-  { id: "HS1", label: "Dissipador redondo de alumínio ⌀ 30 mm", versions: ["v2"], perUnit: 1, unit: "un", source: null, note: "sem preço: não achei dissipador com medidas comparáveis" },
-  { id: "DR1", label: "Driver de corrente constante de 350 mA", versions: ["v2"], perUnit: 1, unit: "un", source: null, note: "sem preço: o K2679 achado é de 700 mA e o Mercado Livre bloqueou a leitura" },
-  { id: "IR1", label: "Diafragma de íris mecânico 1,5 a 25 mm", versions: ["v2"], perUnit: 1, unit: "un", source: null, note: "sem preço: só vi anúncio no eBay, sem valor conferido" },
-  { id: "CV1", label: "Lamínula 22 × 22 mm de 0,17 mm", versions: ["v2"], perUnit: 1, unit: "un", source: null, note: "sem preço: Knittel e Laborglas (100 peças) existem, sem preço conferido" },
+  { id: "HS1", label: "Dissipador de alumínio para LED de potência", versions: ["v2"], perUnit: 1, unit: "un",
+    source: { store: "Shopee", url: "https://shopee.com.br/amp/Dissipador-De-Calor-De-Alumínio-Para-Dissipador-De-Calor-De-Alta-Potência-Led-Ic-Chip-Cooler-Radiador-i.308439905.10545998578", price: 19.97, pack: 1, confidence: "proxy", note: "dissipador genérico de LED de R$ 10,16 a R$ 29,78 conforme o tamanho (usado o meio); não achei o redondo de ⌀ 30 mm. Um quadrado de 40 × 40 mm não cabe no tubo de luz" } },
+  { id: "DR1", label: "Driver de corrente constante de 350 mA (2 módulos)", versions: ["v2"], perUnit: 1, unit: "conjunto",
+    source: { store: "Shopee", url: "", price: 23.1, pack: 1, confidence: "proxy", note: "módulo de corrente constante de 30 a 1500 mA com PWM, R$ 15,83, que só aceita 2,8 a 6 V, mais um módulo step-down LM2596 de R$ 7,27 para baixar os 12 V a ≈ 5 V; não achei um driver pronto de 350 mA para 12 V. Alternativa: LM317T (R$ 4,09) com resistor de 3,6 Ω, mas dissipa 2,4 W e pede dissipador" } },
+  { id: "IR1", label: "Diafragma de íris mecânico 1,5 a 25 mm", versions: ["v2"], perUnit: 1, unit: "un",
+    source: { store: "Fruugo (loja internacional, enviada da China)", url: "https://www.fruugo.us/iris-aperture-diaphragm-1525mm-adjustable-optical-lens-for-microscope-and-camera-aluminum/p-459351954", price: 287.2, pack: 1, confidence: "estimativa", note: "US$ 52,95 + US$ 4,49 de frete, a R$ 5,00 por dólar (o dólar fechou em R$ 5,008 em 07/10/2026), sem imposto. É o item que mais pesa e o preço mais incerto: os anúncios da Amazon.com.br não abriram. Alternativa: um disco impresso de aberturas fixas, de custo de filamento" } },
+  { id: "CV1", label: "Lamínula 22 × 22 mm de 0,17 mm", versions: ["v2"], perUnit: 1, unit: "un",
+    source: { store: "Magazine Luiza (Knittel 102222)", url: "https://www.magazineluiza.com.br/busca/laminula/", price: 64, pack: 100, confidence: "anuncio", note: "caixa de 100 a R$ 64,00 no Pix; a Precission de 100 sai por R$ 15,20, sem espessura informada" } },
 ];
 
 export const FILAMENT_SOURCE: PriceSource = {

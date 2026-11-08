@@ -55,7 +55,11 @@ describe("custo", () => {
     const ids = t.rows.map((r) => r.id);
     for (const gone of ["U1", "R1", "C1", "RV1", "RV1-knob"]) expect(ids, gone).not.toContain(gone);
     for (const kept of ["P9", "OIL", "D1", "HS1", "DR1", "IR1", "CV1", "PS1", "J1", "D2", "PLA"]) expect(ids, kept).toContain(kept);
-    expect(t.missing).toEqual(expect.arrayContaining(["HS1", "DR1", "IR1", "CV1"]));
+    expect(t.missing).toEqual([]);
+    const iris = t.rows.find((r) => r.id === "IR1")!;
+    expect(iris.confidence).toBe("estimativa");
+    // the iris is the dearest item after the filament: it decides whether dropping the condenser saves money
+    expect(iris.used!).toBeGreaterThan(100);
   });
 
   it("a versão 1000x custa mais que a v2 e o filamento segue contado pela massa", () => {
@@ -105,7 +109,7 @@ describe("custo", () => {
 
   it("as linhas sem preço ficam de fora do total e são listadas", () => {
     const t = costTable("v2", 1);
-    expect(t.missing).toContain("W1");
+    expect(t.missing).toEqual([]);
     expect(t.used).toBeCloseTo(t.rows.reduce((s, r) => s + (r.used ?? 0), 0), 9);
   });
 

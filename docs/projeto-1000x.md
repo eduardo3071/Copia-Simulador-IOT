@@ -127,10 +127,20 @@ Painel "Custo do suporte e da eletrônica", na aba Eletrônica da v2, botão **v
 
 | | v2 · 400x | v2 · 1000x econômico |
 |---|---|---|
-| Só o que é usado, por unidade | R$ 87,79 | **R$ 218,08** |
-| Gasto para comprar tudo (1 protótipo) | R$ 215,97 | **R$ 337,05** |
-| Lote de 100, por unidade (pacotes inteiros, varejo) | R$ 87,80 | R$ 218,48 |
+| Só o que é usado, por unidade | R$ 89,04 | **R$ 550,23** |
+| Gasto para comprar tudo (1 protótipo) | R$ 217,89 | **R$ 733,24** |
+| Lote de 100, por unidade (pacotes inteiros, varejo) | R$ 89,05 | R$ 550,64 |
 
-Maiores itens da 1000x: objetiva 100x R$ 86,68 (anúncio genérico; de R$ 66 a R$ 87), óleo R$ 47,38 (1 frasco de 100 ml por instrumento), filamento ≈ R$ 43 (357 g), fonte R$ 26,11, LED de 3 W R$ 4,17.
+Itens que entraram com preço em 2026-11-08:
 
-**Fora do total, por falta de preço:** dissipador, driver de 350 mA, íris, lamínulas de 0,17 mm e o fio de 24 AWG. O custo real fica acima do mostrado. O frasco de óleo por instrumento é uma escolha conservadora: um frasco serve a muitos instrumentos.
+| Item | Preço | Origem |
+|---|---|---|
+| Íris mecânica 1,5 a 25 mm | **R$ 287,20** | Fruugo (China): US$ 52,95 + US$ 4,49 de frete a R$ 5,00 por dólar, sem imposto. O preço mais incerto: as páginas brasileiras da Amazon não abriram |
+| Driver de 350 mA | R$ 23,10 | 2 módulos na Shopee: corrente constante de 30 a 1500 mA, 2,8 a 6 V (R$ 15,83) + step-down LM2596 (R$ 7,27). Não achei driver pronto de 350 mA para 12 V |
+| Dissipador | R$ 19,97 | dissipador genérico de LED na Shopee, de R$ 10,16 a R$ 29,78; o redondo de ⌀ 30 mm não achei |
+| Lamínulas de 0,17 mm | R$ 64,00 a caixa de 100 (R$ 0,64 cada) | Knittel 102222 no Magazine Luiza; a Precission de 100 sai a R$ 15,20, sem espessura informada |
+| Fio 24 AWG | R$ 0,96 por metro | Baú da Eletrônica, visto na busca; a página do vermelho estava indisponível |
+
+**A íris pesa mais que o condensador.** Com a íris a R$ 287, tirar o condensador (R$ 165 a R$ 200) **não** deixa a versão mais barata. Duas saídas: (1) comprar um condensador genérico de Abbe NA 1,25, que já traz a íris (R$ 165 na Amazon), e usá-lo no lugar da íris avulsa; (2) trocar a íris por um **disco impresso com aberturas fixas** (custo de filamento). Sem a íris, a versão 1000x fica em ≈ R$ 263 por unidade usada e ≈ R$ 446 para comprar tudo. Com o condensador no lugar dela, ≈ R$ 428 usado.
+
+O frasco de óleo por instrumento (R$ 47,38) é uma escolha conservadora: um frasco serve a muitos instrumentos.
