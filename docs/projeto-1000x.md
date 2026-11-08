@@ -86,3 +86,17 @@ Ordem: compre **primeiro a objetiva**, porque ela define a altura do suporte; de
 
 
 A pesquisa detalhada de cada material, com modelos, links e o que medir, está em `docs/materiais-1000x.md`.
+
+## 7. Dá para chegar a 1000x sem o condensador? (cálculo de 2026-11-08, ainda não testado)
+
+O que **não** tem substituto: a objetiva 100x/1,25 em óleo. Sem ela, a resolução teórica fica em 0,43 a 0,52 µm (40x/0,65) contra 0,27 a 0,31 µm, e ampliar mais (digitalmente ou com ocular de 20x) só deixa a imagem maior, não mais nítida.
+
+O que **pode** ser dispensado, em teoria:
+
+- **Condensador seco:** uma iluminação por difusor logo sob a lâmina tem abertura geométrica de ≈ 0,91 (disco de 26 mm a 6 mm da lâmina, valor assumido). A resolução da 100x fica em 0,311 µm com o difusor e em 0,312 µm com um condensador seco de 0,9: **o mesmo**. Só um condensador de 1,25 com óleo sobre a lente de cima chega a 0,268 µm, e isso exige óleo nos dois lados.
+- **Brilho:** o condensador também serviria para concentrar luz, mas com um LED de 3 W (240 a 300 lm) espalhado no disco de 26 mm o brilho vai a ≈ 144.000 a 180.000 cd/m², contra ≈ 600 cd/m² do LED de 5 mm. A luz deixa de ser o problema.
+- **O que se perde sem condensador:** o diafragma de abertura, que controla contraste e reflexos. Um diafragma de íris de 1,5 a 25 mm (há no eBay) sob o difusor devolve parte disso. Sem alinhamento de Köhler, o contraste fica menor; isso não foi medido.
+
+Resultado: uma versão econômica seria **objetiva 100x/1,25 em óleo + LED de 3 W com driver de 700 mA e dimerização + difusor + íris**, sem o condensador (≈ R$ 165 a R$ 200 a menos). É uma conclusão de cálculo: só o teste com a lâmina mostra se o contraste serve.
+
+Alternativa sem óleo: objetiva 60x/0,85 a seco, 600x no total (faixa útil de 425x a 850x), resolução teórica de 0,40 µm. Não pesquisei preço.

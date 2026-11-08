@@ -153,7 +153,7 @@ export function Painel1000x() {
         <dt>Brilho do difusor (26 mm)</dt><dd>cerca de {fixed(nit, 0)} cd/m² com {fixed(flux, 1)} lm espalhados; uma tela de celular comum fica na casa de 500 cd/m² (referência geral)</dd>
       </dl>
       <p className="small muted">
-        Para 1000x faltam, além da objetiva de 100x: um condensador com diafragma (a iluminação precisa de abertura perto de 1), um LED muito mais forte, óleo de imersão e o comprimento do tubo perto de 160 mm. O projeto detalhado está em docs/projeto-1000x.md.
+        Para 1000x faltam, além da objetiva de 100x: um LED muito mais forte (com 240 a 300 lm o difusor passa de 140.000 cd/m²), óleo de imersão e o comprimento do tubo perto de 160 mm. O condensador pode ser dispensado, em teoria: um difusor logo sob a lâmina já dá abertura perto de 0,9, e a resolução fica a mesma de um condensador seco; falta o diafragma para o contraste. O projeto detalhado está em docs/projeto-1000x.md.
       </p>
     </section>
   );
