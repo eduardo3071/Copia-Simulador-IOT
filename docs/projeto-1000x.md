@@ -68,3 +68,18 @@ Com isso: parâmetros novos do suporte, peça do condensador (M5), suporte do LE
 - 100x/1,25 óleo: Motic EA (0,06 mm), Motic ASC (0,14 mm), Motic SP (0,165 mm), Optika M-1123.N (0,13 mm, 45 mm parfocal), Optika/Micro-Pro (0,18 mm, 45 mm), Bresser (160 mm, 0,17 mm, 45 mm), Zeiss A-Plan (0,22 mm, rosca M27).
 - Condensadores: Meiji, Accu-Scope, Kern e Olympus; as dimensões em milímetros não aparecem de forma comparável nos anúncios.
 - Lista de SOPs: página da OMS de microscopia de malária.
+
+## 6. Guia de compra (2026-11-08)
+
+Ordem: compre **primeiro a objetiva**, porque ela define a altura do suporte; depois o condensador.
+
+**Objetiva 100x/1,25 em óleo.** Procure "100x/1.25 oil, 160/0.17, RMS, spring". Evite: "∞" (infinito), "185", rosca M27 (Zeiss) e "sem mola". Pergunte ao vendedor, com foto ao lado de uma régua: (1) comprimento do ombro da rosca até a ponta e a distância parfocal (o ideal é 45 mm); (2) distância de trabalho. Achados: anúncios no eBay em dólar (de US$ 55 a US$ 180, quase todos usados) e um anúncio da categoria "objetiva acromática 100x imersão em óleo" no Mercado Livre; nenhum preço em reais foi conferido.
+
+**Condensador de Abbe NA 1,25 com diafragma de íris.** Há conjuntos genéricos no AliExpress e no eBay (um deles anuncia "37 mm" e fixação por 3 parafusos). O tamanho não vem padronizado: peça diâmetro externo do corpo, altura total, diâmetro da lente de cima e o tipo de montagem, e dê preferência a um corpo cilíndrico (cabe num anel impresso).
+
+**LED e driver.** LED de 3 W branco (6000 K) em estrela de alumínio, 700 mA, tensão direta de 3,0 a 3,6 V, com dissipador de alumínio e pasta térmica; driver de corrente constante de 700 mA para entrada de 12 V. Não ligue o LED direto na fonte nem com resistor: um anúncio avisa que o resistor em série dissiparia potência demais. O LED de potência precisa de dissipador sempre.
+
+**Óleo de imersão.** Frasco de 100 ml (há anúncio da Laborclin no Mercado Livre). Confira com o vendedor o índice de refração, que nos óleos usuais fica perto de 1,515 (valor de uso geral, não verificado nesta busca). Um anúncio descreve o óleo como à base de rícino: peça o certificado antes de aceitar. Compre também papel para lente.
+
+**Mensagem para o vendedor (inglês, para AliExpress/eBay):**
+"Please send a photo with a ruler and tell me: (1) the length from the RMS shoulder (the face the thread screws against) to the front tip, and the parfocal distance; (2) the working distance; (3) for the condenser: outer body diameter, total height, top lens diameter and mount type."
