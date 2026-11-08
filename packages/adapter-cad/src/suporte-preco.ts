@@ -114,6 +114,32 @@ export const COST_LINES: CostLine[] = [
     source: { store: bau, url: "https://www.baudaeletronica.com.br/produto/diodo-1n5819.html", price: 0.21, pack: 1, confidence: "pagina" } },
 ];
 
+/** Solid volume of the printed parts of the economical 1000x version in cm3 (a test keeps them in sync with the STL files). */
+export const PRINT_VOLUME_1000X: { id: string; label: string; cm3: number }[] = [
+  { id: "M1", label: "Base e coluna (M1)", cm3: 243.9 },
+  { id: "M2", label: "Abraçadeira do tubo (M2)", cm3: 9.6 },
+  { id: "M3", label: "Tampa de fundo (M3)", cm3: 25.2 },
+  { id: "M4", label: "Difusor (M4)", cm3: 0.4 },
+  { id: "M5", label: "Tubo de luz (M5)", cm3: 11.4 },
+];
+
+/** Lines that the economical 1000x version shares with the v2 (same store, same price). */
+const SHARED_1000X = ["SW1", "J1", "PS1", "D2", "PCB1", "H1", "H2", "H3", "W1", "W2", "W3", "L1"];
+
+/** What the economical 1000x version adds or changes: the objective, the oil, the 3 W LED and its driver. No LM317, R1, C1 or rheostat. */
+const NEW_1000X: CostLine[] = [
+  { id: "P9", label: "Objetiva 100x/1,25 em óleo, 160/0,17, RMS", versions: ["v2"], perUnit: 1, unit: "un",
+    source: { store: "Amazon.com.br", url: "https://www.amazon.com.br/microsc%C3%B3pio-RMS-microscopia-laborat%C3%B3rio-comprimento/dp/B0GHRJPSYM", price: 86.68, pack: 1, confidence: "anuncio", note: "anúncios genéricos de R$ 66,26 a R$ 86,68, usado o maior; NA 1,25 e 160/0,17 não conferidos; de marca (eBay, usada) sai de US$ 55 a US$ 180 mais frete e imposto" } },
+  { id: "OIL", label: "Óleo de imersão 100 ml (1 frasco por instrumento)", versions: ["v2"], perUnit: 1, unit: "frasco",
+    source: { store: "Amazon.com.br (Laborclin)", url: "https://www.amazon.com.br/Oleo-de-Imers%C3%A3o-100ml-Laborclin/dp/B0CJ19YC18", price: 47.38, pack: 1, confidence: "anuncio", note: "de R$ 36,72 a R$ 52,00 conforme a loja; peça o índice de refração (Zeiss 518 F: 1,518)" } },
+  { id: "D1", label: "LED branco frio 3 W em estrela, 700 mA (operado a 350 mA)", versions: ["v2"], perUnit: 1, unit: "un",
+    source: { store: usina, url: "https://www.usinainfo.com.br/led-alto-brilho/led-smd-branco-frio-de-alto-brilho-3w-epistar-2788.html", price: 4.17, pack: 1, confidence: "anuncio", note: "preço visto na listagem; a página do produto não mostrava preço" } },
+  { id: "HS1", label: "Dissipador redondo de alumínio ⌀ 30 mm", versions: ["v2"], perUnit: 1, unit: "un", source: null, note: "sem preço: não achei dissipador com medidas comparáveis" },
+  { id: "DR1", label: "Driver de corrente constante de 350 mA", versions: ["v2"], perUnit: 1, unit: "un", source: null, note: "sem preço: o K2679 achado é de 700 mA e o Mercado Livre bloqueou a leitura" },
+  { id: "IR1", label: "Diafragma de íris mecânico 1,5 a 25 mm", versions: ["v2"], perUnit: 1, unit: "un", source: null, note: "sem preço: só vi anúncio no eBay, sem valor conferido" },
+  { id: "CV1", label: "Lamínula 22 × 22 mm de 0,17 mm", versions: ["v2"], perUnit: 1, unit: "un", source: null, note: "sem preço: Knittel e Laborglas (100 peças) existem, sem preço conferido" },
+];
+
 export const FILAMENT_SOURCE: PriceSource = {
   store: "Mercado Livre, Magalu, Kabum, Terabyte (anúncios)",
   url: "https://m.magazineluiza.com.br/busca/filamento+pla/",
@@ -171,8 +197,17 @@ function row(line: CostLine, units: number): CostRow {
 }
 
 export function costTable(version: SuporteVersion, units = 1): CostTable {
-  const rows = COST_LINES.filter((l) => l.versions.includes(version)).map((l) => row(l, units));
-  const parts = PRINT_VOLUME_CM3[version];
+  return tableOf(version, COST_LINES.filter((l) => l.versions.includes(version)), PRINT_VOLUME_CM3[version], units);
+}
+
+/** Economical 1000x version (v2 electronics with the 3 W LED and the 100x objective), same counting as `costTable`. */
+export function costTable1000x(units = 1): CostTable {
+  const shared = COST_LINES.filter((l) => SHARED_1000X.includes(l.id) && l.versions.includes("v2"));
+  return tableOf("v2", [...NEW_1000X, ...shared], PRINT_VOLUME_1000X, units);
+}
+
+function tableOf(version: SuporteVersion, lines: CostLine[], parts: { id: string; label: string; cm3: number }[], units: number): CostTable {
+  const rows = lines.map((l) => row(l, units));
   const grams = parts.reduce((s, p) => s + gramsOf(p.cm3), 0);
   const need = grams * units;
   const packs = Math.ceil(need / FILAMENT_SOURCE.pack - 1e-9);
@@ -193,7 +228,15 @@ const brl = (n: number) => n.toFixed(2).replace(".", ",");
 
 /** Spreadsheet of one version for one batch size, with the store and address of every price. */
 export function costCsv(version: SuporteVersion, units: number): string {
-  const t = costTable(version, units);
+  return csvOf(costTable(version, units));
+}
+
+export function costCsv1000x(units: number): string {
+  return csvOf(costTable1000x(units));
+}
+
+function csvOf(t: CostTable): string {
+  const units = t.units;
   const q = (s: string) => `"${s.replaceAll('"', '""')}"`;
   const head = ["ID", "Item", "Quantidade", "Unidade", "Pacotes", "Preço do pacote (R$)", "Tamanho do pacote", "Material usado (R$)", "Compra (R$)", "Confiança", "Loja", "Endereço", "Observação"];
   const lines = t.rows.map((r) =>

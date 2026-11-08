@@ -120,3 +120,17 @@ Verificado por teste (238 passam): o layout não tem erros; o tubo do pregoscóp
 **O que ainda é suposição** (medir nas peças compradas): objetiva (diâmetro e comprimento), íris, estrela do LED, dissipador e driver. O 3D marca cada uma como "suposto". **Não está feito:** os fios, o ocular no 3D, o manual, a lista de compras e o plano de teste elétrico desta versão.
 
 STLs em `pacote-montagem/mecanica/v2-1000x/`: base e coluna, tampa, abraçadeira, tubo de luz.
+
+## 9. Custo da versão econômica (2026-11-08, preços do Brasil, sem o pregoscópio)
+
+Painel "Custo do suporte e da eletrônica", na aba Eletrônica da v2, botão **v2 · 1000x econômico**; planilhas `pacote-montagem/CUSTOS-v2-1000x-1un.csv` e `CUSTOS-v2-1000x-100un.csv`.
+
+| | v2 · 400x | v2 · 1000x econômico |
+|---|---|---|
+| Só o que é usado, por unidade | R$ 87,79 | **R$ 218,08** |
+| Gasto para comprar tudo (1 protótipo) | R$ 215,97 | **R$ 337,05** |
+| Lote de 100, por unidade (pacotes inteiros, varejo) | R$ 87,80 | R$ 218,48 |
+
+Maiores itens da 1000x: objetiva 100x R$ 86,68 (anúncio genérico; de R$ 66 a R$ 87), óleo R$ 47,38 (1 frasco de 100 ml por instrumento), filamento ≈ R$ 43 (357 g), fonte R$ 26,11, LED de 3 W R$ 4,17.
+
+**Fora do total, por falta de preço:** dissipador, driver de 350 mA, íris, lamínulas de 0,17 mm e o fio de 24 AWG. O custo real fica acima do mostrado. O frasco de óleo por instrumento é uma escolha conservadora: um frasco serve a muitos instrumentos.

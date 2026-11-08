@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PRICE_DATE, costCsv, costTable, type PriceConfidence, type SuporteVersion } from "@simiot/adapter-cad";
+import { PRICE_DATE, costCsv, costCsv1000x, costTable, costTable1000x, type PriceConfidence, type SuporteVersion } from "@simiot/adapter-cad";
 
 const brl = (n: number | null) => (n === null ? "—" : n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
 const qty = (n: number) => n.toLocaleString("pt-BR", { maximumFractionDigits: 1 });
@@ -24,7 +24,9 @@ function download(name: string, text: string) {
 /** Cost of the support and its electronics in R$, for one prototype or a batch. The pregoscopio (P1 to P10) is not priced. */
 export function Custos({ version }: { version: SuporteVersion }) {
   const [units, setUnits] = useState(1);
-  const t = costTable(version, units);
+  const [econ, setEcon] = useState(false);
+  const is1000 = econ && version === "v2";
+  const t = is1000 ? costTable1000x(units) : costTable(version, units);
   return (
     <section className="calc">
       <h4>Custo do suporte e da eletrônica (sem o pregoscópio)</h4>
@@ -34,8 +36,14 @@ export function Custos({ version }: { version: SuporteVersion }) {
       <div className="row">
         <button className={units === 1 ? "active" : ""} onClick={() => setUnits(1)}>1 protótipo</button>
         <button className={units === 100 ? "active" : ""} onClick={() => setUnits(100)}>Lote de 100</button>
-        <button onClick={() => download(`custos-${version}-${units}un.csv`, costCsv(version, units))}>Baixar planilha (CSV)</button>
+        <button onClick={() => download(`custos-${is1000 ? "v2-1000x" : version}-${units}un.csv`, is1000 ? costCsv1000x(units) : costCsv(version, units))}>Baixar planilha (CSV)</button>
       </div>
+      {version === "v2" && (
+        <div className="row">
+          <button className={!econ ? "active" : ""} onClick={() => setEcon(false)}>v2 · 400x</button>
+          <button className={econ ? "active" : ""} onClick={() => setEcon(true)}>v2 · 1000x econômico</button>
+        </div>
+      )}
       <dl>
         <dt>Custo por unidade, só o que é usado</dt><dd><b>{brl(t.usedPerUnit)}</b></dd>
         <dt>{units === 1 ? "Gasto para comprar tudo" : "Gasto por unidade comprando pacotes inteiros"}</dt>
@@ -61,6 +69,7 @@ export function Custos({ version }: { version: SuporteVersion }) {
         </tbody>
       </table>
       {t.missing.length > 0 && <p className="small error">Sem preço e fora do total: {t.missing.join(", ")}.</p>}
+      {is1000 && <p className="small muted">A versão 1000x troca o LM317, o R1, o C1 e o reostato por um driver de 350 mA, e acrescenta a objetiva 100x, o óleo, o LED de 3 W, o dissipador, a íris e as lamínulas. O custo real fica acima do mostrado, porque dissipador, driver, íris e lamínulas estão sem preço.</p>}
       <p className="small muted">
         No lote os preços são de varejo, sem desconto de atacado: é um teto, e um fornecedor de atacado ou a importação sai mais barato. Várias lojas mostravam "últimas unidades": para 100 peças é preciso pedir estoque ou cotar atacado. A placa fabricada a partir dos Gerbers não foi cotada; a placa ilhada serve para montar à mão.
       </p>

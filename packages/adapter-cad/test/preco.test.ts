@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { COST_LINES, PRINT_VOLUME_CM3, bom, costCsv, costTable, gramsOf } from "../src/index.ts";
+import { COST_LINES, PRINT_VOLUME_1000X, PRINT_VOLUME_CM3, bom, costCsv, costCsv1000x, costTable, costTable1000x, gramsOf } from "../src/index.ts";
 
 /** Solid volume of an STL (binary or ASCII) in cm3, by the signed volume of its triangles. */
 function stlVolume(file: string): number {
@@ -37,6 +37,35 @@ describe("custo", () => {
         expect(stlVolume(files[p.id]!(v)), `${v} ${p.id}`).toBeCloseTo(p.cm3, 0);
       }
     }
+  });
+
+  it("os volumes da versão 1000x conferem com os STL do pacote", () => {
+    const files: Record<string, string> = {
+      M1: "v2-1000x/suporte-base-coluna-impressao.stl",
+      M2: "v2-1000x/abracadeira-tubo-impressao.stl",
+      M3: "v2-1000x/tampa-fundo.stl",
+      M4: "comum/difusor.stl",
+      M5: "v2-1000x/tubo-de-luz.stl",
+    };
+    for (const p of PRINT_VOLUME_1000X) expect(stlVolume(files[p.id]!), p.id).toBeCloseTo(p.cm3, 0);
+  });
+
+  it("a versão 1000x não tem LM317, R1, C1 nem reostato, e tem objetiva, óleo e LED de 3 W", () => {
+    const t = costTable1000x(1);
+    const ids = t.rows.map((r) => r.id);
+    for (const gone of ["U1", "R1", "C1", "RV1", "RV1-knob"]) expect(ids, gone).not.toContain(gone);
+    for (const kept of ["P9", "OIL", "D1", "HS1", "DR1", "IR1", "CV1", "PS1", "J1", "D2", "PLA"]) expect(ids, kept).toContain(kept);
+    expect(t.missing).toEqual(expect.arrayContaining(["HS1", "DR1", "IR1", "CV1"]));
+  });
+
+  it("a versão 1000x custa mais que a v2 e o filamento segue contado pela massa", () => {
+    const a = costTable("v2", 1);
+    const b = costTable1000x(1);
+    expect(b.used).toBeGreaterThan(a.used);
+    expect(b.purchase).toBeGreaterThan(a.purchase);
+    expect(b.grams).toBeGreaterThan(a.grams);
+    const csv = costCsv1000x(100).trim().split("\r\n");
+    expect(csv.length).toBe(costTable1000x(100).rows.length + 3);
   });
 
   it("toda peça comprada da lista, fora o pregoscópio, tem uma linha de preço", () => {
