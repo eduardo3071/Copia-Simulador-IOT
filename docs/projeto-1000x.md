@@ -79,7 +79,10 @@ Ordem: compre **primeiro a objetiva**, porque ela define a altura do suporte; de
 
 **LED e driver.** LED de 3 W branco (6000 K) em estrela de alumínio, 700 mA, tensão direta de 3,0 a 3,6 V, com dissipador de alumínio e pasta térmica; driver de corrente constante de 700 mA para entrada de 12 V. Não ligue o LED direto na fonte nem com resistor: um anúncio avisa que o resistor em série dissiparia potência demais. O LED de potência precisa de dissipador sempre.
 
-**Óleo de imersão.** Frasco de 100 ml (há anúncio da Laborclin no Mercado Livre). Confira com o vendedor o índice de refração, que nos óleos usuais fica perto de 1,515 (valor de uso geral, não verificado nesta busca). Um anúncio descreve o óleo como à base de rícino: peça o certificado antes de aceitar. Compre também papel para lente.
+**Óleo de imersão.** Frasco de 100 ml (há anúncio da Laborclin no Mercado Livre). Confira com o vendedor o índice de refração, que no Zeiss Immersol 518 F é 1,518 (a 23 ou a 30 °C, conforme a fonte: confira o certificado do lote). Um anúncio descreve o óleo como à base de rícino: peça o certificado antes de aceitar. Compre também papel para lente.
 
 **Mensagem para o vendedor (inglês, para AliExpress/eBay):**
 "Please send a photo with a ruler and tell me: (1) the length from the RMS shoulder (the face the thread screws against) to the front tip, and the parfocal distance; (2) the working distance; (3) for the condenser: outer body diameter, total height, top lens diameter and mount type."
+
+
+A pesquisa detalhada de cada material, com modelos, links e o que medir, está em `docs/materiais-1000x.md`.
