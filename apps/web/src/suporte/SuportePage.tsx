@@ -81,7 +81,7 @@ export function SuportePage() {
         <h1>Suporte do Pregoscópio</h1>
         <div className="seg" role="radiogroup" aria-label="Versão">
           {(["v1", "v2"] as const).map((v) => (
-            <button key={v} role="radio" aria-checked={version === v} className={version === v ? "active" : ""} onClick={() => { setVersion(v); setSelected(null); }}>
+            <button key={v} role="radio" aria-checked={version === v} className={version === v ? "active" : ""} onClick={() => { setVersion(v); setSelected(null); if (v === "v1") setEdition1000(false); }}>
               {v === "v1" ? "v1 · pilha 9 V" : "v2 · fonte e dimmer"}
             </button>
           ))}
@@ -100,7 +100,7 @@ export function SuportePage() {
             <p className="small">Planta-mãe com todas as peças juntas, posição de cada uma, lista de materiais com medidas padrão e montagem passo a passo. Escolha a edição (400x ou 1000x) e o idioma abaixo; cada edição tem o seu PDF. Na 400x, escolha a versão v1 ou v2 acima.</p>
             <div className="seg" role="radiogroup" aria-label="Edição do manual">
               <button role="radio" aria-checked={!edition1000} className={!edition1000 ? "active" : ""} onClick={() => { setEdition1000(false); setStep(1); }}>Manual 400x ({version})</button>
-              <button role="radio" aria-checked={edition1000} className={edition1000 ? "active" : ""} onClick={() => { setEdition1000(true); setStep(1); }}>Manual 1000x econômico</button>
+              <button role="radio" aria-checked={edition1000} className={edition1000 ? "active" : ""} onClick={() => { setEdition1000(true); setVersion("v2"); setStep(1); }}>Manual 1000x econômico (v2)</button>
             </div>
             <div className="seg" role="radiogroup" aria-label="Idioma do manual">
               {(["bi", "pt", "zh", "en"] as const).map((l) => (
@@ -161,6 +161,13 @@ function ThreeD({ version, selected, setSelected, startView }: { version: Suport
   const [explode, setExplode] = useState(0);
   const [econ, setEcon] = useState(startView === "1000x");
   const [aperture, setAperture] = useState(0);
+  // the 1000x version runs on the 12 V adapter (v2): a 9 V battery cannot feed the 3 W LED, so on v1 the page always shows the 400x scene
+  useEffect(() => {
+    if (version === "v1" && econ) {
+      setEcon(false);
+      setRetract(Math.round(NOMINAL_RETRACT * 10) / 10);
+    }
+  }, [version, econ]);
   const [retract, setRetract] = useState(startView === "1000x" ? econRetract() : Math.round(NOMINAL_RETRACT * 10) / 10);
   const [cut, setCut] = useState(startView === "inside" ? 0 : -50);
   const [lightOn, setLightOn] = useState(true);
@@ -195,8 +202,9 @@ function ThreeD({ version, selected, setSelected, startView }: { version: Suport
         <div className="suporte-controls">
           <div className="row">
             <button className={!econ ? "primary" : ""} aria-pressed={!econ} onClick={() => switchTo(false)}>400x (atual)</button>
-            <button className={econ ? "primary" : ""} aria-pressed={econ} onClick={() => switchTo(true)}>1000x econômico</button>
+            <button className={econ ? "primary" : ""} aria-pressed={econ} disabled={version === "v1"} title={version === "v1" ? "A 1000x usa a fonte de 12 V (v2): a pilha de 9 V não alimenta o LED de 3 W" : undefined} onClick={() => switchTo(true)}>1000x econômico (v2)</button>
           </div>
+          {version === "v1" && <p className="small muted">A versão 1000x só existe na v2: o LED de 3 W gasta uma pilha de 9 V em cerca de 1 hora. Troque para a v2 para ver a 1000x.</p>}
           <div className="row">
             {(["iso", "front", "side", "top", "inside"] as const).map((name) => (
               <button key={name} onClick={() => { if (name === "inside" && cut <= -50) setCut(0); setView({ name, n: view.n + 1 }); }}>
