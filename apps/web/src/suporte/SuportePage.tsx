@@ -108,10 +108,9 @@ export function SuportePage() {
               ))}
             </div>
             <div className="row">
-              {(["bi", "pt", "zh", "en"] as const).map((l) => (
+              {(["pt", "zh", "en"] as const).map((l) => (
                 <a key={l} className={`button${docLang === l ? " primary" : ""}`} href={edition1000 ? pdfUrl1000x(l) : pdfUrl(version, l)} download>PDF · {LANG_LABEL[l]}</a>
               ))}
-              <button onClick={() => window.print()}>Imprimir esta página</button>
             </div>
             <LangContext.Provider value={docLang}>
               {edition1000 ? <StepViewer1000x key="1000x" start={step} onStep={setStep} /> : <StepViewer key={version} version={version} start={step} onStep={setStep} />}

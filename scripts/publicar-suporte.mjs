@@ -21,7 +21,7 @@ for (const [source, target] of [
 rmSync(new URL("manual/", to), { recursive: true, force: true });
 cpSync(new URL("manual/", from), new URL("manual/", to), { recursive: true });
 for (const v of ["v1", "v2", "v2-1000x"]) {
-  for (const l of ["", "-pt", "-zh", "-en"]) {
+  for (const l of ["-pt", "-zh", "-en"]) {
     try {
       cpSync(new URL(`MANUAL-${v}${l}.pdf`, from), new URL(`MANUAL-${v}${l}.pdf`, to));
     } catch {

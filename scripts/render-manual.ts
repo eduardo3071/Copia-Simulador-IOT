@@ -31,7 +31,7 @@ async function pool<T>(items: T[], size: number, run: (item: T, slot: number) =>
 }
 
 if (process.argv.includes("--pdf")) {
-  const jobs = (["v1", "v2", "v2-1000x"] as const).flatMap((v) => (["bi", "pt", "zh", "en"] as const).map((lang) => ({ v, lang })));
+  const jobs = (["v1", "v2", "v2-1000x"] as const).flatMap((v) => (["pt", "zh", "en"] as const).map((lang) => ({ v, lang })));
   // MANUAL_ONLY="v1:bi,v1:pt" renders only those editions (a hung Edge can be redone without the others)
   const only = process.env.MANUAL_ONLY?.split(",");
   const wanted = only ? jobs.filter((j) => only.includes(`${j.v}:${j.lang}`)) : jobs;
