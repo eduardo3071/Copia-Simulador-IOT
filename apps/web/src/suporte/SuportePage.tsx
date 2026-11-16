@@ -154,7 +154,7 @@ function PartCard({ part, version }: { part: SuportePart; version: SuporteVersio
   );
 }
 
-const ECON_IDS = ["M1", "M2", "M3", "M4", "M5", "AP1", "HS1", "D1", "DR1", "PCB1", "D2", "SW1", "J1", "PS1", "L1", "CV1", "OIL", "P1", "P2", "P3", "P4", "P5", "P6", "P9", "P10"];
+const ECON_IDS = ["M1", "M2", "M3", "M4", "M5", "AP1", "P1", "P2", "P3", "P4", "P5", "P6", "P10", "P9", "L1", "CV1", "OIL", "D1", "HS1", "DR1", "D2", "SW1", "J1", "PS1", "PCB1", "H1", "H2", "H3", "W1", "W2", "W3"];
 
 /** startView: "iso", "front", "side", "top" or "inside" (the cutaway of the light box), from #suporte/3d/v2/inside. */
 function ThreeD({ version, selected, setSelected, startView }: { version: SuporteVersion; selected: string | null; setSelected(id: string | null): void; startView: string }) {

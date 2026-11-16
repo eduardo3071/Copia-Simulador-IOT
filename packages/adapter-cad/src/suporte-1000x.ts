@@ -62,6 +62,12 @@ export function componentes1000x(layout: HolderLayout = layoutEconomica1000x()):
     { id: "SW1", name: "Chave KCD1-101", dims: `recorte ${f(p.switchCutout.width)} × ${f(p.switchCutout.height)} mm`, evidence: "fonte", note: "LCSC" },
     { id: "J1", name: "Conector P4 DC-022B", dims: `furo ⌀ ${f(p.jackDiameter)} mm`, evidence: "fonte", note: "5,5 × 2,1 mm; furo de 7,8 mm na maioria dos anúncios" },
     { id: "PS1", name: "Fonte chaveada 12 V 1 A", dims: "plugue P4 5,5 × 2,1 mm, centro positivo", evidence: "fonte", note: "Usinainfo" },
+    { id: "H1", name: "Parafuso M3 × 10 da tampa", dims: `4 × M3 × 10, furos de ⌀ ${f(p.screwHole)} mm na tampa`, evidence: "calculado", note: "prendem a tampa nos 4 cantos; piloto de ⌀ 2,6 mm no PLA" },
+    { id: "H2", name: "Parafuso M3 × 16 da abraçadeira", dims: `2 × M3 × 16, furos de ⌀ ${f(p.screwHole)} mm`, evidence: "calculado", note: "atravessam a orelha da abraçadeira M2 e entram 8 mm na outra" },
+    { id: "H3", name: "Parafuso M3 × 8 da placa", dims: "4 × M3 × 8", evidence: "calculado", note: "prendem a PCB1 nos 4 suportes de 6 mm" },
+    { id: "W1", name: "Fios de 24 AWG (F1 a F5)", dims: "5 fios; cortes na lista de corte", evidence: "calculado", note: "trajetos calculados em volta das peças e conferidos por teste" },
+    { id: "W2", name: "Termorretrátil sobre as emendas", dims: "⌀ 2 a 3 mm × 10 mm, uma luva por emenda", evidence: "calculado", note: "no 3D aparece sobre as duas emendas do LED" },
+    { id: "W3", name: "Cola quente", dims: "cordão de 3 a 4 mm", evidence: "calculado", note: "borda do difusor, base do tubo de luz e do dissipador" },
   ];
 }
 

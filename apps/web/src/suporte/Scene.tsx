@@ -353,6 +353,12 @@ function Assembly1000({ options, registry }: { options: SceneOptions; registry: 
             <Solder pos={[w.to[0], w.to[1], w.to[2]]} />
           </PartGroup>
         ))}
+        {/* heat-shrink over the two joints of the LED, where the wires meet the pads of the star */}
+        {wires.filter((w) => !w.spec.panel).map((w) => (
+          <PartGroup key={`s${w.spec.id}`} {...base} id="W2" layer="fios" needs="D1" label={w.path[w.path.length - 3]!}>
+            <Sleeve points={headOf([...w.path].reverse(), 11)} />
+          </PartGroup>
+        ))}
         {layout.boardPosts.map((q, i) => (
           <PartGroup key={i} {...base} id="H3" layer="parafusos" position={[q.x, q.y, bd.standoffHeight + 1.6]} label={[0, 0, 2]}>
             <Screw r={2.8} />
