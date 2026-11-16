@@ -41,7 +41,7 @@ function fromHash(): { tab: Tab; version: SuporteVersion; econ: boolean; view: s
     shot: mode === "shot",
     check: mode === "check",
     doc: mode === "doc",
-    lang: lang === "pt" || lang === "zh" || lang === "en" ? lang : "bi",
+    lang: lang === "pt" || lang === "zh" || lang === "en" ? lang : "pt",
   };
 }
 
@@ -103,7 +103,7 @@ export function SuportePage() {
               <button role="radio" aria-checked={edition1000} className={edition1000 ? "active" : ""} onClick={() => { setEdition1000(true); setVersion("v2"); setStep(1); }}>Manual 1000x econômico (v2)</button>
             </div>
             <div className="seg" role="radiogroup" aria-label="Idioma do manual">
-              {(["bi", "pt", "zh", "en"] as const).map((l) => (
+              {(["pt", "zh", "en"] as const).map((l) => (
                 <button key={l} role="radio" aria-checked={docLang === l} className={docLang === l ? "active" : ""} onClick={() => setDocLang(l)}>{LANG_LABEL[l]}</button>
               ))}
             </div>
