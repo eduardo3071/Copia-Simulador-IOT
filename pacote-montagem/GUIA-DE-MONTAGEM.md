@@ -70,7 +70,7 @@ A lista completa de compras, com o que digitar na loja e a confiança em cada n�
 ### Só v2 (fonte)
 | ID | Qtd | Item |
 |---|---|---|
-| PS1 | 1 | Fonte 12 V, 500 mA, plugue P4 5,5 × 2,1 mm com centro positivo |
+| PS1 | 1 | Fonte 12 V, 1 A (a mesma da 1000x), plugue P4 5,5 × 2,1 mm com centro positivo |
 | J1 | 1 | Conector P4 fêmea de painel DC-022B (furo de 7,8 mm) |
 | D2 | 1 | Diodo 1N5819 (Schottky 1 A) |
 | RV1 | 1 | Reostato linear 220 Ω com eixo de 6 mm (WH148 B221) e botão |

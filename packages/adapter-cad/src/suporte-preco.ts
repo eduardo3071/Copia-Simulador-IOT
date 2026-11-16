@@ -105,7 +105,7 @@ export const COST_LINES: CostLine[] = [
   { id: "BT1-clip", label: "Clipe de bateria 9 V com cabos", versions: ["v1"], perUnit: 1, unit: "un",
     source: { store: bau, url: "https://www.baudaeletronica.com.br/produto/clip-de-bateria-9v-tipo-1-vertical-t.html", price: 1.34, pack: 1, confidence: "pagina", note: "cabos de 28 AWG" } },
   { id: "PS1", label: "Fonte chaveada 12 V 1 A, plugue P4", versions: ["v2"], perUnit: 1, unit: "un",
-    source: { store: usina, url: "https://www.usinainfo.com.br/fonte-chaveada-usb-e-p4/fonte-de-alimentacao-chaveada-12vdc-1a-plug-p4-55x21mm-3082.html", price: 26.11, pack: 1, confidence: "pagina", note: "o projeto pede 12 V 500 mA; a de 1 A serve (centro positivo)" } },
+    source: { store: usina, url: "https://www.usinainfo.com.br/fonte-chaveada-usb-e-p4/fonte-de-alimentacao-chaveada-12vdc-1a-plug-p4-55x21mm-3082.html", price: 26.11, pack: 1, confidence: "pagina", note: "12 V 1 A é a fonte das duas versões (a 400x usa só 18 mA); centro positivo" } },
   { id: "J1", label: "Conector P4 de painel DC-022B", versions: ["v2"], perUnit: 1, unit: "un",
     source: { store: "Shopee (via escorregaopreco.com.br)", url: "", price: 16.99, pack: 10, confidence: "anuncio", note: "kit de 10 DC-022B visto na busca (Shopee), endereço não guardado; a página da Usinainfo não mostrou preço" } },
   { id: "RV1", label: "Potenciômetro linear WH148 (eixo de 6 mm)", versions: ["v2"], perUnit: 1, unit: "un",
