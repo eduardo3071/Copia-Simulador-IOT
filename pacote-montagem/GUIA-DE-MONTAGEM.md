@@ -1,6 +1,6 @@
 # Guia de montagem: suporte e luz do pregoscópio
 
-Revisão 2 (03/11/2026). Gerado por `scripts/build-suporte.ts`, `scripts/build-eletronica.ts` e `scripts/build-lista-de-compras.ts`; os parâmetros estão em `packages/adapter-cad/src/holder.ts`.
+Revisão 3 (23/11/2026). Gerado por `scripts/build-suporte.ts`, `scripts/build-eletronica.ts` e `scripts/build-lista-de-compras.ts`; os parâmetros estão em `packages/adapter-cad/src/holder.ts`. Este guia cobre a **400x (v1 e v2)**. A versão **1000x econômica** (só v2) tem manual próprio, `MANUAL-v2-1000x-pt.pdf` (e `-zh`, `-en`), e custos em `CUSTOS-v2-1000x-1un.csv`.
 
 > **Status: projeto digital completo, nada impresso nem montado ainda.** Tudo o que não foi medido ou testado na bancada está na seção "O que ainda não foi verificado". Imprima antes os gabaritos de `CALIBRACAO.md` e depois a abraçadeira, antes das peças grandes.
 
@@ -9,7 +9,7 @@ Revisão 2 (03/11/2026). Gerado por `scripts/build-suporte.ts`, `scripts/build-e
 ## 1. O que é
 Um suporte em C que segura o pregoscópio na vertical, com uma caixa luminosa na base. A lâmina desliza num canal no topo da caixa, sob a objetiva, e um LED branco ilumina por baixo. O pregoscópio (tubo telescópico com objetiva) é impresso à parte.
 
-Duas versões, que dividem a abraçadeira, o difusor e o estágio de corrente constante (LM317 com R1 de 68 Ω):
+Duas versões de 400x, que dividem a abraçadeira, o difusor e o estágio de corrente constante (LM317 com R1 de 68 Ω):
 - **v1, pilha:** pilha de 9 V, interruptor e LED. O brilho fica fixo em 18,4 mA mesmo com a pilha descarregando.
 - **v2, fonte:** adaptador de tomada, diodo contra polaridade invertida, interruptor e botão de brilho com corrente constante (sem PWM, para não dar faixas na câmera).
 
@@ -17,17 +17,22 @@ Duas versões, que dividem a abraçadeira, o difusor e o estágio de corrente co
 ```
 pacote-montagem/
   GUIA-DE-MONTAGEM.md, CALIBRACAO.md, visualizador-3d.html
+  MANUAL-v1-*.pdf, MANUAL-v2-*.pdf, MANUAL-v2-1000x-*.pdf   (manual de construção em pt, zh e en; um PDF por idioma)
   lista-de-compras-v1.csv, lista-de-compras-v2.csv   (o que procurar na loja; preço em branco)
+  CUSTOS-*.csv   (custo por versão, com preço de loja, para 1 e para 100 unidades)
   mecanica/
     comum/        abracadeira-tubo.stl, difusor.stl (+ versão em posição de impressão)
     v1-pilha/     suporte-base-coluna.stl, tampa-fundo.stl (+ -impressao.stl)
     v2-fonte/     suporte-base-coluna.stl, tampa-fundo.stl (+ -impressao.stl)
+    v2-1000x/     suporte-base-coluna.stl, tampa-fundo.stl, tubo-de-luz.stl, roda-de-aberturas.stl, abracadeira-tubo.stl (+ -impressao.stl)
     calibracao/   calibracao-tubo.stl, calibracao-pecas.stl, calibracao-bateria.stl
   eletronica/
     v1-pilha/         esquematico.svg, bom.csv, pick-and-place.csv, gerber/  (placa 40 × 25 mm)
     v2-fonte-dimmer/  esquematico.svg, bom.csv, pick-and-place.csv, gerber/  (placa 70 × 25 mm)
+    v2-fonte-dimmer-gerber.zip   (os Gerbers e as furações da v2, prontos para enviar à fábrica)
+    v2-1000x/         esquematico.svg   (sem placa própria: o driver vai numa placa ilhada de 40 × 25 mm)
 ```
-Os arquivos `*-impressao.stl` já estão deitados sobre a face de trás da coluna (90 × 210 mm de mesa, 115 mm de altura), o que cabe em mesa de 30 cm. Os demais ficam na posição de montagem (210,2 mm de altura) e servem para visualizar.
+Os arquivos `*-impressao.stl` já estão deitados sobre a face de trás da coluna (90 × 228,2 mm de mesa, 115 mm de altura; na 1000x, 90 × 237,6 mm). **A mesa precisa ter mais de 230 mm no lado maior (240 mm na 1000x):** uma mesa de 220 × 220 mm não comporta a peça. Os demais ficam na posição de montagem (228,2 mm de altura) e servem para visualizar.
 
 ## 3. Medidas usadas
 | Peça | Valor | Origem |
@@ -36,6 +41,7 @@ Os arquivos `*-impressao.stl` já estão deitados sobre a face de trás da colun
 | Tubo interno (telescópico) | ⌀ 22,5 mm, curso de 40 mm, total 155 mm | paquímetro |
 | Objetiva | ⌀ 20 mm, sai 35 mm do tubo interno | paquímetro |
 | Parte visível do tubo interno, recolhido | 9 mm | fotos (regra de três) |
+| Tubo interno puxado para o foco | 28 mm, o que deixa o tubo mecânico em cerca de 152 mm (a objetiva 160/0,17 pede 160 mm) | calculado; confirme no foco real |
 | Lâmina | 76 × 26 × 1 mm | padrão, **não medida** |
 | Pilha 9 V | 48,5 × 26,5 × 17,5 mm | padrão |
 | Interruptor de balancim KCD1-101 (furo) | 21,2 × 15,0 mm | guia da LCSC; **não conferido** |
@@ -58,7 +64,7 @@ A lista completa de compras, com o que digitar na loja e a confiança em cada n�
 | H1 | 4 | Parafuso M3 × 10 autoatarraxante (tampa de fundo) |
 | H2 | 2 | Parafuso M3 × 16 autoatarraxante (abraçadeira) |
 | H3 | 4 | Parafuso M3 × 8 autoatarraxante (placa do driver) |
-| W1 | 1 | Fio flexível 24 AWG: vermelho, preto e mais uma cor (v1: 6 fios de 10 a 25 cm; v2: 9 fios de 10 a 45 cm) |
+| W1 | 1 | Fio flexível 24 AWG: vermelho, preto e mais uma cor (v1: 6 fios de 6,5 a 13 cm; v2: 9 fios de 8,5 a 17 cm; os comprimentos de corte de cada fio estão na lista de corte do manual) |
 | W2 | 1 | Tubo termorretrátil ⌀ 2 a 3 mm, 10 cm (uma luva de 1 cm por emenda) |
 | W3 | 1 | Cola quente e fita dupla face (12 mm) |
 
@@ -106,8 +112,8 @@ Meça nesta ordem, com o interruptor ligado. A primeira leitura fora da faixa mo
 |---|---|---|---|
 | Pilha BT1: + para − | 9,00 V | 8,4 a 9,7 V | pilha fraca, clipe mal encaixado ou invertido |
 | Entrada do U1 (depois do SW1) para GND | 9,00 V | 8,3 a 9,7 V | interruptor aberto, solda fria |
-| Saída do U1 (OUT) para GND | 4,35 V | 4,1 a 4,6 V | R1 aberto ou LED invertido (a saída sobe até perto da entrada) |
-| Ânodo do D1 (pino ADJ) para GND | 3,10 V | 2,8 a 3,4 V | LED invertido (0 V) ou queimado |
+| Saída do U1 (OUT) para GND | 4,35 V | 3,9 a 4,8 V | R1 aberto ou LED invertido (a saída sobe até perto da entrada) |
+| Ânodo do D1 (pino ADJ) para GND | 3,10 V | 2,7 a 3,4 V | LED invertido (0 V) ou queimado |
 | Sobre R1 (entre OUT e ADJ) | 1,25 V | 1,2 a 1,3 V | LM317 falso ou fora de regulação |
 | Corrente do LED, multímetro em série | 18,4 mA | 17,4 a 19,4 mA | R1 errado (confira as faixas) ou LM317 sem regulação |
 
@@ -118,11 +124,11 @@ Meça nesta ordem, com o interruptor ligado. A primeira leitura fora da faixa mo
 | Fonte no J1: + para −, sem carga | 12,00 V | 11,5 a 15 V | fonte não regulada lê até 15 V sem carga |
 | Depois do D2 para GND | 11,60 V | 11 a 11,8 V | diodo invertido (0 V) ou queda acima de 0,5 V |
 | Entrada do U1 (depois do SW1) para GND | 11,60 V | 10,9 a 11,8 V | interruptor aberto, solda fria |
-| Saída do U1 (OUT) para GND | 4,35 V | 4,1 a 4,6 V | R1 ou RV1 abertos |
-| Ânodo do D1 (pino ADJ) para GND | 3,10 V | 2,8 a 3,4 V | LED invertido ou queimado |
+| Saída do U1 (OUT) para GND | 4,35 V | 3,9 a 4,8 V | R1 ou RV1 abertos |
+| Ânodo do D1 (pino ADJ) para GND | 3,10 V | 2,7 a 3,4 V | LED invertido ou queimado |
 | Sobre R1 + RV1 (entre OUT e ADJ) | 1,25 V | 1,2 a 1,3 V | LM317 falso ou fora de regulação |
 | Corrente com RV1 no mínimo (0 Ω) | 18,4 mA | 17,0 a 19,4 mA | R1 errado ou cursor do RV1 sem ligação |
-| Corrente com RV1 no máximo (220 Ω) | 4,3 mA | 3,9 a 4,8 mA | reostato maior que 220 Ω: o LM317 pode oscilar |
+| Corrente com RV1 no máximo (220 Ω) | 4,3 mA | 3,5 a 5,5 mA | reostato maior que 220 Ω: o LM317 pode oscilar |
 
 ## 6. Impressão
 Material PLA, camada de 0,2 mm, 3 perímetros, enchimento de 20 a 30 %.
@@ -153,7 +159,7 @@ Cor escura nas paredes ajuda a evitar luz espalhada. Imprima na ordem do roteiro
 - Medidas ainda por conferir: lâmina real, furo do interruptor e do conector, diâmetro do tubo externo com mais de um ponto de medição, quanto a objetiva sai do tubo.
 - Distância de trabalho de 0,8 mm é um valor típico de objetiva 40x/0,65; confirme com a sua.
 - O LED a cerca de 10 mm da janela pode iluminar de forma irregular; o difusor deve resolver, mas só o teste confirma.
-- Os Gerbers passaram numa checagem independente (`scripts/verificar-gerber.py`, com gerbonara): contorno, furos dentro da placa, furos de montagem nos lugares dos suportes e cobre a mais de 3 mm da borda. **As trilhas e a máscara ainda não foram vistas num programa de PCB** (KiCad GerbView); faça isso antes de fabricar.
+- Os Gerbers passaram numa checagem independente (`scripts/verificar-gerber.py`, com gerbonara): contorno, furos dentro da placa, furos de montagem nos lugares dos suportes e cobre a mais de 3 mm da borda. Em 23/11/2026 a placa v2 também foi desenhada a partir dos Gerbers (`scripts/renderizar-gerber.py`), e a conferência de ligações (`scripts/verificar-rede-gerber.py`) confirmou que o cobre liga exatamente as pastilhas do circuito, sem aberto nem curto (v1: 13 pastilhas e 5 redes; v2: 18 pastilhas e 7 redes). A via da v2 foi aumentada para 0,3 mm de furo. Continuam sem verificação a largura mínima de trilha (0,15 mm) e a folga mínima (0,16 mm), que dependem da fábrica: pergunte o mínimo dela antes de pedir.
 - O circuito foi calculado e simulado no simulador (corrente contínua, fonte ideal, LED por limiar), mas **não foi medido com multímetro**. O plano de teste da seção 5 serve para isso.
 - Os valores de interruptor, conector e reostato vêm de guias e anúncios, não de datasheet oficial.
 

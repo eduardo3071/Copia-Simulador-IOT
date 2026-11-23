@@ -4,7 +4,7 @@ Em vez de medir com paquímetro, imprima duas placas pequenas e prove as peças 
 
 | Arquivo | Tamanho | Para quê |
 |---|---|---|
-| `calibracao-tubo.stl` | 270 × 44 × 3,6 mm | diâmetro do tubo externo do pregoscópio |
+| `calibracao-tubo.stl` | 270 × 48 × 3,6 mm | diâmetro do tubo externo do pregoscópio |
 | `calibracao-pecas.stl` | 174 × 208 × 3,6 mm | lâmina, interruptor, LED, parafuso M3, conector DC-022B e eixo do reostato |
 | `calibracao-bateria.stl` | 252 × 42 × 3,6 mm | bateria 9 V (a peça é grande demais para a placa de peças) |
 
@@ -30,6 +30,9 @@ Se a peça não entrar nem no maior furo de uma série, me diga: preciso de uma 
 1. Edite os valores em `holder.ts`.
 2. Rode `npx tsx scripts/build-suporte.ts` para gerar os STLs novos.
 3. Rode `npx vitest run packages/adapter-cad` para conferir os testes.
+
+## O que a calibração não cobre
+- **A versão 1000x** (objetiva de imersão 100x, LED de 3 W com estrela de 20 mm e dissipador de 30 mm, driver, roda de aberturas): não há série de calibração para essas peças. Meça-as com o paquímetro quando comprar e atualize `packages/adapter-cad/src/suporte-1000x.ts`.
 
 ## O que a calibração não substitui
 - **Pilha:** é uma decisão sua (9 V ou outra). Não se mede.
