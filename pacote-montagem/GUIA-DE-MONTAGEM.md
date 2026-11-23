@@ -41,7 +41,7 @@ Os arquivos `*-impressao.stl` já estão deitados sobre a face de trás da colun
 | Tubo interno (telescópico) | ⌀ 22,5 mm, curso de 40 mm, total 155 mm | paquímetro |
 | Objetiva | ⌀ 20 mm, sai 35 mm do tubo interno | paquímetro |
 | Parte visível do tubo interno, recolhido | 9 mm | fotos (regra de três) |
-| Tubo interno puxado para o foco | 28 mm, o que deixa o tubo mecânico em cerca de 152 mm (a objetiva 160/0,17 pede 160 mm) | calculado; confirme no foco real |
+| Tubo interno no foco nominal | estendido 37 mm no total (9 mm que já aparecem recolhido + 28 mm puxados), o que deixa o tubo mecânico em cerca de 152 mm (a objetiva 160/0,17 pede 160 mm) | calculado; confirme no foco real |
 | Lâmina | 76 × 26 × 1 mm | padrão, **não medida** |
 | Pilha 9 V | 48,5 × 26,5 × 17,5 mm | padrão |
 | Interruptor de balancim KCD1-101 (furo) | 21,2 × 15,0 mm | guia da LCSC; **não conferido** |
@@ -138,21 +138,24 @@ Material PLA, camada de 0,2 mm, 3 perímetros, enchimento de 20 a 30 %.
 | Abraçadeira | arquivo `-impressao` (abre para cima) | não |
 | Suporte base + coluna | arquivo `-impressao` (deitado nas costas) | sim, dentro da caixa (teto da caixa em ponte de 85 mm) |
 | Tampa de fundo | já plana | não |
-| Difusor | plano, em PLA natural ou branco, 1 a 2 camadas | não |
+| Difusor | plano, em PLA natural ou branco, ⌀ 26 × 0,8 mm (4 camadas de 0,2 mm) | não |
 
 Cor escura nas paredes ajuda a evitar luz espalhada. Imprima na ordem do roteiro (seção 9).
 
 ## 7. Montagem
-1. Imprima, remova suportes e limpe os furos com uma broca de 3 mm onde estiver rugoso.
-2. Cole o difusor no encaixe do teto da caixa, por dentro, com um cordão fino de cola quente (W3).
-3. Instale o interruptor no recorte da frente. Mantenha a rosca livre.
-4. **v2:** instale o conector de força na lateral direita e o botão do reostato na frente.
-5. Monte o circuito (seção 5) na placa do driver. Solde e isole os fios.
-6. Solde os dois fios do LED (laranja no ânodo, preto no cátodo) nas pernas, isole as emendas com o termorretrátil (W2) e encaixe o LED no porta-LED da tampa, com o flange na sede. Os fios descem pelo furo cego do porta-LED e saem pela **fenda lateral** no pé do porta-LED, voltada para a placa do driver (a tampa não tem furo para fora). Parafuse a placa do driver nos 4 suportes da tampa (M3 × 8). **v1:** coloque também a pilha no berço.
-7. Faça o plano de teste da seção 5 antes de fechar.
-8. Feche a tampa com 4 parafusos M3 × 10. Cuide para não prender fio.
-9. Encaixe o pregoscópio no anel da coluna: tire a metade da abraçadeira, encoste o tubo de lado, recoloque e aperte os 2 parafusos M3 × 16 sem forçar.
-10. Foco: afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno do pregoscópio, até a imagem ficar nítida.
+A ordem é a do manual de construção (os mesmos passos, com as imagens).
+1. Imprima, remova os suportes e limpe todos os furos com uma broca de 3 mm. Passe lixa fina nas bordas do canal da lâmina e confira que não ficou resto dentro da caixa.
+2. Cole o difusor (⌀ 26 × 0,8 mm) no encaixe do teto da caixa, por dentro, com um cordão fino de cola quente (W3) na borda, sem cobrir a janela de ⌀ 24 mm.
+3. Prove a lâmina (76 × 26 × 1 mm) no canal: ela deve entrar e sair sem esforço e sem folga lateral visível. Se prender, use o gabarito G2.
+4. Instale o interruptor KCD1-101, de fora para dentro, no recorte de 21,2 × 15,0 mm da parede frontal, até as travas estalarem.
+5. **v2:** instale o conector DC-022B no furo de ⌀ 7,8 mm da parede direita e o reostato no furo de ⌀ 7,5 mm da frente, com a porca por fora e o botão.
+6. Tampa, LED: solde os dois fios do LED (laranja na perna longa, o ânodo; preto na curta, o cátodo), isole as emendas com o termorretrátil (W2) e encaixe o LED no porta-LED da tampa, com o flange na sede. Os fios descem pelo furo do porta-LED e saem pela **fenda lateral**, voltada para a placa do driver (a tampa não tem furo para fora).
+7. Tampa, placa do driver: solde U1, R1 e C1 (**v2:** e o diodo D2, com a faixa para o lado do pad pin2) na placa, nos pads do Gerber, com o U1 de rótulo para a frente (ADJ, OUT, IN da esquerda para a direita). Parafuse a placa nos 4 suportes da tampa com M3 × 8 (H3). **v1:** coloque a pilha no berço, solde o fio vermelho do clipe no pad BT1 POS e o preto no BT1 NEG, e só então encaixe o clipe na pilha.
+8. Ligue os fios do painel aos pads, nas cores da lista de ligações: **v1:** interruptor SW1 (pads A e B); **v2:** conector J1 (VIN e GND), interruptor SW1 (A e B) e os três terminais do reostato RV1. Deixe folga para a tampa abrir.
+9. Faça o plano de teste da seção 5 antes de fechar. Todas as leituras devem ficar na faixa, e o LED deve acender.
+10. Feche a tampa com 4 parafusos M3 × 10, apertando aos poucos e em cruz. Cuide para não prender fio.
+11. Encaixe o pregoscópio no anel da coluna: tire a metade da abraçadeira, encoste o tubo externo de lado, recoloque e aperte os 2 parafusos M3 × 16 sem forçar.
+12. Foco: **v2:** ligue a fonte de 12 V ao conector e o interruptor, e gire o botão do reostato para o brilho. Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno, até a lâmina ficar nítida. Foco nominal: lente a 0,8 mm da lâmina, com o tubo interno estendido 37 mm (leia a escala impressa no tubo). A ponta da objetiva tem mola, mas não force contra o vidro.
 
 ## 8. O que ainda não foi verificado
 - **Nada foi impresso nem montado.** Todas as folgas (0,2 mm no furo do tubo, 0,6 mm de abertura da abraçadeira, 0,4 mm no difusor e no LED) são valores típicos de FDM.
