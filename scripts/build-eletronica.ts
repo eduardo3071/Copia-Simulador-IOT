@@ -40,6 +40,10 @@ async function render(name: string, title: string, children: Node[], board: { wi
   circuit.add(h("board", { width: board.width, height: board.height, ...(AUTOPACK ? { pcbPack: true } : {}) }, ...children));
   await circuit.renderUntilSettled();
   const json = circuit.getCircuitJson() as AnyCircuitElement[];
+  // the autorouter's default via (0.2 mm hole, 0.3 mm pad) leaves a 0.05 mm ring, below what prototype fabs accept: 0.3 mm hole with a 0.6 mm pad
+  for (const e of json) {
+    if (e.type === "pcb_via") Object.assign(e, { hole_diameter: 0.3, outer_diameter: 0.6 });
+  }
   const errors = json.filter((e) => e.type.endsWith("_error")).map((e) => `${e.type}: ${String((e as { message?: unknown }).message ?? "")}`);
   mkdirSync(new URL(`${name}/`, out), { recursive: true });
   writeFileSync(new URL(`${name}/esquematico.svg`, out), convertCircuitJsonToSchematicSvg(json));
