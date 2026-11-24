@@ -346,13 +346,19 @@ function Assembly1000({ options, registry }: { options: SceneOptions; registry: 
           <DriverModule size={[30, 20, 10]} />
         </PartGroup>
         {/* the wires of the 1000x version, routed around the parts; the three that start on a part of the wall follow the box when the lid is pulled away */}
-        {wires.map((w) => (
-          <PartGroup key={w.spec.id} {...base} id="W1" layer="fios" needs={w.spec.panel ? "PCB1" : "D1"} label={w.path[Math.min(4, w.path.length - 1)]!}>
-            <Tube points={w.spec.panel ? dropped(w.path, -lidZ) : (w.path as V3[])} r={0.62} color={w.spec.color} round={3.2} />
-            <Solder pos={w.spec.panel ? [w.from[0], w.from[1], w.from[2] - lidZ] : [w.from[0], w.from[1], w.from[2]]} />
-            <Solder pos={[w.to[0], w.to[1], w.to[2]]} />
-          </PartGroup>
-        ))}
+        {wires.map((w) => {
+          // F1 joins D2 to the switch: both ends are on the box, so the whole wire stays with the box when the lid is pulled away
+          const onWall = (pin: string) => /^(D2|SW1|J1):/.test(pin);
+          const wallOnly = onWall(w.spec.from) && onWall(w.spec.to);
+          const points = wallOnly ? (w.path.map((q) => [q[0], q[1], q[2] - lidZ]) as V3[]) : w.spec.panel ? dropped(w.path, -lidZ) : (w.path as V3[]);
+          return (
+            <PartGroup key={w.spec.id} {...base} id="W1" layer="fios" needs={w.spec.panel ? "PCB1" : "D1"} label={points[Math.min(4, points.length - 1)]!}>
+              <Tube points={points} r={0.62} color={w.spec.color} round={3.2} />
+              <Solder pos={w.spec.panel ? [w.from[0], w.from[1], w.from[2] - lidZ] : [w.from[0], w.from[1], w.from[2]]} />
+              <Solder pos={[w.to[0], w.to[1], wallOnly ? w.to[2] - lidZ : w.to[2]]} />
+            </PartGroup>
+          );
+        })}
         {/* heat-shrink over the two joints of the LED, where the wires meet the pads of the star */}
         {wires.filter((w) => !w.spec.panel).map((w) => (
           <PartGroup key={`s${w.spec.id}`} {...base} id="W2" layer="fios" needs="D1" label={w.path[w.path.length - 3]!}>

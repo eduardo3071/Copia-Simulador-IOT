@@ -50,7 +50,8 @@ if (process.argv.includes("--pdf")) {
     { v: "v2-1000x", n: 0, name: "v2-1000x-visao-geral.png", size: "1300,800" },
     ...steps1000x().map((s) => ({ v: "v2-1000x", n: s.n, name: `v2-1000x-passo-${String(s.n).padStart(2, "0")}.png`, size: partsUpToStep1000x(s.n).has("P1") ? "900,1100" : "1300,800" })),
   ];
-  await pool(jobs, 2, async ({ v, n, name, size }, slot) => {
+  // MANUAL_POOL=1 renders one picture at a time: with two Edges at once the STL parts (box, lid, tube, head) can load after the shot is taken
+  await pool(jobs, Number(process.env.MANUAL_POOL ?? 2), async ({ v, n, name, size }, slot) => {
     const file = resolve(out, name);
     if (existsSync(file)) return;
     await edge([`--screenshot=${fwd(file)}`, `--window-size=${size}`, "--virtual-time-budget=40000", `${BASE}#suporte/manual/${v}/${n}/shot`], slot);
