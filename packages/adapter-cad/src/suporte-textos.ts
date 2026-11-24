@@ -19,7 +19,7 @@ export const PRINT: { part: string; text: Bilingual }[] = [
   { part: "M1", text: T("arquivo -impressao, deitado nas costas; suportes só dentro da caixa", "使用 -impressao 文件，背面朝下打印；仅在盒内加支撑", "file -impressao, lying on its back; supports only inside the box") },
   { part: "M2", text: T("arquivo -impressao, abre para cima; sem suportes", "使用 -impressao 文件，开口朝上；不需要支撑", "file -impressao, opening upward; no supports") },
   { part: "M3", text: T("já plana; sem suportes", "已是平板；不需要支撑", "already flat; no supports") },
-  { part: "M4", text: T("plano, PLA natural ou branco, 1 a 2 camadas; sem suportes", "平放，本色或白色 PLA，1~2 层；不需要支撑", "flat, natural or white PLA, 1 to 2 layers; no supports") },
+  { part: "M4", text: T("plano, PLA natural ou branco, 4 camadas de 0,2 mm (0,8 mm); sem suportes", "平放，本色或白色 PLA，4 层 0.2 mm（共 0.8 mm）；不需要支撑", "flat, natural or white PLA, 4 layers of 0.2 mm (0.8 mm); no supports") },
 ];
 
 export const STATUS: Bilingual[] = [

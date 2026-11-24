@@ -55,7 +55,7 @@ export const DICT: [string, string, string][] = [
   ["M3 Tampa de fundo", "M3 底盖", "M3 Bottom lid"],
   ["M4 Difusor e assento no teto do M1", "M4 扩散片及 M1 顶板凹槽", "M4 Diffuser and its seat in the ceiling of M1"],
   ["Teto, assento do difusor e canal: detalhe H (DT-03) e detalhe G (DT-09).", "顶板详见 DT-03、DT-09。", "Ceiling, diffuser seat and channel: detail H (DT-03) and detail G (DT-09)."],
-  ["PLA natural ou branco, 1 a 2 camadas de 0,2 mm (≈ 0,8 mm). Sem suportes.", "本色或白色 PLA，1~2 层 0.2 mm（约 0.8 mm）。无需支撑。", "Natural or white PLA, 1 to 2 layers of 0.2 mm (≈ 0.8 mm). No supports."],
+  ["PLA natural ou branco, 4 camadas de 0,2 mm (0,8 mm). Sem suportes.", "本色或白色 PLA，4 层 0.2 mm（共 0.8 mm）。无需支撑。", "Natural or white PLA, 4 layers of 0.2 mm (0.8 mm). No supports."],
   ["Arquivo abracadeira-tubo-impressao.stl (abre para cima), sem suportes.", "使用 abracadeira-tubo-impressao.stl（开口朝上），无需支撑。", "File abracadeira-tubo-impressao.stl (opens upward), no supports."],
   ["atravessam as orelhas e entram", "穿过耳部，拧入", "go through the ears and enter"],
   ["Confirmar no gabarito G1 antes de imprimir em série.", "批量打印前请用校准件 G1 确认。", "Confirm with jig G1 before printing in series."],

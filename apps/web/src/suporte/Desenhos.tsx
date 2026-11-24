@@ -732,7 +732,7 @@ function M4Difusor({ g, version, sheet, total }: { g: G; version: SuporteVersion
         x={140}
         y={132}
         head="Material e cor · 材料与颜色"
-        lines={[{ t: "PLA natural ou branco, 1 a 2 camadas de 0,2 mm (≈ 0,8 mm). Sem suportes." }, { t: "本色或白色 PLA，1~2 层 0.2 mm（约 0.8 mm）。无需支撑。", zh: true }]}
+        lines={[{ t: "PLA natural ou branco, 4 camadas de 0,2 mm (0,8 mm). Sem suportes." }, { t: "本色或白色 PLA，4 层 0.2 mm（共 0.8 mm）。无需支撑。", zh: true }]}
       />
     </Sheet>
   );

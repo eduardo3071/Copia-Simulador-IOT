@@ -47,7 +47,7 @@ export const PRINT_1000X: { part: string; text: Bilingual }[] = [
   { part: "M1", text: bi("arquivo -impressao, deitado nas costas; suportes só dentro da caixa e na fenda da roda", "使用 -impressao 文件，背面朝下打印；仅在盒内和转盘槽处加支撑", "file -impressao, lying on its back; supports only inside the box and at the wheel slot") },
   { part: "M2", text: bi("arquivo -impressao, abre para cima; sem suportes (a abraçadeira desta versão é mais alta que a da 400x)", "使用 -impressao 文件，开口朝上；无需支撑（本版抱箍位置比 400x 版更高）", "file -impressao, opening upward; no supports (the clamp of this version sits higher than the 400x one)") },
   { part: "M3", text: bi("já plana; sem suportes; os 12 furos de ventilação ficam em volta do dissipador", "已是平板；无需支撑；12 个通风孔位于散热片周围", "already flat; no supports; the 12 air holes lie around the heatsink") },
-  { part: "M4", text: bi("plano, PLA natural ou branco, 1 a 2 camadas; sem suportes", "平放，本色或白色 PLA，1~2 层；无需支撑", "flat, natural or white PLA, 1 to 2 layers; no supports") },
+  { part: "M4", text: bi("plano, PLA natural ou branco, 4 camadas de 0,2 mm (0,8 mm); sem suportes", "平放，本色或白色 PLA，4 层 0.2 mm（共 0.8 mm）；无需支撑", "flat, natural or white PLA, 4 layers of 0.2 mm (0.8 mm); no supports") },
   { part: "M5", text: bi("em pé, PLA preto, a fenda do pé voltada para o lado; sem suportes; o pino do topo é fino: imprima devagar", "竖直打印，黑色 PLA，底部缺口朝侧；无需支撑；顶部销较细：请降速打印", "standing, black PLA, the foot slot to the side; no supports; the pin at the top is thin: print slowly") },
   { part: "AP1", text: bi("arquivo -impressao, deitada; 3 perímetros e enchimento de 100 %; sem suportes", "使用 -impressao 文件，平放；3 层外壁，100% 填充；无需支撑", "file -impressao, flat; 3 perimeters and 100 % infill; no supports") },
 ];
@@ -296,7 +296,7 @@ export function files1000x(): { file: string; text: Bilingual }[] {
     { file: "mecanica/comum/difusor.stl", text: bi("M4 difusor", "M4 扩散片", "M4 diffuser") },
     { file: `${dir}/tubo-de-luz.stl`, text: bi("M5 tubo de luz com pino da roda e fenda dos fios", "M5 光管（带转盘销和走线缺口）", "M5 light tube with wheel pin and wire slot") },
     { file: `${dir}/roda-de-aberturas-impressao.stl`, text: bi("AP1 roda de aberturas, deitada", "AP1 孔径转盘（平放）", "AP1 aperture wheel, flat") },
-    { file: "eletronica/v2-1000x-esquematico.svg", text: bi("Esquemático da versão 1000x", "1000x 版原理图", "Schematic of the 1000x version") },
+    { file: "eletronica/v2-1000x/esquematico.svg", text: bi("Esquemático da versão 1000x", "1000x 版原理图", "Schematic of the 1000x version") },
     { file: "CUSTOS-v2-1000x-1un.csv", text: bi("Custo da versão 1000x, 1 unidade (R$, Brasil)", "1000x 版成本，1 台（巴西雷亚尔）", "Cost of the 1000x version, 1 unit (R$, Brazil)") },
     { file: "mecanica/calibracao/", text: bi("Gabaritos G1 a G3 (imprimir primeiro)", "校准件 G1~G3（请先打印）", "Jigs G1 to G3 (print them first)") },
   ];
