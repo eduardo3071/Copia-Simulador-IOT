@@ -4,7 +4,7 @@
  */
 import { holderLayout } from "./holder.ts";
 import { bom } from "./suporte-catalog.ts";
-import { EN_NAMES, ZH_NAMES, type Bilingual, type ManualStep, type PlacedPart } from "./suporte-manual.ts";
+import { EN_NAMES, PHASES, ZH_NAMES, type Bilingual, type ManualStep, type PlacedPart } from "./suporte-manual.ts";
 import { componentes1000x, COVER_GLASS, derived1000x, ECONOMICA_1000X_PARAMS, layoutEconomica1000x } from "./suporte-1000x.ts";
 import { d2Placement, DR1_SIZE, frame1000, NETS_1000X, WIRES_1000X, wireCutList1000x } from "./suporte-1000x-eletrica.ts";
 
@@ -161,7 +161,8 @@ export function screwPositions1000x(): { id: string; x: number; y: number; z: nu
   return out;
 }
 
-export function steps1000x(): ManualStep[] {
+/** The previous order of the steps; only its Chinese texts are still used, until they are revised for the new order. */
+function previousOrder1000x(): ManualStep[] {
   const d = derived1000x();
   const list: Omit<ManualStep, "n">[] = [
     {
@@ -278,6 +279,158 @@ export function steps1000x(): ManualStep[] {
     },
   ];
   return list.map((s, i) => ({ n: i + 1, ...s }));
+}
+
+const WARN_HOT_1000X = bi("Ferro de soldar a 300 °C: apoie-o no suporte e não toque na ponta. Solde em local ventilado.", "烙铁温度约 300 °C：使用后放回烙铁架，勿触碰烙铁头。请在通风处焊接。", "Soldering iron at 300 °C: rest it in its stand and never touch the tip. Solder in a ventilated place.");
+const WARN_GLUE_1000X = bi("A cola quente queima: use a ponta do bastão e deixe esfriar 1 minuto.", "热熔胶会烫伤：用胶枪头操作，冷却 1 分钟后再碰。", "Hot glue burns: use the tip of the gun and let it cool for 1 minute.");
+
+interface Draft1000 {
+  old: string;
+  phase: Bilingual;
+  title: [string, string];
+  text: [string, string];
+  check?: [string, string];
+  warn?: Bilingual;
+  adds: string[];
+  also?: string[];
+  lidDrop: number;
+  view: ManualStep["view"];
+  lightOn?: boolean;
+  minutes: number;
+}
+
+/** The steps of the 1000x manual, in the order of the bench: board, lighting, box, wiring and test, then the pregoscope with the oil objective. */
+export function steps1000x(): ManualStep[] {
+  const d = derived1000x();
+  const drafts: Draft1000[] = [
+    {
+      old: "Fixar a placa PCB1", phase: PHASES.eletrica,
+      title: ["Colar o driver DR1 na placa ilhada (PCB1, DR1)", "Glue the driver DR1 on the perforated board (PCB1, DR1)"],
+      text: [
+        "• Pegue a placa ilhada PCB1 (40 × 25 mm, cortada de uma placa de 5 × 7 cm) e o módulo driver de corrente constante DR1 (350 mA).\n• Leia a serigrafia do módulo e ache o lado das entradas (IN+, IN−) e o das saídas (LED+, LED−).\n• Cole o driver no centro da placa com cola quente (W3) ou fita dupla face, com as entradas (IN+, IN−) para a esquerda e as saídas (LED+, LED−) para a direita.\n• Não solde nada na placa: ela só serve de apoio, e os fios vão direto aos terminais do driver.",
+        "• Take the perforated board PCB1 (40 × 25 mm, cut from a 5 × 7 cm board) and the constant-current driver module DR1 (350 mA).\n• Read the silkscreen of the module and find the side of the inputs (IN+, IN−) and the side of the outputs (LED+, LED−).\n• Glue the driver at the centre of the board with hot glue (W3) or double-sided tape, with the inputs (IN+, IN−) to the left and the outputs (LED+, LED−) to the right.\n• Do not solder anything to the board: it is only a base, and the wires go straight to the terminals of the driver.",
+      ],
+      check: ["Entradas à esquerda, saídas à direita, driver firme na placa.", "Inputs to the left, outputs to the right, driver firm on the board."],
+      adds: ["PCB1", "DR1"], lidDrop: 0, view: "lid", lightOn: false, minutes: 10,
+    },
+    {
+      old: "Fixar a placa PCB1", phase: PHASES.eletrica,
+      title: ["Fixar a placa na tampa (M3, H3)", "Fix the board to the lid (M3, H3)"],
+      text: [
+        "• Pegue a tampa de fundo M3, com a face dos 4 suportes de 6 mm para cima.\n• Apoie a placa PCB1 com o driver nos 4 suportes, atrás do círculo central da tampa, onde o tubo de luz vai ficar, e confira que os 4 furos da placa caem sobre os dos suportes.\n• Parafuse com 4 parafusos M3 × 8 (H3), em cruz, um pouco de cada vez, até encostar: o PLA racha se for forçado.\n• Confira que o driver não encosta no círculo do tubo de luz.",
+        "• Take the bottom lid M3, with the side of the 4 standoffs of 6 mm facing up.\n• Rest the board PCB1 with the driver on the 4 standoffs, behind the central circle of the lid, where the light tube will stand, and check that the 4 holes of the board fall over those of the standoffs.\n• Screw it down with 4 screws M3 × 8 (H3), in a cross pattern, a little at a time, until they seat: PLA cracks if forced.\n• Check that the driver does not touch the circle of the light tube.",
+      ],
+      check: ["O driver não encosta no tubo de luz.", "The driver does not touch the light tube."],
+      warn: bi("Não aperte demais: o PLA racha. Pare quando o parafuso encostar.", "不要拧得过紧：PLA 会开裂。螺钉贴合即停。", "Do not overtighten: PLA cracks. Stop when the screw seats."),
+      adds: ["M3", "H3"], also: ["PCB1", "DR1"], lidDrop: 0, view: "lid", lightOn: false, minutes: 10,
+    },
+    {
+      old: "Pôr o LED", phase: PHASES.luz,
+      title: ["Pôr o LED no dissipador e o tubo de luz na tampa (HS1, D1, M5, TP1)", "Put the LED on the heatsink and the light tube on the lid (HS1, D1, M5, TP1)"],
+      text: [
+        "• Cole o dissipador (HS1) com cola quente (W3) no centro da tampa M3.\n• Passe uma camada fina de pasta térmica (TP1) na parte de baixo da estrela do LED (D1) e assente-a no centro do dissipador, com os dois pads (+ vermelho, − azul) virados para a frente.\n• Ponha o tubo de luz (M5) em volta, com a fenda do pé voltada para o lado da coluna (+y), e cole a base com cola quente.\n• Os 12 furos de ventilação da tampa ficam em volta do dissipador: não os tampe com cola.",
+        "• Glue the heatsink (HS1) with hot glue (W3) to the centre of the lid M3.\n• Spread a thin layer of thermal paste (TP1) on the underside of the LED star (D1) and set it on the centre of the heatsink, with the two pads (+ red, − blue) facing the front.\n• Put the light tube (M5) around it, with the foot slot toward the column (+y), and hot-glue its base.\n• The 12 air holes of the lid lie around the heatsink: do not block them with glue.",
+      ],
+      check: ["Dissipador no centro; fenda do tubo para a coluna; furos de ventilação livres.", "Heatsink at the centre; tube slot toward the column; air holes free."],
+      warn: bi("Não ligue o LED sem o dissipador.", "未装散热片不要点亮 LED。", "Do not power the LED without the heatsink."),
+      adds: ["HS1", "D1", "M5"], also: ["M3"], lidDrop: 0, view: "lid", lightOn: false, minutes: 15,
+    },
+    {
+      old: "Instalar o conector", phase: PHASES.suporte,
+      title: ["Instalar a chave SW1, o conector J1 e o diodo D2 na caixa (M1, SW1, J1, D2)", "Install the switch SW1, the jack J1 and the diode D2 in the box (M1, SW1, J1, D2)"],
+      text: [
+        "• Limpe os furos da caixa M1 com uma broca de 3 mm, tire os suportes de impressão e vire a caixa de cabeça para baixo na bancada.\n• Encaixe a chave SW1 no recorte da parede frontal, de fora para dentro, até as travas estalarem.\n• Encaixe o conector J1 no furo da parede direita (atrás do tubo de luz, em y = 32 mm), com os terminais para dentro, e aperte a porca por fora.\n• Solde o ânodo do diodo D2 (lado sem faixa) ao terminal + do J1. O corpo do D2 fica no ar, ao longo de y, com a faixa para o lado livre.\n• Confira que a faixa do D2 está no cátodo, no lado livre.",
+        "• Clean the holes of the box M1 with a 3 mm drill bit, remove the print supports and turn the box upside down on the bench.\n• Snap the switch SW1 into the cut-out of the front wall, from outside to inside, until the tabs click.\n• Fit the jack J1 in the hole of the right wall (behind the light tube, at y = 32 mm), with the terminals inside, and tighten the nut outside.\n• Solder the anode of the diode D2 (the end without the band) to the + lug of J1. D2 stands in the air along y, with the band toward the free end.\n• Check that the band of D2 is on the cathode, at the free end.",
+      ],
+      check: ["A faixa do D2 está no cátodo (lado livre).", "The band of D2 is on the cathode (free end)."],
+      warn: bi("Diodo ao contrário bloqueia a corrente: a faixa fica no lado que vai para a chave.", "二极管接反会阻断电流：色环端接向开关。", "A reversed diode blocks the current: the band goes on the side toward the switch."),
+      adds: ["M1", "SW1", "J1", "D2"], lidDrop: 60, view: "iso", lightOn: false, minutes: 20,
+    },
+    {
+      old: "Colar o difusor", phase: PHASES.suporte,
+      title: ["Colar o difusor (M4, W3)", "Glue the diffuser (M4, W3)"],
+      text: [
+        "• Com a caixa ainda de cabeça para baixo, ponha o difusor (M4) no encaixe do teto, por dentro, sobre a janela do LED.\n• Faça um cordão de cola quente (W3) na borda do disco. A cola não pode cobrir a janela.\n• Deixe esfriar 1 minuto e confira que o disco não balança.",
+        "• With the box still upside down, set the diffuser (M4) in the seat of the ceiling, from inside, over the window of the LED.\n• Run a bead of hot glue (W3) around the edge of the disc. The glue must not cover the window.\n• Let it cool for 1 minute and check that the disc does not rock.",
+      ],
+      check: ["O difusor não balança e a janela está livre.", "The diffuser does not rock and the window is free."],
+      warn: WARN_GLUE_1000X, adds: ["M4", "W3"], lidDrop: 60, view: "iso", lightOn: false, minutes: 10,
+    },
+    {
+      old: "Cortar e soldar", phase: PHASES.ligacao,
+      title: ["Cortar e soldar os cinco fios F1 a F5 (W1, W2)", "Cut and solder the five wires F1 to F5 (W1, W2)"],
+      text: [
+        "• Corte os cinco fios pelas medidas da lista de corte e descasque 6 mm de cada ponta.\n• F4 (amarelo) e F5 (azul): passe pela fenda do pé do tubo de luz e solde nos pads + e − da estrela do LED; as outras pontas vão às saídas LED+ e LED− do driver.\n• F1 (vermelho): cátodo do D2 ao terminal 1 da chave SW1.\n• F2 (laranja): terminal 2 da chave à entrada IN+ do driver.\n• F3 (preto): terminal − do J1 à entrada IN− do driver.\n• Proteja as emendas com termorretrátil (W2) e deixe folga nos fios F1 a F3 para a tampa abrir.\n• Confira que nenhum fio toca o dissipador.",
+        "• Cut the five wires to the lengths of the cut list and strip 6 mm from each end.\n• F4 (yellow) and F5 (blue): run them through the foot slot of the light tube and solder them to the pads + and − of the LED star; the other ends go to the outputs LED+ and LED− of the driver.\n• F1 (red): cathode of D2 to terminal 1 of the switch SW1.\n• F2 (orange): terminal 2 of the switch to the input IN+ of the driver.\n• F3 (black): terminal − of J1 to the input IN− of the driver.\n• Protect the joints with heat-shrink (W2) and leave slack in wires F1 to F3 so the lid can open.\n• Check that no wire touches the heatsink.",
+      ],
+      check: ["Cada fio na cor e no pad da lista; nenhum fio toca o dissipador.", "Each wire in the colour and on the pad of the list; no wire touches the heatsink."],
+      warn: WARN_HOT_1000X, adds: ["W1", "W2"], lidDrop: 60, view: "lid", lightOn: false, minutes: 30,
+    },
+    {
+      old: "Teste elétrico", phase: PHASES.ligacao,
+      title: ["Teste elétrico na bancada, com a tampa aberta", "Electrical test on the bench, with the lid open"],
+      text: [
+        "• Ligue a fonte de 12 V ao conector J1 e ligue a chave SW1.\n• Siga o plano de teste da seção 6, ponto por ponto: tensão da fonte, depois do D2, entrada do driver, tensão sobre o LED e corrente do LED na entrada de 10 A.\n• Deixe o LED aceso por 30 minutos e meça a temperatura do dissipador.\n• Se uma leitura sair da faixa, desligue, pare e corrija antes de continuar.",
+        "• Plug the 12 V adapter into the jack J1 and switch SW1 on.\n• Follow the test plan of section 6, point by point: supply voltage, after D2, driver input, voltage across the LED and LED current on the 10 A input.\n• Leave the LED on for 30 minutes and measure the temperature of the heatsink.\n• If a reading is out of range, switch off, stop and fix it before going on.",
+      ],
+      check: ["350 mA no LED e dissipador até 50 °C", "350 mA in the LED and heatsink up to 50 °C"],
+      adds: [], also: ["D1"], lidDrop: 60, view: "lid", lightOn: true, minutes: 40,
+    },
+    {
+      old: "Fechar", phase: PHASES.ligacao,
+      title: ["Fechar a tampa (H1)", "Close the lid (H1)"],
+      text: [
+        "• Confira que nenhum fio está sobre a borda da caixa nem nos furos dos parafusos, e que os fios F1 a F3 têm folga.\n• Suba a tampa até a caixa sem prender nenhum fio.\n• Aperte os 4 parafusos M3 × 10 (H1) nos cantos, em cruz, um pouco de cada vez, sem forçar o plástico.",
+        "• Check that no wire lies over the rim of the box or in the screw holes, and that wires F1 to F3 have slack.\n• Raise the lid to the box without trapping any wire.\n• Tighten the 4 screws M3 × 10 (H1) at the corners, in a cross pattern, a little at a time, without forcing the plastic.",
+      ],
+      adds: ["H1"], lidDrop: 40, view: "lid", lightOn: true, minutes: 10,
+    },
+    {
+      old: "Colocar a roda", phase: PHASES.ligacao,
+      title: ["Colocar a roda de aberturas (AP1)", "Fit the aperture wheel (AP1)"],
+      text: [
+        "• Com a tampa fechada, entre com a roda (AP1) de lado pela fenda da parede direita, com a borda na frente, até o furo central cair no pino do tubo de luz (M5).\n• Gire a roda com o dedo: cada um dos cinco furos (24, 10, 2, 5 e 16 mm) deve parar no eixo da janela.\n• A borda da roda deve sair cerca de 13 mm para fora da caixa, e a roda não pode raspar na parede nem na tampa.",
+        "• With the lid closed, slide the wheel (AP1) in sideways through the slot of the right wall, edge first, until the central hole drops onto the pin of the light tube (M5).\n• Turn the wheel with a finger: each of the five holes (24, 10, 2, 5 and 16 mm) must stop on the axis of the window.\n• The edge of the wheel must stick out about 13 mm from the box, and the wheel must not rub on the wall or on the lid.",
+      ],
+      check: ["A roda gira sem raspar e nenhum furo fica pela metade na janela.", "The wheel turns without rubbing and no hole sits half on the window."],
+      adds: ["AP1"], lidDrop: 0, view: "iso", lightOn: true, minutes: 5,
+    },
+    {
+      old: "Encaixar o pregoscópio", phase: PHASES.pregoscopio,
+      title: ["Encaixar o pregoscópio com a objetiva 100x (M2, H2, P1 a P10, PS1)", "Fit the pregoscope with the 100x objective (M2, H2, P1 to P10, PS1)"],
+      text: [
+        "• Rosqueie a objetiva 100x (P9) na ponta do tubo interno.\n• Ponha o tubo externo (P2) no anel da coluna e feche a abraçadeira (M2) com 2 parafusos M3 × 16 (H2), sem apertar demais.\n• O ocular WF10X (fornecido pelo cliente) vai na borda do tubo externo.\n• Ligue a fonte de 12 V (PS1) no conector J1.",
+        "• Screw the 100x objective (P9) on the tip of the inner tube.\n• Put the outer tube (P2) in the ring of the column and close the clamp (M2) with 2 screws M3 × 16 (H2), without overtightening.\n• The WF10X eyepiece (supplied by the customer) goes on the rim of the outer tube.\n• Plug the 12 V adapter (PS1) into the jack J1.",
+      ],
+      check: [`tubo de ${f(d.tubeLength, 0)} mm do ombro da objetiva à borda`, `${f(d.tubeLength, 0)} mm from the objective shoulder to the rim`],
+      adds: ["M2", "H2", "P1", "P2", "P3", "P4", "P5", "P6", "P10", "P9", "PS1"], lidDrop: 0, view: "iso", lightOn: true, minutes: 15,
+    },
+    {
+      old: "Pôr a lâmina", phase: PHASES.pregoscopio,
+      title: ["Pôr a lâmina, a lamínula e o óleo e focar (L1, CV1, OIL)", "Put the slide, the cover glass and the oil, and focus (L1, CV1, OIL)"],
+      text: [
+        "• Cubra a amostra da lâmina (L1) com a lamínula de 0,17 mm (CV1) e deslize a lâmina no canal.\n• Ponha uma gota de óleo (OIL) de cerca de 5 mm sobre a lamínula.\n• Com a roda em 24 mm, estenda o tubo interno até 37 mm na escala e desça devagar até o óleo tocar a objetiva.\n• Foque girando o tubo, sem forçar a ponta com mola.\n• Depois reduza a abertura da roda para ajustar o brilho e o contraste.",
+        "• Cover the sample of the slide (L1) with the 0.17 mm cover glass (CV1) and slide the slide into the channel.\n• Put a drop of oil (OIL) of about 5 mm on the cover glass.\n• With the wheel at 24 mm, pull the inner tube out to 37 mm on the scale and go down slowly until the oil touches the objective.\n• Focus by turning the tube, without forcing the spring tip.\n• Then reduce the opening of the wheel to adjust brightness and contrast.",
+      ],
+      check: ["imagem nítida a 1000x e nenhum óleo na caixa", "sharp image at 1000x and no oil in the box"],
+      warn: bi("Limpe a objetiva e a lamínula com papel de lente e álcool isopropílico depois de cada uso.", "每次使用后用擦镜纸和异丙醇清洁物镜和盖玻片。", "Clean the objective and the cover glass with lens paper and isopropyl alcohol after each use."),
+      adds: ["L1", "CV1", "OIL"], lidDrop: 0, view: "iso", lightOn: true, minutes: 15,
+    },
+  ];
+  return drafts.map((x, i) => {
+    const o = previousOrder1000x().find((s) => s.title.pt.startsWith(x.old));
+    if (!o) throw new Error(`passo da edição anterior sem tradução: ${x.old}`);
+    return {
+      n: i + 1,
+      phase: x.phase,
+      title: bi(x.title[0], o.title.zh, x.title[1]),
+      text: bi(x.text[0], o.text.zh, x.text[1]),
+      adds: x.adds, also: x.also, lidDrop: x.lidDrop, view: x.view, lightOn: x.lightOn,
+      check: x.check ? bi(x.check[0], o.check?.zh ?? o.title.zh, x.check[1]) : undefined,
+      warn: x.warn,
+      minutes: x.minutes,
+    } satisfies ManualStep;
+  });
 }
 
 export function partsUpToStep1000x(n: number): Set<string> {

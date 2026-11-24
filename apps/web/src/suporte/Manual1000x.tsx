@@ -279,6 +279,7 @@ function Doc() {
       <div className="steps">
         {steps.map((s) => (
           <section className="sheet step" key={s.n}>
+            {s.phase && <p className="step-phase"><Bi t={s.phase} /></p>}
             <h3><span className="step-n">{s.n}</span> <Bi t={s.title} /> <span className="step-min">{s.minutes} min</span></h3>
             <figure className="step-fig">
               <img src={stepImage1000x(s.n)} alt="" loading="lazy" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />

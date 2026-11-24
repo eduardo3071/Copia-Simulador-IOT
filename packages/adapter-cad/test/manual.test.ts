@@ -19,7 +19,8 @@ describe("manual de montagem", () => {
     });
 
     it(`${v}: a part is not introduced twice and nothing is added that the version does not use`, () => {
-      const used = new Set(bom(v).map((l) => l.part.id));
+      // "WP" is not a part: it marks the step where the panel wires appear in the pictures
+      const used = new Set([...bom(v).map((l) => l.part.id), "WP"]);
       const seen = new Set<string>();
       for (const s of manualSteps(v)) {
         for (const id of s.adds) {

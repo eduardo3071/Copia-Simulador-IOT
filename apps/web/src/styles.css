@@ -365,6 +365,8 @@ a.button.primary { background: #2b6fe0; border-color: #2b6fe0; color: #fff; }
 .manual-doc .status-box { margin: 12px 0; padding: 10px 14px; background: #fff6e0; border-left: 4px solid #ff8a00; }
 .manual-doc .status-box ul { margin: 6px 0 0; padding-left: 18px; }
 .manual-doc .warn-note { margin: 8px 0; padding: 6px 10px; background: #fdecea; border-left: 3px solid #d9362b; }
+.manual-doc .step p, .step-viewer .step-text p { white-space: pre-line; }
+.manual-doc .step-phase { margin: 0 0 2px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #b35c00; }
 .manual-doc .step-min { float: right; font-size: 12px; font-weight: 400; color: #4b5666; }
 .manual-doc .schematic-fig { margin: 0 0 10px; }
 .manual-doc .schematic-fig img { width: 100%; display: block; border: 1px solid #c4ccd8; }

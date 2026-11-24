@@ -506,7 +506,7 @@ function AssemblyClassic({ options, registry }: { options: SceneOptions; registr
         )}
         {/* wires, routed around the parts; the LED pair carries heat-shrink where it leaves the post */}
         {routes.map((w, i) => (
-          <PartGroup key={w.id} {...base} id="W1" layer="fios" needs={w.spec.part === "D1" ? "D1" : "PCB1"} label={w.path[Math.min(3, w.path.length - 1)]!}>
+          <PartGroup key={w.id} {...base} id="W1" layer="fios" needs={w.spec.part === "D1" ? "D1" : w.spec.part === "BT1" ? "BT1" : "WP"} label={w.path[Math.min(3, w.path.length - 1)]!}>
             <Tube points={w.spec.part === "D1" || w.spec.part === "BT1" ? (w.path as V3[]) : dropped(w.path, -lidZ)} r={0.62} color={w.spec.color} round={3.2} />
             <Solder pos={w.spec.part === "D1" || w.spec.part === "BT1" ? [w.from[0], w.from[1], w.from[2]] : [w.from[0], w.from[1], w.from[2] - lidZ]} />
           </PartGroup>

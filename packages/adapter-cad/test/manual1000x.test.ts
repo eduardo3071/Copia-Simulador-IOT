@@ -8,8 +8,8 @@ describe("manual da versão 1000x", () => {
   const steps = steps1000x();
   const lines = bom1000x();
 
-  it("tem 10 passos numerados em ordem e cada um com título, texto e três idiomas", () => {
-    expect(steps.map((s) => s.n)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  it("tem 11 passos numerados em ordem e cada um com título, texto e três idiomas", () => {
+    expect(steps.map((s) => s.n)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
     for (const s of steps) {
       for (const t of [s.title, s.text]) {
         expect(t.pt.length, `passo ${s.n}`).toBeGreaterThan(10);
@@ -29,13 +29,18 @@ describe("manual da versão 1000x", () => {
     for (const id of seen) expect(lines.some((l) => l.id === id), `${id} fora da lista`).toBe(true);
   });
 
-  it("a ordem é montável: a tampa antes de fechar, a roda depois de fechar, o teste antes do difusor", () => {
+  it("a ordem é montável: placa e tampa antes da caixa, o difusor e os fios antes do teste, a roda depois de fechar", () => {
     const first = (id: string) => steps.findIndex((s) => s.adds.includes(id)) + 1;
     expect(first("M3")).toBeLessThan(first("H1"));
     expect(first("H1")).toBeLessThan(first("AP1"));
     expect(first("D2")).toBeLessThan(first("W1"));
     expect(first("W1")).toBeLessThan(steps.findIndex((s) => s.title.pt.startsWith("Teste elétrico")) + 1);
-    expect(steps.findIndex((s) => s.title.pt.startsWith("Teste elétrico")) + 1).toBeLessThan(first("M4"));
+    expect(first("M4")).toBeLessThan(steps.findIndex((s) => s.title.pt.startsWith("Teste elétrico")) + 1);
+    // the order of the bench: board, lighting, box, wiring and test, pregoscope
+    expect(first("PCB1")).toBeLessThan(first("D1"));
+    expect(first("D1")).toBeLessThan(first("M1"));
+    expect(first("M1")).toBeLessThan(first("W1"));
+    expect(first("W1")).toBeLessThan(first("P9"));
     expect(first("P9")).toBeLessThan(first("OIL"));
   });
 

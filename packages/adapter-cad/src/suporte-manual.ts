@@ -26,6 +26,8 @@ export interface ManualStep {
   /** Extra gap (mm) pulling the lid and what rides on it away from the box. */
   lidDrop: number;
   view: "iso" | "lid" | "front";
+  /** The phase of the build this step belongs to (electrical, lighting, box, wiring and test, pregoscope). */
+  phase?: Bilingual;
   lightOn?: boolean;
   check?: Bilingual;
   minutes?: number;
@@ -167,8 +169,8 @@ export function screwPositions(version: SuporteVersion): { id: string; x: number
   return out;
 }
 
-/** The assembly sequence of a version, in the order a person builds it. */
-export function manualSteps(version: SuporteVersion): ManualStep[] {
+/** The previous order of the steps (box first, then the lid). Only its Chinese texts are still used, until they are revised for the new order. */
+function previousOrder(version: SuporteVersion): ManualStep[] {
   const v1 = version === "v1";
   const steps: Omit<ManualStep, "n">[] = [
     {
@@ -354,6 +356,249 @@ function extras(title: string): { minutes: number; warn?: Bilingual } {
   if (title.startsWith("Fechar")) return { minutes: 10, warn: WARN_PLASTIC };
   if (title.startsWith("Encaixar")) return { minutes: 15, warn: WARN_PLASTIC };
   return { minutes: 10 };
+}
+
+/** The five phases of the build, in the order of the bench: electronics first, then the box, then the pregoscope. */
+export const PHASES = {
+  eletrica: bi("Fase 1 de 5 · Parte elétrica e placa", "第 1 阶段 / 共 5 · 电气部分与电路板", "Phase 1 of 5 · Electrical part and board"),
+  luz: bi("Fase 2 de 5 · Componentes de iluminação", "第 2 阶段 / 共 5 · 照明部件", "Phase 2 of 5 · Lighting components"),
+  suporte: bi("Fase 3 de 5 · Suporte (a caixa)", "第 3 阶段 / 共 5 · 支架（灯箱）", "Phase 3 of 5 · Support (the box)"),
+  ligacao: bi("Fase 4 de 5 · Ligação, teste e fechamento", "第 4 阶段 / 共 5 · 接线、测试与合盖", "Phase 4 of 5 · Wiring, test and closing"),
+  pregoscopio: bi("Fase 5 de 5 · Posicionar o pregoscópio", "第 5 阶段 / 共 5 · 装入显微镜", "Phase 5 of 5 · Place the pregoscope"),
+};
+
+const WARN_GLUE = bi("A cola quente queima: use a ponta do bastão e deixe esfriar 1 minuto.", "热熔胶会烫伤：用胶枪头操作，冷却 1 分钟后再碰。", "Hot glue burns: use the tip of the gun and let it cool for 1 minute.");
+
+/**
+ * The Chinese of the previous edition of a step, found by the start of its old Portuguese title. The order and the detail of the steps
+ * changed after the Chinese was written, so it still has to be revised (the Portuguese and English are the current ones).
+ */
+function previousZh(version: SuporteVersion, prefix: string): ManualStep {
+  const s = previousOrder(version).find((x) => x.title.pt.startsWith(prefix));
+  if (!s) throw new Error(`passo da edição anterior sem tradução: ${prefix}`);
+  return s;
+}
+
+interface Draft {
+  old: string;
+  phase: Bilingual;
+  title: [string, string];
+  text: [string, string];
+  check?: [string, string];
+  warn?: Bilingual;
+  adds: string[];
+  also?: string[];
+  lidDrop: number;
+  view: ManualStep["view"];
+  lightOn?: boolean;
+  minutes: number;
+}
+
+/** The assembly sequence of a version, in the order a person builds it: electronics, lighting, box, wiring and test, pregoscope. */
+export function manualSteps(version: SuporteVersion): ManualStep[] {
+  const v1 = version === "v1";
+  const W = v1 ? 40 : 70;
+  const d2pt = v1 ? "" : ", o diodo D2 (1N5819, com a faixa para o lado do pad pin2)";
+  const d2en = v1 ? "" : ", the diode D2 (1N5819, with the band toward the pad pin2)";
+  const drafts: Draft[] = [
+    {
+      old: "Tampa: placa", phase: PHASES.eletrica,
+      title: [`Soldar a placa do driver (PCB1, U1, R1, C1${v1 ? "" : ", D2"})`, `Solder the driver board (PCB1, U1, R1, C1${v1 ? "" : ", D2"})`],
+      text: [
+        `Ferramentas: ferro de solda de 30 a 60 W a cerca de 300 °C, solda de 0,8 mm, alicate de corte e multímetro.\n• Apoie a placa PCB1 (${W} × 25 mm) na bancada, com a serigrafia para cima e as trilhas para baixo.\n• Solde dos componentes mais baixos para os mais altos: primeiro o resistor R1 (68 Ω: azul, cinza, preto, dourado, marrom)${d2pt}, depois o capacitor C1 (100 nF, marcado 104, sem polaridade) e por último o regulador U1 (LM317T).\n• Encaixe cada componente nos furos desenhados na serigrafia, vire a placa, aqueça o pad e a perna juntos por 2 a 3 segundos, aplique a solda e corte a sobra da perna rente à solda.\n• O U1 fica com o rótulo para a frente, na ordem ADJ, OUT, IN da esquerda para a direita, e a aleta metálica virada para trás.\n• Cada solda deve ficar brilhante e em forma de cone, sem encostar na trilha vizinha.\n• Antes de ligar qualquer coisa, ponha o multímetro em continuidade e confirme que não há curto entre IN e GND, nem entre OUT e GND.`,
+        `Tools: soldering iron of 30 to 60 W at about 300 °C, 0.8 mm solder, side cutters and multimeter.\n• Rest the board PCB1 (${W} × 25 mm) on the bench, silkscreen up and traces down.\n• Solder from the lowest parts to the tallest: first the resistor R1 (68 Ω: blue, grey, black, gold, brown)${d2en}, then the capacitor C1 (100 nF, marked 104, no polarity) and last the regulator U1 (LM317T).\n• Push each part into the holes drawn on the silkscreen, turn the board over, heat the pad and the leg together for 2 to 3 seconds, feed the solder and cut the leftover leg flush with the solder.\n• U1 faces forward with its label, in the order ADJ, OUT, IN from left to right, and the metal tab facing back.\n• Every joint must be shiny and cone-shaped, without touching the next trace.\n• Before powering anything, set the multimeter to continuity and confirm that there is no short between IN and GND, nor between OUT and GND.`,
+      ],
+      check: ["Aleta do U1 para trás; soldas brilhantes; nenhum curto entre IN, OUT e GND.", "Tab of U1 facing back; shiny joints; no short between IN, OUT and GND."],
+      warn: WARN_HOT, adds: ["PCB1", "U1", "R1", "C1", ...(v1 ? [] : ["D2"])], lidDrop: 0, view: "lid", lightOn: false, minutes: 40,
+    },
+    {
+      old: "Tampa: placa", phase: PHASES.eletrica,
+      title: ["Fixar a placa na tampa (M3, H3)", "Fix the board to the lid (M3, H3)"],
+      text: [
+        "• Pegue a tampa de fundo M3, com a face dos 4 suportes de 6 mm e do porta-LED para cima.\n• Apoie a placa PCB1 nos 4 suportes, com a seta FRENTE / FRONT da serigrafia voltada para o lado que será a frente da caixa (o lado do interruptor), e confira que os 4 furos da placa caem sobre os 4 furos dos suportes.\n• Parafuse com 4 parafusos M3 × 8 (H3). Aperte em cruz, um pouco de cada vez, até encostar: o PLA racha se for forçado.\n• Sacuda de leve: a placa não pode se mexer nem encostar na tampa.",
+        "• Take the bottom lid M3, with the side of the 4 standoffs of 6 mm and of the LED post facing up.\n• Rest the board PCB1 on the 4 standoffs, with the arrow FRENTE / FRONT of the silkscreen facing the side that will be the front of the box (the switch side), and check that the 4 holes of the board fall over the 4 holes of the standoffs.\n• Screw it down with 4 screws M3 × 8 (H3). Tighten in a cross pattern, a little at a time, until they seat: PLA cracks if forced.\n• Shake it gently: the board must not move or touch the lid.",
+      ],
+      check: ["Os 4 parafusos encostados e a placa firme, com a seta para o lado do interruptor.", "The 4 screws seated and the board firm, with the arrow toward the switch side."],
+      warn: WARN_PLASTIC, adds: ["M3", "H3"], also: ["PCB1"], lidDrop: 0, view: "lid", lightOn: false, minutes: 10,
+    },
+  ];
+  if (v1) {
+    drafts.push({
+      old: "Tampa: pilha", phase: PHASES.eletrica,
+      title: ["Pilha de 9 V no berço (BT1)", "9 V battery in the cradle (BT1)"],
+      text: [
+        "• Encaixe a pilha de 9 V (6F22) no berço da tampa, com os terminais voltados para o lado esquerdo.\n• Com o clipe ainda solto da pilha, solde o fio vermelho do clipe no pad BT1 POS e o fio preto no pad BT1 NEG.\n• Só depois encaixe o clipe nos terminais da pilha. Se o clipe for encaixado antes, a placa já fica energizada enquanto você solda.\n• Confira a polaridade: o fio vermelho (positivo) vai ao pad BT1 POS.",
+        "• Seat the 9 V battery (6F22) in the cradle of the lid, with the terminals toward the left side.\n• With the clip still off the battery, solder the red wire of the clip to the pad BT1 POS and the black wire to the pad BT1 NEG.\n• Only then snap the clip onto the battery terminals. If the clip is snapped on first, the board is already live while you solder.\n• Check the polarity: the red wire (positive) goes to the pad BT1 POS.",
+      ],
+      check: ["Vermelho no pad BT1 POS e preto no BT1 NEG; clipe encaixado por último.", "Red on the pad BT1 POS and black on BT1 NEG; clip snapped on last."],
+      warn: WARN_POLARITY, adds: ["BT1", "W1"], lidDrop: 0, view: "lid", lightOn: false, minutes: 10,
+    });
+  }
+  drafts.push(
+    {
+      old: "Tampa: montar o LED", phase: PHASES.luz,
+      title: ["Montar o LED na tampa (D1)", "Mount the LED on the lid (D1)"],
+      text: [
+        "• Separe dois fios flexíveis de 24 AWG (W1), um laranja e um preto, com os comprimentos da lista de corte, e descasque 6 mm de cada ponta.\n• Enfie um pedaço de 10 mm de termorretrátil (W2) em cada fio e deixe a luva recuada, longe do calor.\n• Solde o fio laranja na perna longa do LED (ânodo, +) e o fio preto na perna curta (cátodo, −), por menos de 3 segundos em cada perna para não queimar o LED.\n• Corra uma luva sobre cada emenda e encolha com um soprador de ar quente, sem derreter a isolação do fio.\n• Encaixe o LED na sede do porta-LED da tampa M3, com o flange apoiado na sede.\n• Passe os fios pelo furo do porta-LED: eles saem pela fenda lateral, voltada para a placa. A tampa não tem furo para fora.",
+        "• Take two flexible wires of 24 AWG (W1), one orange and one black, in the lengths of the cut list, and strip 6 mm from each end.\n• Slip a 10 mm piece of heat-shrink (W2) over each wire and leave the sleeve pulled back, away from the heat.\n• Solder the orange wire to the long leg of the LED (anode, +) and the black wire to the short leg (cathode, −), for less than 3 seconds on each leg so the LED does not burn out.\n• Slide a sleeve over each joint and shrink it with a hot-air blower, without melting the insulation of the wire.\n• Seat the LED in the seat of the LED post of the lid M3, with the flange resting on the seat.\n• Run the wires through the hole of the LED post: they leave through the side slot, which faces the board. The lid has no hole through to the outside.",
+      ],
+      check: ["Perna longa = ânodo (+). A tampa não tem furo para fora.", "Long leg = anode (+). The lid has no hole through to the outside."],
+      warn: bi(`Solde por menos de 3 segundos por perna para não queimar o LED. ${WARN_HOT.pt}`, `每个引脚焊接不超过 3 秒，避免烧坏 LED。${WARN_HOT.zh}`, `Solder each leg for less than 3 seconds so the LED does not burn out. ${WARN_HOT.en}`),
+      adds: v1 ? ["D1", "W2"] : ["D1", "W1", "W2"], also: ["M3"], lidDrop: 0, view: "lid", lightOn: false, minutes: 20,
+    },
+    {
+      old: "Tampa: placa", phase: PHASES.luz,
+      title: ["Ligar o LED à placa (D1, PCB1)", "Connect the LED to the board (D1, PCB1)"],
+      text: [
+        "• Leve os dois fios do LED pela fenda lateral até a placa e corte o excesso, deixando uma pequena folga.\n• Solde o fio laranja no pad D1 ANODO e o fio preto no pad D1 CATODO.\n• Puxe de leve cada fio para provar a solda.\n• Confira que nenhum fio encosta na aleta do U1 nem passa por baixo da placa.\n• Prenda os fios soltos com um ponto de cola quente (W3).",
+        "• Lead the two wires of the LED through the side slot to the board and trim the excess, leaving a little slack.\n• Solder the orange wire to the pad D1 ANODO and the black wire to the pad D1 CATODO.\n• Pull each wire gently to test the joint.\n• Check that no wire touches the tab of U1 or runs under the board.\n• Tie down loose wires with a dab of hot glue (W3).",
+      ],
+      check: ["Laranja no pad D1 ANODO e preto no D1 CATODO; nenhum fio na aleta do U1.", "Orange on the pad D1 ANODO and black on D1 CATODO; no wire on the tab of U1."],
+      warn: WARN_HOT, adds: [], also: ["PCB1", "D1", "W1", "W2"], lidDrop: 0, view: "lid", lightOn: false, minutes: 10,
+    },
+    {
+      old: "Preparar", phase: PHASES.suporte,
+      title: ["Preparar a caixa (M1)", "Prepare the box (M1)"],
+      text: [
+        "• Retire os suportes de impressão com os dedos ou um alicate de corte, sem forçar as paredes.\n• Limpe todos os furos com uma broca de 3 mm, girada com os dedos (sem furadeira).\n• Passe lixa fina nas bordas do canal da lâmina e sacuda a caixa para confirmar que não ficou nenhum resto dentro.\n• A tampa montada nos passos anteriores fica de lado, ainda aberta.",
+        "• Remove the print supports with your fingers or side cutters, without forcing the walls.\n• Clean every hole with a 3 mm drill bit, turned by hand (no power drill).\n• Sand the edges of the slide channel lightly and shake the box to make sure no debris is left inside.\n• The lid assembled in the previous steps stays aside, still open.",
+      ],
+      check: ["O canal da lâmina deve estar liso e limpo.", "The slide channel must be smooth and clean."],
+      adds: ["M1"], lidDrop: 60, view: "iso", minutes: 20,
+    },
+    {
+      old: "Colar o difusor", phase: PHASES.suporte,
+      title: ["Colar o difusor (M4)", "Glue the diffuser (M4)"],
+      text: [
+        "• Com a caixa de cabeça para baixo, ponha o disco M4 (⌀ 26 × 0,8 mm) no encaixe do teto, por dentro, sobre a janela de ⌀ 24 mm.\n• Faça um cordão fino de cola quente (W3) na borda do disco, sem cobrir a janela.\n• Deixe esfriar 1 minuto e toque no disco: ele não pode balançar.",
+        "• With the box upside down, set the disc M4 (⌀ 26 × 0.8 mm) in the seat of the ceiling, from inside, over the ⌀ 24 mm window.\n• Run a thin bead of hot glue (W3) around the edge of the disc, without covering the window.\n• Let it cool for 1 minute and touch the disc: it must not rock.",
+      ],
+      check: ["O difusor não balança e a janela está livre.", "The diffuser does not rock and the window is free."],
+      warn: WARN_GLUE, adds: ["M4", "W3"], lidDrop: 60, view: "iso", minutes: 10,
+    },
+    {
+      old: "Provar", phase: PHASES.suporte,
+      title: ["Provar a lâmina (L1)", "Test-fit the slide (L1)"],
+      text: [
+        "• Com a caixa na posição normal, deslize a lâmina L1 (76 × 26 × 1 mm) pelo canal, de lado.\n• Ela deve entrar e sair sem esforço e sem folga lateral visível.\n• Se prender, não force: use o gabarito G2 para escolher o furo certo antes de imprimir de novo.",
+        "• With the box in its normal position, slide the slide L1 (76 × 26 × 1 mm) through the channel, from the side.\n• It must go in and out without effort and without visible side play.\n• If it sticks, do not force it: use jig G2 to pick the right size before printing again.",
+      ],
+      check: ["A lâmina entra pelo lado e fica a 40,4 mm acima do piso.", "The slide enters from the side and sits 40.4 mm above the floor."],
+      adds: ["L1"], lidDrop: 60, view: "iso", minutes: 5,
+    },
+    {
+      old: "Instalar o interruptor", phase: PHASES.suporte,
+      title: ["Instalar o interruptor (SW1)", "Install the switch (SW1)"],
+      text: [
+        "• Empurre o interruptor KCD1-101 de fora para dentro no recorte de 21,2 × 15,0 mm da parede frontal, até as duas travas estalarem.\n• Puxe de leve para confirmar que ele não sai.\n• Os dois terminais ficam dentro da caixa. Deixe-os livres: os fios serão soldados mais adiante.",
+        "• Push the KCD1-101 switch from outside into the 21.2 × 15.0 mm cut-out of the front wall until the two tabs click.\n• Pull gently to confirm that it does not come out.\n• The two terminals end up inside the box. Leave them free: the wires are soldered later.",
+      ],
+      adds: ["SW1"], lidDrop: 60, view: "iso", minutes: 5,
+    },
+  );
+  if (!v1) {
+    drafts.push(
+      {
+        old: "Instalar o conector", phase: PHASES.suporte,
+        title: ["Instalar o conector de força (J1)", "Install the power jack (J1)"],
+        text: [
+          "• Passe o conector DC-022B por dentro, no furo de ⌀ 7,8 mm da parede direita, com os terminais para dentro.\n• Aperte a porca por fora com os dedos, sem ferramenta.\n• Se o furo ficar folgado ou apertado, confira o gabarito G2.",
+          "• Pass the DC-022B jack from inside through the ⌀ 7.8 mm hole of the right wall, with the terminals inside.\n• Tighten the nut by hand outside, without a tool.\n• If the hole is loose or tight, check jig G2.",
+        ],
+        adds: ["J1"], lidDrop: 60, view: "iso", minutes: 5,
+      },
+      {
+        old: "Instalar o reostato", phase: PHASES.suporte,
+        title: ["Instalar o reostato (RV1)", "Install the rheostat (RV1)"],
+        text: [
+          "• Passe o eixo do reostato de 220 Ω pelo furo de ⌀ 7,5 mm da parede frontal, por dentro, com os três terminais voltados para a cavidade.\n• Aperte a porca por fora com os dedos e encaixe o botão no eixo de 6 mm.\n• Gire o botão em todo o curso: ele não pode raspar na parede.",
+          "• Pass the shaft of the 220 Ω rheostat through the ⌀ 7.5 mm hole of the front wall from inside, with the three terminals facing the cavity.\n• Tighten the nut by hand outside and fit the knob on the 6 mm shaft.\n• Turn the knob through its full travel: it must not rub on the wall.",
+        ],
+        adds: ["RV1"], lidDrop: 60, view: "iso", minutes: 5,
+      },
+    );
+  }
+  drafts.push(
+    v1
+      ? {
+          old: "Tampa: pilha", phase: PHASES.ligacao,
+          title: ["Ligar os fios do interruptor (SW1)", "Connect the wires of the switch (SW1)"],
+          text: [
+            "• Corte dois fios da lista de corte (um vermelho e um laranja) e descasque 6 mm de cada ponta.\n• Solde o fio vermelho no terminal 1 do interruptor SW1 e leve a outra ponta ao pad SW1 A; solde o fio laranja no terminal 2 e leve a outra ponta ao pad SW1 B.\n• Deixe folga nos dois fios para a tampa abrir e fechar sem esticar nenhum.\n• Isole as soldas dos terminais com termorretrátil (W2) e prenda os fios soltos com um ponto de cola quente.",
+            "• Cut two wires from the cut list (one red and one orange) and strip 6 mm from each end.\n• Solder the red wire to terminal 1 of the switch SW1 and take the other end to the pad SW1 A; solder the orange wire to terminal 2 and take the other end to the pad SW1 B.\n• Leave slack in both wires so the lid can open and close without stretching either one.\n• Insulate the joints of the terminals with heat-shrink (W2) and tie down loose wires with a dab of hot glue.",
+          ],
+          check: ["Vermelho no terminal 1 e no pad SW1 A; laranja no terminal 2 e no pad SW1 B.", "Red on terminal 1 and the pad SW1 A; orange on terminal 2 and the pad SW1 B."],
+          warn: WARN_HOT, adds: ["WP"], also: ["SW1"], lidDrop: 60, view: "lid", lightOn: false, minutes: 20,
+        }
+      : {
+          old: "Ligar os fios", phase: PHASES.ligacao,
+          title: ["Ligar os fios do painel (J1, SW1, RV1)", "Connect the panel wires (J1, SW1, RV1)"],
+          text: [
+            "• Corte os fios do painel nos comprimentos da lista de corte e descasque 6 mm de cada ponta.\n• Conector J1: solde um fio vermelho no terminal positivo (centro do plugue) e leve a outra ponta ao pad J1 VIN; solde um fio preto no outro terminal e leve a outra ponta ao pad J1 GND. Confirme a polaridade com o multímetro.\n• Interruptor SW1: fio vermelho no terminal 1 e no pad SW1 A; fio laranja no terminal 2 e no pad SW1 B.\n• Reostato RV1: fio amarelo no terminal 1 e no pad pin1, fio verde (cursor) no terminal 2 e no pad pin2, fio azul no terminal 3 e no pad pin3.\n• Deixe folga em todos os fios para a tampa abrir e fechar sem esticar nenhum.\n• Isole as soldas dos terminais com termorretrátil (W2) e prenda os fios soltos com um ponto de cola quente.",
+            "• Cut the panel wires to the lengths of the cut list and strip 6 mm from each end.\n• Jack J1: solder a red wire to the positive terminal (centre of the plug) and take the other end to the pad J1 VIN; solder a black wire to the other terminal and take the other end to the pad J1 GND. Confirm the polarity with the multimeter.\n• Switch SW1: red wire on terminal 1 and on the pad SW1 A; orange wire on terminal 2 and on the pad SW1 B.\n• Rheostat RV1: yellow wire on terminal 1 and on the pad pin1, green wire (wiper) on terminal 2 and on the pad pin2, blue wire on terminal 3 and on the pad pin3.\n• Leave slack in every wire so the lid can open and close without stretching any of them.\n• Insulate the joints of the terminals with heat-shrink (W2) and tie down loose wires with a dab of hot glue.",
+          ],
+          check: ["Cada fio na cor e no pad da lista de ligações; polaridade do J1 conferida.", "Each wire in the colour and on the pad of the wiring list; polarity of J1 checked."],
+          warn: WARN_HOT, adds: ["WP"], also: ["J1", "SW1", "RV1"], lidDrop: 60, view: "lid", lightOn: false, minutes: 30,
+        },
+    {
+      old: "Teste", phase: PHASES.ligacao,
+      title: ["Teste elétrico com o multímetro", "Electrical test with the multimeter"],
+      text: [
+        `• Antes de fechar, ligue a alimentação (${v1 ? "clipe encaixado na pilha" : "fonte de 12 V no conector J1"}) e o interruptor SW1.\n• Siga o plano de teste da seção de teste elétrico, ponto por ponto, na ordem da tabela, com o multímetro.\n• Todas as leituras devem ficar dentro da faixa e o LED deve acender.\n• Se uma leitura sair da faixa, desligue, pare e corrija antes de continuar: a coluna "Se estiver fora" da tabela diz onde procurar.`,
+        `• Before closing, switch the power on (${v1 ? "clip snapped onto the battery" : "12 V adapter in the jack J1"}) and the switch SW1.\n• Follow the test plan of the electrical test section, point by point, in the order of the table, with the multimeter.\n• Every reading must be inside its range and the LED must light.\n• If a reading is out of range, switch off, stop and fix it before going on: the column "If out of range" of the table says where to look.`,
+      ],
+      check: [`${v1 ? "18,4 mA" : "18,4 a 4,3 mA"} no LED`, `${v1 ? "18.4 mA" : "18.4 to 4.3 mA"} in the LED`],
+      warn: WARN_POLARITY, adds: [], also: ["D1"], lidDrop: 60, view: "lid", lightOn: true, minutes: 15,
+    },
+    {
+      old: "Fechar", phase: PHASES.ligacao,
+      title: ["Fechar a tampa (H1)", "Close the lid (H1)"],
+      text: [
+        "• Confira que nenhum fio está sobre a borda da caixa nem nos furos dos parafusos.\n• Suba a tampa até a caixa sem prender nenhum fio, encostando a borda da tampa na borda da caixa.\n• Aperte os 4 parafusos M3 × 10 (H1) nos cantos, em cruz, um pouco de cada vez, sem forçar o plástico.\n• Ligue o interruptor de novo: a luz difusa deve aparecer na janela do teto.",
+        "• Check that no wire lies over the rim of the box or in the screw holes.\n• Raise the lid to the box without trapping any wire, bringing the edge of the lid against the edge of the box.\n• Tighten the 4 screws M3 × 10 (H1) at the corners, in a cross pattern, a little at a time, without forcing the plastic.\n• Switch on again: the diffused light must show in the window of the ceiling.",
+      ],
+      check: ["Tampa rente à caixa, sem fio preso e com luz na janela.", "Lid flush with the box, no trapped wire and light in the window."],
+      warn: WARN_PLASTIC, adds: ["H1"], lidDrop: 40, view: "lid", lightOn: true, minutes: 10,
+    },
+    {
+      old: "Encaixar", phase: PHASES.pregoscopio,
+      title: ["Encaixar o pregoscópio (M2, H2, P1 a P10)", "Fit the pregoscope (M2, H2, P1 to P10)"],
+      text: [
+        "• Tire a metade removível da abraçadeira M2 (2 parafusos M3 × 16, H2).\n• Encoste o tubo externo P2 no anel da coluna, com a cabeça P1 apoiada no topo do anel.\n• Recoloque a metade da abraçadeira e aperte os 2 parafusos M3 × 16 (H2) aos poucos, sem forçar.\n• A objetiva P9 fica sobre a janela do teto da caixa.",
+        "• Take off the removable half of the clamp M2 (2 screws M3 × 16, H2).\n• Lean the outer tube P2 into the ring of the column, with the head P1 resting on top of the ring.\n• Put the half of the clamp back and tighten the 2 screws M3 × 16 (H2) a little at a time, without forcing.\n• The objective P9 sits over the window of the ceiling of the box.",
+      ],
+      check: ["Tubo firme no anel e objetiva centrada sobre a janela.", "Tube firm in the ring and objective centred over the window."],
+      warn: WARN_PLASTIC, adds: ["M2", "H2", "P1", "P2", "P3", "P4", "P5", "P6", "P10", "P9"], lidDrop: 0, view: "iso", lightOn: true, minutes: 15,
+    },
+    {
+      old: v1 ? "Foco e uso" : "Ligar a fonte", phase: PHASES.pregoscopio,
+      title: v1 ? ["Foco e uso", "Focus and use"] : ["Ligar a fonte, foco e brilho (PS1)", "Connect the supply, focus and brightness (PS1)"],
+      text: v1
+        ? [
+            "• Ligue o interruptor SW1.\n• Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno P3, até a lâmina ficar nítida.\n• Foco nominal: a lente a 0,8 mm da lâmina, com o tubo interno estendido 37 mm (leia a escala impressa no tubo, na borda do tubo externo).\n• A ponta da objetiva tem mola, mas não force contra o vidro.",
+            "• Switch SW1 on.\n• Loosen the clamp and slide the outer tube, or pull the inner tube P3, until the slide is sharp.\n• Nominal focus: the lens 0.8 mm from the slide, with the inner tube pulled out 37 mm (read the scale printed on the tube, at the edge of the outer tube).\n• The tip of the objective is spring-loaded, but do not push it against the glass.",
+          ]
+        : [
+            "• Ligue a fonte de 12 V (PS1) ao conector J1 e ligue o interruptor SW1.\n• Gire o botão RV1 para ajustar o brilho.\n• Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno P3, até a lâmina ficar nítida.\n• Foco nominal: a lente a 0,8 mm da lâmina, com o tubo interno estendido 37 mm (leia a escala impressa no tubo, na borda do tubo externo).\n• A ponta da objetiva tem mola, mas não force contra o vidro.",
+            "• Plug the 12 V supply (PS1) into the jack J1 and switch SW1 on.\n• Turn the knob RV1 to set the brightness.\n• Loosen the clamp and slide the outer tube, or pull the inner tube P3, until the slide is sharp.\n• Nominal focus: the lens 0.8 mm from the slide, with the inner tube pulled out 37 mm (read the scale printed on the tube, at the edge of the outer tube).\n• The tip of the objective is spring-loaded, but do not push it against the glass.",
+          ],
+      check: ["Imagem nítida com a lâmina a 0,8 mm da objetiva.", "Sharp image with the slide 0.8 mm from the objective."],
+      adds: v1 ? [] : ["PS1"], also: ["L1"], lidDrop: 0, view: "iso", lightOn: true, minutes: 10,
+    },
+  );
+  return drafts.map((d, i) => {
+    const o = previousZh(version, d.old);
+    return {
+      n: i + 1,
+      phase: d.phase,
+      title: bi(d.title[0], o.title.zh, d.title[1]),
+      text: bi(d.text[0], o.text.zh, d.text[1]),
+      adds: d.adds, also: d.also, lidDrop: d.lidDrop, view: d.view, lightOn: d.lightOn,
+      check: d.check ? bi(d.check[0], o.check?.zh ?? o.title.zh, d.check[1]) : undefined,
+      warn: d.warn,
+      minutes: d.minutes,
+    } satisfies ManualStep;
+  });
 }
 
 export interface FileEntry {

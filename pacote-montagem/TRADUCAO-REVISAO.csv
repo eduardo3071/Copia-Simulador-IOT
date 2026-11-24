@@ -34,38 +34,142 @@
 "Glossário";"distância de trabalho";"工作距离";"working distance";"";""
 "Glossário";"foco";"对焦";"focus";"";""
 "Glossário";"escala do tubo interno";"内镜筒刻度";"scale of the inner tube";"";""
-"Passos de montagem";"Preparar a caixa (M1)";"准备灯箱 (M1)";"Prepare the box (M1)";"";""
-"Passos de montagem";"Retire o suporte de impressão e limpe todos os furos com uma broca de 3 mm. Passe lixa fina nas bordas do canal da lâmina e confira que não ficou nenhum resto dentro da caixa.";"去除打印支撑，用 3 mm 钻头清理所有孔。用细砂纸打磨载玻片槽道边缘，并确认盒内没有残留碎屑。";"Remove the print supports and clean every hole with a 3 mm drill bit. Sand the edges of the slide channel lightly and make sure no debris is left inside the box.";"";""
-"Passos de montagem";"O canal da lâmina deve estar liso e limpo.";"载玻片槽道应光滑干净。";"The slide channel must be smooth and clean.";"";""
-"Passos de montagem";"Colar o difusor (M4)";"粘贴扩散片 (M4)";"Glue the diffuser (M4)";"";""
-"Passos de montagem";"Coloque o disco M4 (⌀ 26 × 0,8 mm) no encaixe do teto da caixa, por dentro. Prenda com um cordão fino de cola quente (W3) na borda, sem cobrir a janela de ⌀ 24 mm.";"将扩散片 M4（⌀26 × 0.8 mm）从盒内放入顶部凹槽，沿边缘涂一圈细热熔胶（W3），不要盖住 ⌀24 mm 的光窗。";"Place the disc M4 (⌀ 26 × 0.8 mm) in the ceiling seat from inside the box. Fix it with a thin bead of hot glue (W3) around the edge, without covering the ⌀ 24 mm window.";"";""
-"Passos de montagem";"A cola quente queima: use a ponta do bastão e deixe esfriar 1 minuto.";"热熔胶会烫伤：用胶枪头操作，冷却 1 分钟后再碰。";"Hot glue burns: use the tip of the gun and let it cool for 1 minute.";"";""
-"Passos de montagem";"Provar a lâmina (L1)";"试装载玻片 (L1)";"Test-fit the slide (L1)";"";""
-"Passos de montagem";"Deslize a lâmina L1 (76 × 26 × 1 mm) pelo canal. Ela deve entrar e sair sem esforço e sem folga lateral visível. Se prender, use o gabarito G2 para escolher o furo certo antes de imprimir de novo.";"将载玻片 L1（76 × 26 × 1 mm）滑入槽道，应顺畅进出且侧向无明显间隙。若过紧，请先用校准件 G2 确定尺寸再重新打印。";"Slide the slide L1 (76 × 26 × 1 mm) through the channel. It must go in and out without effort and without visible side play. If it sticks, use jig G2 to pick the right size before printing again.";"";""
-"Passos de montagem";"A lâmina entra pelo lado e fica a 40,4 mm acima do piso.";"载玻片从侧面进入，距底面 40.4 mm。";"The slide enters from the side and sits 40.4 mm above the floor.";"";""
-"Passos de montagem";"Instalar o interruptor (SW1)";"安装开关 (SW1)";"Install the switch (SW1)";"";""
-"Passos de montagem";"Empurre o interruptor KCD1-101 de fora para dentro no recorte de 21,2 × 15,0 mm da parede frontal, até as travas estalarem. Os dois terminais ficam dentro da caixa.";"将 KCD1-101 摇臂开关从前壁外侧推入 21.2 × 15.0 mm 开孔，直至卡扣弹出。两个接线端位于盒内。";"Push the KCD1-101 switch from outside into the 21.2 × 15.0 mm cut-out of the front wall until the tabs click. The two terminals end up inside the box.";"";""
-"Passos de montagem";"Tampa: montar o LED (M3, D1)";"底盖：安装 LED (M3, D1)";"Lid: mount the LED (M3, D1)";"";""
-"Passos de montagem";"Solde dois fios (W1) nas pernas do LED: laranja na perna longa (ânodo), preto na curta (cátodo). Isole cada solda com termorretrátil (W2). Encaixe o LED na sede do porta-LED da tampa M3. Os fios descem pelo furo do porta-LED e saem pela fenda lateral, voltada para a placa.";"将两根导线（W1）焊到 LED 引脚：橙色接长脚（阳极），黑色接短脚（阴极）。每个焊点套上热缩管（W2）。把 LED 装入底盖 M3 的 LED 座，导线沿座内孔向下，从侧面开槽引出，朝向驱动板。";"Solder two wires (W1) to the LED legs: orange to the long leg (anode), black to the short one (cathode). Insulate each joint with heat-shrink (W2). Seat the LED in the LED post of lid M3. The wires go down the hole of the post and leave through the side slot, which faces the board.";"";""
+"Passos de montagem";"Soldar a placa do driver (PCB1, U1, R1, C1)";"底盖：驱动板 (PCB1, U1, R1, C1)";"Solder the driver board (PCB1, U1, R1, C1)";"";""
+"Passos de montagem";"Ferramentas: ferro de solda de 30 a 60 W a cerca de 300 °C, solda de 0,8 mm, alicate de corte e multímetro.
+• Apoie a placa PCB1 (40 × 25 mm) na bancada, com a serigrafia para cima e as trilhas para baixo.
+• Solde dos componentes mais baixos para os mais altos: primeiro o resistor R1 (68 Ω: azul, cinza, preto, dourado, marrom), depois o capacitor C1 (100 nF, marcado 104, sem polaridade) e por último o regulador U1 (LM317T).
+• Encaixe cada componente nos furos desenhados na serigrafia, vire a placa, aqueça o pad e a perna juntos por 2 a 3 segundos, aplique a solda e corte a sobra da perna rente à solda.
+• O U1 fica com o rótulo para a frente, na ordem ADJ, OUT, IN da esquerda para a direita, e a aleta metálica virada para trás.
+• Cada solda deve ficar brilhante e em forma de cone, sem encostar na trilha vizinha.
+• Antes de ligar qualquer coisa, ponha o multímetro em continuidade e confirme que não há curto entre IN e GND, nem entre OUT e GND.";"按 Gerber 焊盘将稳压器 U1、电阻 R1 (68 Ω) 和电容 C1 (100 nF)焊到 PCB1（40 × 25 mm）上。U1 标签朝前，从左到右依次为 ADJ、OUT、IN。用 M3 × 8 螺钉 (H3) 把板固定在盖板的 4 个立柱上。按连接顺序一节，把 LED 和其他元件的导线焊到标记的焊盘上。";"Tools: soldering iron of 30 to 60 W at about 300 °C, 0.8 mm solder, side cutters and multimeter.
+• Rest the board PCB1 (40 × 25 mm) on the bench, silkscreen up and traces down.
+• Solder from the lowest parts to the tallest: first the resistor R1 (68 Ω: blue, grey, black, gold, brown), then the capacitor C1 (100 nF, marked 104, no polarity) and last the regulator U1 (LM317T).
+• Push each part into the holes drawn on the silkscreen, turn the board over, heat the pad and the leg together for 2 to 3 seconds, feed the solder and cut the leftover leg flush with the solder.
+• U1 faces forward with its label, in the order ADJ, OUT, IN from left to right, and the metal tab facing back.
+• Every joint must be shiny and cone-shaped, without touching the next trace.
+• Before powering anything, set the multimeter to continuity and confirm that there is no short between IN and GND, nor between OUT and GND.";"";""
+"Passos de montagem";"Aleta do U1 para trás; soldas brilhantes; nenhum curto entre IN, OUT e GND.";"U1 散热片朝后；任何焊点不得相碰。";"Tab of U1 facing back; shiny joints; no short between IN, OUT and GND.";"";""
+"Passos de montagem";"Ferro de soldar a 300 °C: apoie-o no suporte e não toque na ponta. Solde em local ventilado.";"烙铁温度约 300 °C：使用后放回烙铁架，勿触碰烙铁头。请在通风处焊接。";"Soldering iron at 300 °C: rest it in its stand and never touch the tip. Solder in a ventilated place.";"";""
+"Passos de montagem";"Fixar a placa na tampa (M3, H3)";"底盖：驱动板 (PCB1, U1, R1, C1)";"Fix the board to the lid (M3, H3)";"";""
+"Passos de montagem";"• Pegue a tampa de fundo M3, com a face dos 4 suportes de 6 mm e do porta-LED para cima.
+• Apoie a placa PCB1 nos 4 suportes, com a seta FRENTE / FRONT da serigrafia voltada para o lado que será a frente da caixa (o lado do interruptor), e confira que os 4 furos da placa caem sobre os 4 furos dos suportes.
+• Parafuse com 4 parafusos M3 × 8 (H3). Aperte em cruz, um pouco de cada vez, até encostar: o PLA racha se for forçado.
+• Sacuda de leve: a placa não pode se mexer nem encostar na tampa.";"按 Gerber 焊盘将稳压器 U1、电阻 R1 (68 Ω) 和电容 C1 (100 nF)焊到 PCB1（40 × 25 mm）上。U1 标签朝前，从左到右依次为 ADJ、OUT、IN。用 M3 × 8 螺钉 (H3) 把板固定在盖板的 4 个立柱上。按连接顺序一节，把 LED 和其他元件的导线焊到标记的焊盘上。";"• Take the bottom lid M3, with the side of the 4 standoffs of 6 mm and of the LED post facing up.
+• Rest the board PCB1 on the 4 standoffs, with the arrow FRENTE / FRONT of the silkscreen facing the side that will be the front of the box (the switch side), and check that the 4 holes of the board fall over the 4 holes of the standoffs.
+• Screw it down with 4 screws M3 × 8 (H3). Tighten in a cross pattern, a little at a time, until they seat: PLA cracks if forced.
+• Shake it gently: the board must not move or touch the lid.";"";""
+"Passos de montagem";"Os 4 parafusos encostados e a placa firme, com a seta para o lado do interruptor.";"U1 散热片朝后；任何焊点不得相碰。";"The 4 screws seated and the board firm, with the arrow toward the switch side.";"";""
+"Passos de montagem";"Não aperte demais: o PLA racha. Pare quando o parafuso encostar.";"不要拧得过紧：PLA 会开裂。螺钉贴合即停。";"Do not overtighten: PLA cracks. Stop when the screw seats.";"";""
+"Passos de montagem";"Pilha de 9 V no berço (BT1)";"底盖：9 V 电池 (BT1)";"9 V battery in the cradle (BT1)";"";""
+"Passos de montagem";"• Encaixe a pilha de 9 V (6F22) no berço da tampa, com os terminais voltados para o lado esquerdo.
+• Com o clipe ainda solto da pilha, solde o fio vermelho do clipe no pad BT1 POS e o fio preto no pad BT1 NEG.
+• Só depois encaixe o clipe nos terminais da pilha. Se o clipe for encaixado antes, a placa já fica energizada enquanto você solda.
+• Confira a polaridade: o fio vermelho (positivo) vai ao pad BT1 POS.";"将 9 V 电池放入盖板电池仓。把电池扣红线焊到 BT1 POS 焊盘，黑线焊到 BT1 NEG 焊盘，然后再把电池扣扣到电池上。开关 SW1 的导线焊到 SW1 A 和 B 焊盘。";"• Seat the 9 V battery (6F22) in the cradle of the lid, with the terminals toward the left side.
+• With the clip still off the battery, solder the red wire of the clip to the pad BT1 POS and the black wire to the pad BT1 NEG.
+• Only then snap the clip onto the battery terminals. If the clip is snapped on first, the board is already live while you solder.
+• Check the polarity: the red wire (positive) goes to the pad BT1 POS.";"";""
+"Passos de montagem";"Vermelho no pad BT1 POS e preto no BT1 NEG; clipe encaixado por último.";"底盖：9 V 电池 (BT1)";"Red on the pad BT1 POS and black on BT1 NEG; clip snapped on last.";"";""
+"Passos de montagem";"Confira a polaridade antes de ligar: LED (perna longa +), diodo (faixa = cátodo), plugue de centro positivo.";"通电前核对极性：LED 长脚为 +，二极管色环端为阴极，插头中心为正极。";"Check the polarity before powering up: LED (long leg +), diode (band = cathode), plug with positive centre.";"";""
+"Passos de montagem";"Montar o LED na tampa (D1)";"底盖：安装 LED (M3, D1)";"Mount the LED on the lid (D1)";"";""
+"Passos de montagem";"• Separe dois fios flexíveis de 24 AWG (W1), um laranja e um preto, com os comprimentos da lista de corte, e descasque 6 mm de cada ponta.
+• Enfie um pedaço de 10 mm de termorretrátil (W2) em cada fio e deixe a luva recuada, longe do calor.
+• Solde o fio laranja na perna longa do LED (ânodo, +) e o fio preto na perna curta (cátodo, −), por menos de 3 segundos em cada perna para não queimar o LED.
+• Corra uma luva sobre cada emenda e encolha com um soprador de ar quente, sem derreter a isolação do fio.
+• Encaixe o LED na sede do porta-LED da tampa M3, com o flange apoiado na sede.
+• Passe os fios pelo furo do porta-LED: eles saem pela fenda lateral, voltada para a placa. A tampa não tem furo para fora.";"将两根导线（W1）焊到 LED 引脚：橙色接长脚（阳极），黑色接短脚（阴极）。每个焊点套上热缩管（W2）。把 LED 装入底盖 M3 的 LED 座，导线沿座内孔向下，从侧面开槽引出，朝向驱动板。";"• Take two flexible wires of 24 AWG (W1), one orange and one black, in the lengths of the cut list, and strip 6 mm from each end.
+• Slip a 10 mm piece of heat-shrink (W2) over each wire and leave the sleeve pulled back, away from the heat.
+• Solder the orange wire to the long leg of the LED (anode, +) and the black wire to the short leg (cathode, −), for less than 3 seconds on each leg so the LED does not burn out.
+• Slide a sleeve over each joint and shrink it with a hot-air blower, without melting the insulation of the wire.
+• Seat the LED in the seat of the LED post of the lid M3, with the flange resting on the seat.
+• Run the wires through the hole of the LED post: they leave through the side slot, which faces the board. The lid has no hole through to the outside.";"";""
 "Passos de montagem";"Perna longa = ânodo (+). A tampa não tem furo para fora.";"长脚为阳极 (+)。盖板底部没有通孔。";"Long leg = anode (+). The lid has no hole through to the outside.";"";""
 "Passos de montagem";"Solde por menos de 3 segundos por perna para não queimar o LED. Ferro de soldar a 300 °C: apoie-o no suporte e não toque na ponta. Solde em local ventilado.";"每个引脚焊接不超过 3 秒，避免烧坏 LED。烙铁温度约 300 °C：使用后放回烙铁架，勿触碰烙铁头。请在通风处焊接。";"Solder each leg for less than 3 seconds so the LED does not burn out. Soldering iron at 300 °C: rest it in its stand and never touch the tip. Solder in a ventilated place.";"";""
-"Passos de montagem";"Tampa: placa do driver (PCB1, U1, R1, C1)";"底盖：驱动板 (PCB1, U1, R1, C1)";"Lid: driver board (PCB1, U1, R1, C1)";"";""
-"Passos de montagem";"Solde o regulador U1, o resistor R1 (68 Ω) e o capacitor C1 (100 nF) na placa PCB1 (40 × 25 mm), nos pads do Gerber. O U1 fica com o rótulo para a frente: ADJ, OUT, IN da esquerda para a direita. Parafuse a placa nos 4 suportes da tampa com M3 × 8 (H3). Solde os fios do LED e das demais peças nos pads marcados, na ordem da seção de ligações.";"按 Gerber 焊盘将稳压器 U1、电阻 R1 (68 Ω) 和电容 C1 (100 nF)焊到 PCB1（40 × 25 mm）上。U1 标签朝前，从左到右依次为 ADJ、OUT、IN。用 M3 × 8 螺钉 (H3) 把板固定在盖板的 4 个立柱上。按连接顺序一节，把 LED 和其他元件的导线焊到标记的焊盘上。";"Solder the regulator U1, the resistor R1 (68 Ω) and the capacitor C1 (100 nF) to PCB1 (40 × 25 mm), on the pads of the Gerber files. U1 faces forward with its label: ADJ, OUT, IN from left to right. Screw the board to the 4 standoffs of the lid with M3 × 8 (H3). Solder the wires of the LED and of the other parts to the marked pads, in the order of the wiring section.";"";""
-"Passos de montagem";"Aleta do U1 para trás; nenhuma solda encosta em outra.";"U1 散热片朝后；任何焊点不得相碰。";"Tab of U1 facing back; no solder joint touches another.";"";""
-"Passos de montagem";"Ferro de soldar a 300 °C: apoie-o no suporte e não toque na ponta. Solde em local ventilado.";"烙铁温度约 300 °C：使用后放回烙铁架，勿触碰烙铁头。请在通风处焊接。";"Soldering iron at 300 °C: rest it in its stand and never touch the tip. Solder in a ventilated place.";"";""
-"Passos de montagem";"Tampa: pilha de 9 V (BT1)";"底盖：9 V 电池 (BT1)";"Lid: 9 V battery (BT1)";"";""
-"Passos de montagem";"Encaixe a pilha de 9 V no berço da tampa. Solde o fio vermelho do clipe no pad BT1 POS e o preto no pad BT1 NEG, e só então encaixe o clipe na pilha. Os fios do interruptor SW1 vão aos pads SW1 A e B.";"将 9 V 电池放入盖板电池仓。把电池扣红线焊到 BT1 POS 焊盘，黑线焊到 BT1 NEG 焊盘，然后再把电池扣扣到电池上。开关 SW1 的导线焊到 SW1 A 和 B 焊盘。";"Seat the 9 V battery in the cradle of the lid. Solder the red wire of the clip to the BT1 POS pad and the black one to the BT1 NEG pad, and only then snap the clip onto the battery. The wires of the switch SW1 go to the pads SW1 A and B.";"";""
-"Passos de montagem";"Confira a polaridade antes de ligar: LED (perna longa +), diodo (faixa = cátodo), plugue de centro positivo.";"通电前核对极性：LED 长脚为 +，二极管色环端为阴极，插头中心为正极。";"Check the polarity before powering up: LED (long leg +), diode (band = cathode), plug with positive centre.";"";""
+"Passos de montagem";"Ligar o LED à placa (D1, PCB1)";"底盖：驱动板 (PCB1, U1, R1, C1)";"Connect the LED to the board (D1, PCB1)";"";""
+"Passos de montagem";"• Leve os dois fios do LED pela fenda lateral até a placa e corte o excesso, deixando uma pequena folga.
+• Solde o fio laranja no pad D1 ANODO e o fio preto no pad D1 CATODO.
+• Puxe de leve cada fio para provar a solda.
+• Confira que nenhum fio encosta na aleta do U1 nem passa por baixo da placa.
+• Prenda os fios soltos com um ponto de cola quente (W3).";"按 Gerber 焊盘将稳压器 U1、电阻 R1 (68 Ω) 和电容 C1 (100 nF)焊到 PCB1（40 × 25 mm）上。U1 标签朝前，从左到右依次为 ADJ、OUT、IN。用 M3 × 8 螺钉 (H3) 把板固定在盖板的 4 个立柱上。按连接顺序一节，把 LED 和其他元件的导线焊到标记的焊盘上。";"• Lead the two wires of the LED through the side slot to the board and trim the excess, leaving a little slack.
+• Solder the orange wire to the pad D1 ANODO and the black wire to the pad D1 CATODO.
+• Pull each wire gently to test the joint.
+• Check that no wire touches the tab of U1 or runs under the board.
+• Tie down loose wires with a dab of hot glue (W3).";"";""
+"Passos de montagem";"Laranja no pad D1 ANODO e preto no D1 CATODO; nenhum fio na aleta do U1.";"U1 散热片朝后；任何焊点不得相碰。";"Orange on the pad D1 ANODO and black on D1 CATODO; no wire on the tab of U1.";"";""
+"Passos de montagem";"Preparar a caixa (M1)";"准备灯箱 (M1)";"Prepare the box (M1)";"";""
+"Passos de montagem";"• Retire os suportes de impressão com os dedos ou um alicate de corte, sem forçar as paredes.
+• Limpe todos os furos com uma broca de 3 mm, girada com os dedos (sem furadeira).
+• Passe lixa fina nas bordas do canal da lâmina e sacuda a caixa para confirmar que não ficou nenhum resto dentro.
+• A tampa montada nos passos anteriores fica de lado, ainda aberta.";"去除打印支撑，用 3 mm 钻头清理所有孔。用细砂纸打磨载玻片槽道边缘，并确认盒内没有残留碎屑。";"• Remove the print supports with your fingers or side cutters, without forcing the walls.
+• Clean every hole with a 3 mm drill bit, turned by hand (no power drill).
+• Sand the edges of the slide channel lightly and shake the box to make sure no debris is left inside.
+• The lid assembled in the previous steps stays aside, still open.";"";""
+"Passos de montagem";"O canal da lâmina deve estar liso e limpo.";"载玻片槽道应光滑干净。";"The slide channel must be smooth and clean.";"";""
+"Passos de montagem";"Colar o difusor (M4)";"粘贴扩散片 (M4)";"Glue the diffuser (M4)";"";""
+"Passos de montagem";"• Com a caixa de cabeça para baixo, ponha o disco M4 (⌀ 26 × 0,8 mm) no encaixe do teto, por dentro, sobre a janela de ⌀ 24 mm.
+• Faça um cordão fino de cola quente (W3) na borda do disco, sem cobrir a janela.
+• Deixe esfriar 1 minuto e toque no disco: ele não pode balançar.";"将扩散片 M4（⌀26 × 0.8 mm）从盒内放入顶部凹槽，沿边缘涂一圈细热熔胶（W3），不要盖住 ⌀24 mm 的光窗。";"• With the box upside down, set the disc M4 (⌀ 26 × 0.8 mm) in the seat of the ceiling, from inside, over the ⌀ 24 mm window.
+• Run a thin bead of hot glue (W3) around the edge of the disc, without covering the window.
+• Let it cool for 1 minute and touch the disc: it must not rock.";"";""
+"Passos de montagem";"O difusor não balança e a janela está livre.";"粘贴扩散片 (M4)";"The diffuser does not rock and the window is free.";"";""
+"Passos de montagem";"A cola quente queima: use a ponta do bastão e deixe esfriar 1 minuto.";"热熔胶会烫伤：用胶枪头操作，冷却 1 分钟后再碰。";"Hot glue burns: use the tip of the gun and let it cool for 1 minute.";"";""
+"Passos de montagem";"Provar a lâmina (L1)";"试装载玻片 (L1)";"Test-fit the slide (L1)";"";""
+"Passos de montagem";"• Com a caixa na posição normal, deslize a lâmina L1 (76 × 26 × 1 mm) pelo canal, de lado.
+• Ela deve entrar e sair sem esforço e sem folga lateral visível.
+• Se prender, não force: use o gabarito G2 para escolher o furo certo antes de imprimir de novo.";"将载玻片 L1（76 × 26 × 1 mm）滑入槽道，应顺畅进出且侧向无明显间隙。若过紧，请先用校准件 G2 确定尺寸再重新打印。";"• With the box in its normal position, slide the slide L1 (76 × 26 × 1 mm) through the channel, from the side.
+• It must go in and out without effort and without visible side play.
+• If it sticks, do not force it: use jig G2 to pick the right size before printing again.";"";""
+"Passos de montagem";"A lâmina entra pelo lado e fica a 40,4 mm acima do piso.";"载玻片从侧面进入，距底面 40.4 mm。";"The slide enters from the side and sits 40.4 mm above the floor.";"";""
+"Passos de montagem";"Instalar o interruptor (SW1)";"安装开关 (SW1)";"Install the switch (SW1)";"";""
+"Passos de montagem";"• Empurre o interruptor KCD1-101 de fora para dentro no recorte de 21,2 × 15,0 mm da parede frontal, até as duas travas estalarem.
+• Puxe de leve para confirmar que ele não sai.
+• Os dois terminais ficam dentro da caixa. Deixe-os livres: os fios serão soldados mais adiante.";"将 KCD1-101 摇臂开关从前壁外侧推入 21.2 × 15.0 mm 开孔，直至卡扣弹出。两个接线端位于盒内。";"• Push the KCD1-101 switch from outside into the 21.2 × 15.0 mm cut-out of the front wall until the two tabs click.
+• Pull gently to confirm that it does not come out.
+• The two terminals end up inside the box. Leave them free: the wires are soldered later.";"";""
+"Passos de montagem";"Ligar os fios do interruptor (SW1)";"底盖：9 V 电池 (BT1)";"Connect the wires of the switch (SW1)";"";""
+"Passos de montagem";"• Corte dois fios da lista de corte (um vermelho e um laranja) e descasque 6 mm de cada ponta.
+• Solde o fio vermelho no terminal 1 do interruptor SW1 e leve a outra ponta ao pad SW1 A; solde o fio laranja no terminal 2 e leve a outra ponta ao pad SW1 B.
+• Deixe folga nos dois fios para a tampa abrir e fechar sem esticar nenhum.
+• Isole as soldas dos terminais com termorretrátil (W2) e prenda os fios soltos com um ponto de cola quente.";"将 9 V 电池放入盖板电池仓。把电池扣红线焊到 BT1 POS 焊盘，黑线焊到 BT1 NEG 焊盘，然后再把电池扣扣到电池上。开关 SW1 的导线焊到 SW1 A 和 B 焊盘。";"• Cut two wires from the cut list (one red and one orange) and strip 6 mm from each end.
+• Solder the red wire to terminal 1 of the switch SW1 and take the other end to the pad SW1 A; solder the orange wire to terminal 2 and take the other end to the pad SW1 B.
+• Leave slack in both wires so the lid can open and close without stretching either one.
+• Insulate the joints of the terminals with heat-shrink (W2) and tie down loose wires with a dab of hot glue.";"";""
+"Passos de montagem";"Vermelho no terminal 1 e no pad SW1 A; laranja no terminal 2 e no pad SW1 B.";"底盖：9 V 电池 (BT1)";"Red on terminal 1 and the pad SW1 A; orange on terminal 2 and the pad SW1 B.";"";""
 "Passos de montagem";"Teste elétrico com o multímetro";"万用表电气测试";"Electrical test with the multimeter";"";""
-"Passos de montagem";"Antes de fechar, ligue a alimentação e siga o plano de teste da seção de teste elétrico ponto por ponto. Todas as leituras devem ficar dentro da faixa e o LED deve acender. Se uma leitura sair da faixa, pare e corrija antes de continuar.";"关盖前接通电源，按电气测试一节的测试计划逐点测量。所有读数应在范围内且 LED 点亮。如有读数超出范围，请先排除故障再继续。";"Before closing, switch the power on and follow the test plan of the electrical test section point by point. Every reading must be inside its range and the LED must light. If a reading is out of range, stop and fix it before going on.";"";""
+"Passos de montagem";"• Antes de fechar, ligue a alimentação (clipe encaixado na pilha) e o interruptor SW1.
+• Siga o plano de teste da seção de teste elétrico, ponto por ponto, na ordem da tabela, com o multímetro.
+• Todas as leituras devem ficar dentro da faixa e o LED deve acender.
+• Se uma leitura sair da faixa, desligue, pare e corrija antes de continuar: a coluna ""Se estiver fora"" da tabela diz onde procurar.";"关盖前接通电源，按电气测试一节的测试计划逐点测量。所有读数应在范围内且 LED 点亮。如有读数超出范围，请先排除故障再继续。";"• Before closing, switch the power on (clip snapped onto the battery) and the switch SW1.
+• Follow the test plan of the electrical test section, point by point, in the order of the table, with the multimeter.
+• Every reading must be inside its range and the LED must light.
+• If a reading is out of range, switch off, stop and fix it before going on: the column ""If out of range"" of the table says where to look.";"";""
 "Passos de montagem";"18,4 mA no LED";"LED 电流 18.4 mA";"18.4 mA in the LED";"";""
 "Passos de montagem";"Fechar a tampa (H1)";"合上底盖 (H1)";"Close the lid (H1)";"";""
-"Passos de montagem";"Suba a tampa até a caixa sem prender nenhum fio e aperte os 4 parafusos M3 × 10 (H1) nos cantos. Aperte aos poucos, em cruz, sem forçar o plástico.";"把底盖托到灯箱下方，确保不夹住任何导线，在四角拧入 4 颗 M3 × 10 螺钉 (H1)。分次交叉拧紧，不要过度用力。";"Raise the lid to the box without trapping any wire and tighten the 4 screws M3 × 10 (H1) at the corners. Tighten a little at a time, in a cross pattern, without forcing the plastic.";"";""
-"Passos de montagem";"Não aperte demais: o PLA racha. Pare quando o parafuso encostar.";"不要拧得过紧：PLA 会开裂。螺钉贴合即停。";"Do not overtighten: PLA cracks. Stop when the screw seats.";"";""
+"Passos de montagem";"• Confira que nenhum fio está sobre a borda da caixa nem nos furos dos parafusos.
+• Suba a tampa até a caixa sem prender nenhum fio, encostando a borda da tampa na borda da caixa.
+• Aperte os 4 parafusos M3 × 10 (H1) nos cantos, em cruz, um pouco de cada vez, sem forçar o plástico.
+• Ligue o interruptor de novo: a luz difusa deve aparecer na janela do teto.";"把底盖托到灯箱下方，确保不夹住任何导线，在四角拧入 4 颗 M3 × 10 螺钉 (H1)。分次交叉拧紧，不要过度用力。";"• Check that no wire lies over the rim of the box or in the screw holes.
+• Raise the lid to the box without trapping any wire, bringing the edge of the lid against the edge of the box.
+• Tighten the 4 screws M3 × 10 (H1) at the corners, in a cross pattern, a little at a time, without forcing the plastic.
+• Switch on again: the diffused light must show in the window of the ceiling.";"";""
+"Passos de montagem";"Tampa rente à caixa, sem fio preso e com luz na janela.";"合上底盖 (H1)";"Lid flush with the box, no trapped wire and light in the window.";"";""
 "Passos de montagem";"Encaixar o pregoscópio (M2, H2, P1 a P10)";"装入显微镜 (M2, H2, P1~P10)";"Fit the pregoscope (M2, H2, P1 to P10)";"";""
-"Passos de montagem";"Tire a metade removível da abraçadeira M2, encoste o tubo externo P2 no anel da coluna, recoloque a metade e aperte os 2 parafusos M3 × 16 (H2) sem forçar. A cabeça P1 apoia no topo do anel e a objetiva P9 fica sobre a janela.";"取下抱箍 M2 的可拆半环，将外镜筒 P2 靠入立柱环，装回半环并拧入 2 颗 M3 × 16 螺钉 (H2)，不要用力过大。头部 P1 压在环的顶面，物镜 P9 位于光窗正上方。";"Take off the removable half of the clamp M2, lean the outer tube P2 into the column ring, put the half back and tighten the 2 screws M3 × 16 (H2) without forcing. The head P1 rests on top of the ring and the objective P9 sits over the window.";"";""
+"Passos de montagem";"• Tire a metade removível da abraçadeira M2 (2 parafusos M3 × 16, H2).
+• Encoste o tubo externo P2 no anel da coluna, com a cabeça P1 apoiada no topo do anel.
+• Recoloque a metade da abraçadeira e aperte os 2 parafusos M3 × 16 (H2) aos poucos, sem forçar.
+• A objetiva P9 fica sobre a janela do teto da caixa.";"取下抱箍 M2 的可拆半环，将外镜筒 P2 靠入立柱环，装回半环并拧入 2 颗 M3 × 16 螺钉 (H2)，不要用力过大。头部 P1 压在环的顶面，物镜 P9 位于光窗正上方。";"• Take off the removable half of the clamp M2 (2 screws M3 × 16, H2).
+• Lean the outer tube P2 into the ring of the column, with the head P1 resting on top of the ring.
+• Put the half of the clamp back and tighten the 2 screws M3 × 16 (H2) a little at a time, without forcing.
+• The objective P9 sits over the window of the ceiling of the box.";"";""
+"Passos de montagem";"Tubo firme no anel e objetiva centrada sobre a janela.";"装入显微镜 (M2, H2, P1~P10)";"Tube firm in the ring and objective centred over the window.";"";""
 "Passos de montagem";"Foco e uso";"对焦与使用";"Focus and use";"";""
-"Passos de montagem";"Ligue o interruptor SW1. Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno P3, até a lâmina ficar nítida. Foco nominal: a lente a 0,8 mm da lâmina, com o tubo interno estendido 37 mm (leia a escala impressa no tubo, na borda do tubo externo). A ponta da objetiva tem mola, mas não force contra o vidro.";"打开开关 SW1。松开抱箍并滑动外镜筒，或拉出内镜筒 P3，直到载玻片图像清晰。标称对焦：镜头距载玻片 0.8 mm，内镜筒伸出 37 mm（读取镜筒上印的刻度，位于外镜筒端口处）。物镜前端带弹簧，但不要顶压玻片。";"Switch SW1 on. Loosen the clamp and slide the outer tube, or pull the inner tube P3, until the slide is sharp. Nominal focus: the lens 0.8 mm from the slide, with the inner tube pulled out 37 mm (read the scale printed on the tube, at the edge of the outer tube). The tip of the objective is spring-loaded, but do not push it against the glass.";"";""
+"Passos de montagem";"• Ligue o interruptor SW1.
+• Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno P3, até a lâmina ficar nítida.
+• Foco nominal: a lente a 0,8 mm da lâmina, com o tubo interno estendido 37 mm (leia a escala impressa no tubo, na borda do tubo externo).
+• A ponta da objetiva tem mola, mas não force contra o vidro.";"打开开关 SW1。松开抱箍并滑动外镜筒，或拉出内镜筒 P3，直到载玻片图像清晰。标称对焦：镜头距载玻片 0.8 mm，内镜筒伸出 37 mm（读取镜筒上印的刻度，位于外镜筒端口处）。物镜前端带弹簧，但不要顶压玻片。";"• Switch SW1 on.
+• Loosen the clamp and slide the outer tube, or pull the inner tube P3, until the slide is sharp.
+• Nominal focus: the lens 0.8 mm from the slide, with the inner tube pulled out 37 mm (read the scale printed on the tube, at the edge of the outer tube).
+• The tip of the objective is spring-loaded, but do not push it against the glass.";"";""
+"Passos de montagem";"Imagem nítida com a lâmina a 0,8 mm da objetiva.";"对焦与使用";"Sharp image with the slide 0.8 mm from the objective.";"";""
 "Ligações";"Solde U1 (rótulo para a frente: ADJ, OUT, IN), R1 (68 Ω) e C1 (100 nF) nos pads da placa. As trilhas da placa fazem as ligações entre eles.";"把 U1（标签朝前：ADJ、OUT、IN）、R1 (68 Ω) 和 C1 (100 nF) 焊到板的焊盘上。板上的走线完成它们之间的连接。";"Solder U1 (label facing forward: ADJ, OUT, IN), R1 (68 Ω) and C1 (100 nF) to the pads of the board. The traces of the board make the connections between them.";"";""
 "Ligações";"LED D1: fio laranja (perna longa, ânodo) ao pad D1 ANODO; fio preto (perna curta, cátodo) ao pad D1 CATODO.";"LED D1：橙色线（长脚，阳极）接 D1 ANODO 焊盘；黑线（短脚，阴极）接 D1 CATODO 焊盘。";"LED D1: orange wire (long leg, anode) to pad D1 ANODO; black wire (short leg, cathode) to pad D1 CATODO.";"";""
 "Ligações";"Pilha BT1: fio vermelho do clipe ao pad BT1 POS; fio preto ao pad BT1 NEG.";"电池 BT1：电池扣红线接 BT1 POS 焊盘；黑线接 BT1 NEG 焊盘。";"Battery BT1: red wire of the clip to pad BT1 POS; black wire to pad BT1 NEG.";"";""
@@ -109,17 +213,82 @@
 "Arquivos";"Coordenadas de montagem dos componentes";"元件贴装坐标";"Component placement coordinates";"";""
 "Arquivos";"Lista de compras (preço a preencher)";"采购清单（价格待填）";"Shopping list (price to be filled in)";"";""
 "Arquivos";"Gabaritos G1 a G3 (imprimir primeiro)";"校准件 G1~G3（请先打印）";"Jigs G1 to G3 (print them first)";"";""
+"Passos de montagem";"Soldar a placa do driver (PCB1, U1, R1, C1, D2)";"底盖：驱动板 (PCB1, U1, R1, C1, D2)";"Solder the driver board (PCB1, U1, R1, C1, D2)";"";""
+"Passos de montagem";"Ferramentas: ferro de solda de 30 a 60 W a cerca de 300 °C, solda de 0,8 mm, alicate de corte e multímetro.
+• Apoie a placa PCB1 (70 × 25 mm) na bancada, com a serigrafia para cima e as trilhas para baixo.
+• Solde dos componentes mais baixos para os mais altos: primeiro o resistor R1 (68 Ω: azul, cinza, preto, dourado, marrom), o diodo D2 (1N5819, com a faixa para o lado do pad pin2), depois o capacitor C1 (100 nF, marcado 104, sem polaridade) e por último o regulador U1 (LM317T).
+• Encaixe cada componente nos furos desenhados na serigrafia, vire a placa, aqueça o pad e a perna juntos por 2 a 3 segundos, aplique a solda e corte a sobra da perna rente à solda.
+• O U1 fica com o rótulo para a frente, na ordem ADJ, OUT, IN da esquerda para a direita, e a aleta metálica virada para trás.
+• Cada solda deve ficar brilhante e em forma de cone, sem encostar na trilha vizinha.
+• Antes de ligar qualquer coisa, ponha o multímetro em continuidade e confirme que não há curto entre IN e GND, nem entre OUT e GND.";"按 Gerber 焊盘将稳压器 U1、电阻 R1 (68 Ω)、电容 C1 (100 nF) 和二极管 D2（色环端朝向 pin2 焊盘）焊到 PCB1（70 × 25 mm）上。U1 标签朝前，从左到右依次为 ADJ、OUT、IN。用 M3 × 8 螺钉 (H3) 把板固定在盖板的 4 个立柱上。按连接顺序一节，把 LED 和其他元件的导线焊到标记的焊盘上。";"Tools: soldering iron of 30 to 60 W at about 300 °C, 0.8 mm solder, side cutters and multimeter.
+• Rest the board PCB1 (70 × 25 mm) on the bench, silkscreen up and traces down.
+• Solder from the lowest parts to the tallest: first the resistor R1 (68 Ω: blue, grey, black, gold, brown), the diode D2 (1N5819, with the band toward the pad pin2), then the capacitor C1 (100 nF, marked 104, no polarity) and last the regulator U1 (LM317T).
+• Push each part into the holes drawn on the silkscreen, turn the board over, heat the pad and the leg together for 2 to 3 seconds, feed the solder and cut the leftover leg flush with the solder.
+• U1 faces forward with its label, in the order ADJ, OUT, IN from left to right, and the metal tab facing back.
+• Every joint must be shiny and cone-shaped, without touching the next trace.
+• Before powering anything, set the multimeter to continuity and confirm that there is no short between IN and GND, nor between OUT and GND.";"";""
+"Passos de montagem";"Fixar a placa na tampa (M3, H3)";"底盖：驱动板 (PCB1, U1, R1, C1, D2)";"Fix the board to the lid (M3, H3)";"";""
+"Passos de montagem";"• Pegue a tampa de fundo M3, com a face dos 4 suportes de 6 mm e do porta-LED para cima.
+• Apoie a placa PCB1 nos 4 suportes, com a seta FRENTE / FRONT da serigrafia voltada para o lado que será a frente da caixa (o lado do interruptor), e confira que os 4 furos da placa caem sobre os 4 furos dos suportes.
+• Parafuse com 4 parafusos M3 × 8 (H3). Aperte em cruz, um pouco de cada vez, até encostar: o PLA racha se for forçado.
+• Sacuda de leve: a placa não pode se mexer nem encostar na tampa.";"按 Gerber 焊盘将稳压器 U1、电阻 R1 (68 Ω)、电容 C1 (100 nF) 和二极管 D2（色环端朝向 pin2 焊盘）焊到 PCB1（70 × 25 mm）上。U1 标签朝前，从左到右依次为 ADJ、OUT、IN。用 M3 × 8 螺钉 (H3) 把板固定在盖板的 4 个立柱上。按连接顺序一节，把 LED 和其他元件的导线焊到标记的焊盘上。";"• Take the bottom lid M3, with the side of the 4 standoffs of 6 mm and of the LED post facing up.
+• Rest the board PCB1 on the 4 standoffs, with the arrow FRENTE / FRONT of the silkscreen facing the side that will be the front of the box (the switch side), and check that the 4 holes of the board fall over the 4 holes of the standoffs.
+• Screw it down with 4 screws M3 × 8 (H3). Tighten in a cross pattern, a little at a time, until they seat: PLA cracks if forced.
+• Shake it gently: the board must not move or touch the lid.";"";""
+"Passos de montagem";"Ligar o LED à placa (D1, PCB1)";"底盖：驱动板 (PCB1, U1, R1, C1, D2)";"Connect the LED to the board (D1, PCB1)";"";""
+"Passos de montagem";"• Leve os dois fios do LED pela fenda lateral até a placa e corte o excesso, deixando uma pequena folga.
+• Solde o fio laranja no pad D1 ANODO e o fio preto no pad D1 CATODO.
+• Puxe de leve cada fio para provar a solda.
+• Confira que nenhum fio encosta na aleta do U1 nem passa por baixo da placa.
+• Prenda os fios soltos com um ponto de cola quente (W3).";"按 Gerber 焊盘将稳压器 U1、电阻 R1 (68 Ω)、电容 C1 (100 nF) 和二极管 D2（色环端朝向 pin2 焊盘）焊到 PCB1（70 × 25 mm）上。U1 标签朝前，从左到右依次为 ADJ、OUT、IN。用 M3 × 8 螺钉 (H3) 把板固定在盖板的 4 个立柱上。按连接顺序一节，把 LED 和其他元件的导线焊到标记的焊盘上。";"• Lead the two wires of the LED through the side slot to the board and trim the excess, leaving a little slack.
+• Solder the orange wire to the pad D1 ANODO and the black wire to the pad D1 CATODO.
+• Pull each wire gently to test the joint.
+• Check that no wire touches the tab of U1 or runs under the board.
+• Tie down loose wires with a dab of hot glue (W3).";"";""
 "Passos de montagem";"Instalar o conector de força (J1)";"安装电源插座 (J1)";"Install the power jack (J1)";"";""
-"Passos de montagem";"Passe o conector DC-022B por dentro, no furo de ⌀ 7,8 mm da parede direita, e aperte a porca por fora com os dedos. Se o furo ficar folgado ou apertado, confira o gabarito G2.";"将 DC-022B 插座从盒内穿过右壁 ⌀7.8 mm 孔，在外侧用手拧紧螺母。若孔过松或过紧，请核对校准件 G2。";"Pass the DC-022B jack from inside through the ⌀ 7.8 mm hole of the right wall and tighten the nut by hand outside. If the hole is loose or tight, check jig G2.";"";""
+"Passos de montagem";"• Passe o conector DC-022B por dentro, no furo de ⌀ 7,8 mm da parede direita, com os terminais para dentro.
+• Aperte a porca por fora com os dedos, sem ferramenta.
+• Se o furo ficar folgado ou apertado, confira o gabarito G2.";"将 DC-022B 插座从盒内穿过右壁 ⌀7.8 mm 孔，在外侧用手拧紧螺母。若孔过松或过紧，请核对校准件 G2。";"• Pass the DC-022B jack from inside through the ⌀ 7.8 mm hole of the right wall, with the terminals inside.
+• Tighten the nut by hand outside, without a tool.
+• If the hole is loose or tight, check jig G2.";"";""
 "Passos de montagem";"Instalar o reostato (RV1)";"安装电位器 (RV1)";"Install the rheostat (RV1)";"";""
-"Passos de montagem";"Passe o eixo do reostato de 220 Ω pelo furo de ⌀ 7,5 mm da parede frontal, por dentro. Aperte a porca por fora e encaixe o botão.";"将 220 Ω 电位器轴从盒内穿过前壁 ⌀7.5 mm 孔，在外侧拧紧螺母并装上旋钮。";"Pass the shaft of the 220 Ω rheostat through the ⌀ 7.5 mm hole of the front wall from inside. Tighten the nut outside and fit the knob.";"";""
-"Passos de montagem";"Tampa: placa do driver (PCB1, U1, R1, C1, D2)";"底盖：驱动板 (PCB1, U1, R1, C1, D2)";"Lid: driver board (PCB1, U1, R1, C1, D2)";"";""
-"Passos de montagem";"Solde o regulador U1, o resistor R1 (68 Ω), o capacitor C1 (100 nF) e o diodo D2 (faixa para o lado do pad pin2) na placa PCB1 (70 × 25 mm), nos pads do Gerber. O U1 fica com o rótulo para a frente: ADJ, OUT, IN da esquerda para a direita. Parafuse a placa nos 4 suportes da tampa com M3 × 8 (H3). Solde os fios do LED e das demais peças nos pads marcados, na ordem da seção de ligações.";"按 Gerber 焊盘将稳压器 U1、电阻 R1 (68 Ω)、电容 C1 (100 nF) 和二极管 D2（色环端朝向 pin2 焊盘）焊到 PCB1（70 × 25 mm）上。U1 标签朝前，从左到右依次为 ADJ、OUT、IN。用 M3 × 8 螺钉 (H3) 把板固定在盖板的 4 个立柱上。按连接顺序一节，把 LED 和其他元件的导线焊到标记的焊盘上。";"Solder the regulator U1, the resistor R1 (68 Ω), the capacitor C1 (100 nF) and the diode D2 (band toward the pin2 pad) to PCB1 (70 × 25 mm), on the pads of the Gerber files. U1 faces forward with its label: ADJ, OUT, IN from left to right. Screw the board to the 4 standoffs of the lid with M3 × 8 (H3). Solder the wires of the LED and of the other parts to the marked pads, in the order of the wiring section.";"";""
-"Passos de montagem";"Ligar os fios do painel";"连接面板导线";"Connect the panel wires";"";""
-"Passos de montagem";"Solde os fios do conector J1 (pads VIN e GND), do interruptor SW1 (pads A e B) e dos três terminais do reostato RV1 (pads pin1, pin2 e pin3), nas cores da seção de ligações (vermelho positivo, preto GND, amarelo, verde e azul para o reostato). Deixe folga para a tampa abrir.";"把插座 J1（VIN 和 GND 焊盘）、开关 SW1（A 和 B 焊盘）和电位器 RV1 三个端子（pin1、pin2、pin3 焊盘）的导线焊到板上，颜色见连接顺序一节（红色为正极，黑色为地，电位器用黄、绿、蓝）。预留余量以便打开盖板。";"Solder the wires of the jack J1 (pads VIN and GND), of the switch SW1 (pads A and B) and of the three terminals of the rheostat RV1 (pads pin1, pin2 and pin3) in the colours of the wiring section (red positive, black GND, yellow, green and blue for the rheostat). Leave slack so the lid can open.";"";""
+"Passos de montagem";"• Passe o eixo do reostato de 220 Ω pelo furo de ⌀ 7,5 mm da parede frontal, por dentro, com os três terminais voltados para a cavidade.
+• Aperte a porca por fora com os dedos e encaixe o botão no eixo de 6 mm.
+• Gire o botão em todo o curso: ele não pode raspar na parede.";"将 220 Ω 电位器轴从盒内穿过前壁 ⌀7.5 mm 孔，在外侧拧紧螺母并装上旋钮。";"• Pass the shaft of the 220 Ω rheostat through the ⌀ 7.5 mm hole of the front wall from inside, with the three terminals facing the cavity.
+• Tighten the nut by hand outside and fit the knob on the 6 mm shaft.
+• Turn the knob through its full travel: it must not rub on the wall.";"";""
+"Passos de montagem";"Ligar os fios do painel (J1, SW1, RV1)";"连接面板导线";"Connect the panel wires (J1, SW1, RV1)";"";""
+"Passos de montagem";"• Corte os fios do painel nos comprimentos da lista de corte e descasque 6 mm de cada ponta.
+• Conector J1: solde um fio vermelho no terminal positivo (centro do plugue) e leve a outra ponta ao pad J1 VIN; solde um fio preto no outro terminal e leve a outra ponta ao pad J1 GND. Confirme a polaridade com o multímetro.
+• Interruptor SW1: fio vermelho no terminal 1 e no pad SW1 A; fio laranja no terminal 2 e no pad SW1 B.
+• Reostato RV1: fio amarelo no terminal 1 e no pad pin1, fio verde (cursor) no terminal 2 e no pad pin2, fio azul no terminal 3 e no pad pin3.
+• Deixe folga em todos os fios para a tampa abrir e fechar sem esticar nenhum.
+• Isole as soldas dos terminais com termorretrátil (W2) e prenda os fios soltos com um ponto de cola quente.";"把插座 J1（VIN 和 GND 焊盘）、开关 SW1（A 和 B 焊盘）和电位器 RV1 三个端子（pin1、pin2、pin3 焊盘）的导线焊到板上，颜色见连接顺序一节（红色为正极，黑色为地，电位器用黄、绿、蓝）。预留余量以便打开盖板。";"• Cut the panel wires to the lengths of the cut list and strip 6 mm from each end.
+• Jack J1: solder a red wire to the positive terminal (centre of the plug) and take the other end to the pad J1 VIN; solder a black wire to the other terminal and take the other end to the pad J1 GND. Confirm the polarity with the multimeter.
+• Switch SW1: red wire on terminal 1 and on the pad SW1 A; orange wire on terminal 2 and on the pad SW1 B.
+• Rheostat RV1: yellow wire on terminal 1 and on the pad pin1, green wire (wiper) on terminal 2 and on the pad pin2, blue wire on terminal 3 and on the pad pin3.
+• Leave slack in every wire so the lid can open and close without stretching any of them.
+• Insulate the joints of the terminals with heat-shrink (W2) and tie down loose wires with a dab of hot glue.";"";""
+"Passos de montagem";"Cada fio na cor e no pad da lista de ligações; polaridade do J1 conferida.";"连接面板导线";"Each wire in the colour and on the pad of the wiring list; polarity of J1 checked.";"";""
+"Passos de montagem";"• Antes de fechar, ligue a alimentação (fonte de 12 V no conector J1) e o interruptor SW1.
+• Siga o plano de teste da seção de teste elétrico, ponto por ponto, na ordem da tabela, com o multímetro.
+• Todas as leituras devem ficar dentro da faixa e o LED deve acender.
+• Se uma leitura sair da faixa, desligue, pare e corrija antes de continuar: a coluna ""Se estiver fora"" da tabela diz onde procurar.";"关盖前接通电源，按电气测试一节的测试计划逐点测量。所有读数应在范围内且 LED 点亮。如有读数超出范围，请先排除故障再继续。";"• Before closing, switch the power on (12 V adapter in the jack J1) and the switch SW1.
+• Follow the test plan of the electrical test section, point by point, in the order of the table, with the multimeter.
+• Every reading must be inside its range and the LED must light.
+• If a reading is out of range, switch off, stop and fix it before going on: the column ""If out of range"" of the table says where to look.";"";""
 "Passos de montagem";"18,4 a 4,3 mA no LED";"LED 电流 18.4 至 4.3 mA";"18.4 to 4.3 mA in the LED";"";""
 "Passos de montagem";"Ligar a fonte, foco e brilho (PS1)";"连接电源、对焦与亮度调节 (PS1)";"Connect the supply, focus and brightness (PS1)";"";""
-"Passos de montagem";"Ligue a fonte de 12 V (PS1) ao conector J1 e o interruptor SW1. Gire o botão RV1 para ajustar o brilho. Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno P3, até a lâmina ficar nítida. Foco nominal: a lente a 0,8 mm da lâmina.";"将 12 V 电源 (PS1) 接到插座 J1 并打开开关 SW1。旋转 RV1 旋钮调节亮度。松开抱箍并滑动外镜筒，或拉出内镜筒 P3，直到载玻片图像清晰。标称对焦：镜头距载玻片 0.8 mm。";"Plug the 12 V supply (PS1) into the jack J1 and switch SW1 on. Turn the knob RV1 to set the brightness. Loosen the clamp and slide the outer tube, or pull the inner tube P3, until the slide is sharp. Nominal focus: the lens 0.8 mm from the slide.";"";""
+"Passos de montagem";"• Ligue a fonte de 12 V (PS1) ao conector J1 e ligue o interruptor SW1.
+• Gire o botão RV1 para ajustar o brilho.
+• Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno P3, até a lâmina ficar nítida.
+• Foco nominal: a lente a 0,8 mm da lâmina, com o tubo interno estendido 37 mm (leia a escala impressa no tubo, na borda do tubo externo).
+• A ponta da objetiva tem mola, mas não force contra o vidro.";"将 12 V 电源 (PS1) 接到插座 J1 并打开开关 SW1。旋转 RV1 旋钮调节亮度。松开抱箍并滑动外镜筒，或拉出内镜筒 P3，直到载玻片图像清晰。标称对焦：镜头距载玻片 0.8 mm，内镜筒伸出 37 mm（读取镜筒上印的刻度，位于外镜筒端口处）。物镜前端带弹簧，但不要顶压玻片。";"• Plug the 12 V supply (PS1) into the jack J1 and switch SW1 on.
+• Turn the knob RV1 to set the brightness.
+• Loosen the clamp and slide the outer tube, or pull the inner tube P3, until the slide is sharp.
+• Nominal focus: the lens 0.8 mm from the slide, with the inner tube pulled out 37 mm (read the scale printed on the tube, at the edge of the outer tube).
+• The tip of the objective is spring-loaded, but do not push it against the glass.";"";""
+"Passos de montagem";"Imagem nítida com a lâmina a 0,8 mm da objetiva.";"连接电源、对焦与亮度调节 (PS1)";"Sharp image with the slide 0.8 mm from the objective.";"";""
 "Ligações";"Solde U1 (rótulo para a frente: ADJ, OUT, IN), R1 (68 Ω), C1 (100 nF) e D2 (1N5819, faixa para o pad pin2) nos pads da placa. As trilhas fazem as ligações entre eles.";"把 U1（标签朝前：ADJ、OUT、IN）、R1 (68 Ω)、C1 (100 nF) 和 D2 (1N5819，色环端朝向 pin2 焊盘) 焊到板的焊盘上。板上的走线完成它们之间的连接。";"Solder U1 (label facing forward: ADJ, OUT, IN), R1 (68 Ω), C1 (100 nF) and D2 (1N5819, band toward the pin2 pad) to the pads of the board. The traces make the connections between them.";"";""
 "Ligações";"LED D1: fio laranja (ânodo) ao pad D1 ANODO; fio preto (cátodo) ao pad D1 CATODO.";"LED D1：橙色线（阳极）接 D1 ANODO 焊盘；黑线（阴极）接 D1 CATODO 焊盘。";"LED D1: orange wire (anode) to pad D1 ANODO; black wire (cathode) to pad D1 CATODO.";"";""
 "Ligações";"Conector J1: fio vermelho (centro do plugue, positivo) ao pad J1 VIN; fio preto ao pad J1 GND. Confirme a polaridade com o multímetro.";"插座 J1：红线（插头中心，正极）接 J1 VIN 焊盘；黑线接 J1 GND 焊盘。用万用表确认极性。";"Jack J1: red wire (plug centre, positive) to pad J1 VIN; black wire to pad J1 GND. Confirm the polarity with the multimeter.";"";""
@@ -161,7 +330,7 @@
 "Impressão";"arquivo -impressao, deitado nas costas; suportes só dentro da caixa";"使用 -impressao 文件，背面朝下打印；仅在盒内加支撑";"file -impressao, lying on its back; supports only inside the box";"";""
 "Impressão";"arquivo -impressao, abre para cima; sem suportes";"使用 -impressao 文件，开口朝上；不需要支撑";"file -impressao, opening upward; no supports";"";""
 "Impressão";"já plana; sem suportes";"已是平板；不需要支撑";"already flat; no supports";"";""
-"Impressão";"plano, PLA natural ou branco, 1 a 2 camadas; sem suportes";"平放，本色或白色 PLA，1~2 层；不需要支撑";"flat, natural or white PLA, 1 to 2 layers; no supports";"";""
+"Impressão";"plano, PLA natural ou branco, 4 camadas de 0,2 mm (0,8 mm); sem suportes";"平放，本色或白色 PLA，4 层 0.2 mm（共 0.8 mm）；不需要支撑";"flat, natural or white PLA, 4 layers of 0.2 mm (0.8 mm); no supports";"";""
 "Medidas padrão";"⌀ 5,0 mm; flange ⌀ 5,8 mm; altura ≈ 8,6 mm; passo das pernas 2,54 mm";"⌀5.0 mm；法兰 ⌀5.8 mm；高度约 8.6 mm；引脚间距 2.54 mm";"⌀ 5.0 mm; flange ⌀ 5.8 mm; height ≈ 8.6 mm; lead pitch 2.54 mm";"";""
 "Medidas padrão";"¼ W axial: corpo ≈ 6,3 × 2,3 mm; fio ⌀ 0,5 mm; passo 10 mm";"¼ W 轴向：本体约 6.3 × 2.3 mm；引线 ⌀0.5 mm；间距 10 mm";"¼ W axial: body ≈ 6.3 × 2.3 mm; lead ⌀ 0.5 mm; pitch 10 mm";"";""
 "Medidas padrão";"cerâmico 100 nF (104) 50 V; passo 5 mm";"陶瓷电容 100 nF (104) 50 V；引脚间距 5 mm";"ceramic 100 nF (104) 50 V; pitch 5 mm";"";""
@@ -169,7 +338,7 @@
 "Medidas padrão";"TO-220: 10,0 × 4,5 × 15,0 mm; pinos ADJ-OUT-IN, passo 2,54 mm";"TO-220：10.0 × 4.5 × 15.0 mm；引脚 ADJ-OUT-IN，间距 2.54 mm";"TO-220: 10.0 × 4.5 × 15.0 mm; pins ADJ-OUT-IN, pitch 2.54 mm";"";""
 "Medidas padrão";"recorte de painel 21,2 × 15,0 mm; 2 terminais";"面板开孔 21.2 × 15.0 mm；2 个接线端";"panel cut-out 21.2 × 15.0 mm; 2 terminals";"";""
 "Medidas padrão";"6F22: 48,5 × 26,5 × 17,5 mm";"6F22：48.5 × 26.5 × 17.5 mm";"6F22: 48.5 × 26.5 × 17.5 mm";"";""
-"Medidas padrão";"12 V 500 mA; plugue P4 5,5 × 2,1 mm, centro positivo";"12 V 500 mA；P4 插头 5.5 × 2.1 mm，中心为正极";"12 V 500 mA; P4 plug 5.5 × 2.1 mm, centre positive";"";""
+"Medidas padrão";"12 V 1 A (a mesma da 1000x; a 400x usa só 18 mA); plugue P4 5,5 × 2,1 mm, centro positivo";"12 V 1 A（与 1000x 相同；400x 只用 18 mA）；P4 插头 5.5 × 2.1 mm，中心为正极";"12 V 1 A (same as the 1000x; the 400x draws only 18 mA); P4 plug 5.5 × 2.1 mm, centre positive";"";""
 "Medidas padrão";"DC-022B: furo de painel ⌀ 7,8 mm; plugue 5,5 × 2,1 mm";"DC-022B：面板孔 ⌀7.8 mm；插头 5.5 × 2.1 mm";"DC-022B: panel hole ⌀ 7.8 mm; plug 5.5 × 2.1 mm";"";""
 "Medidas padrão";"WH148: eixo ⌀ 6 mm; rosca M7; furo ⌀ 7,5 mm";"WH148：轴 ⌀6 mm；M7 螺纹；开孔 ⌀7.5 mm";"WH148: shaft ⌀ 6 mm; M7 thread; hole ⌀ 7.5 mm";"";""
 "Medidas padrão";"1,6 mm de espessura; furos M3 a 3,5 mm das bordas";"板厚 1.6 mm；M3 安装孔距边缘 3.5 mm";"1.6 mm thick; M3 holes 3.5 mm from the edges";"";""
@@ -238,7 +407,7 @@
 "Desenhos técnicos";"M3 Tampa de fundo";"M3 底盖";"M3 Bottom lid";"";""
 "Desenhos técnicos";"M4 Difusor e assento no teto do M1";"M4 扩散片及 M1 顶板凹槽";"M4 Diffuser and its seat in the ceiling of M1";"";""
 "Desenhos técnicos";"Teto, assento do difusor e canal: detalhe H (DT-03) e detalhe G (DT-09).";"顶板详见 DT-03、DT-09。";"Ceiling, diffuser seat and channel: detail H (DT-03) and detail G (DT-09).";"";""
-"Desenhos técnicos";"PLA natural ou branco, 1 a 2 camadas de 0,2 mm (≈ 0,8 mm). Sem suportes.";"本色或白色 PLA，1~2 层 0.2 mm（约 0.8 mm）。无需支撑。";"Natural or white PLA, 1 to 2 layers of 0.2 mm (≈ 0.8 mm). No supports.";"";""
+"Desenhos técnicos";"PLA natural ou branco, 4 camadas de 0,2 mm (0,8 mm). Sem suportes.";"本色或白色 PLA，4 层 0.2 mm（共 0.8 mm）。无需支撑。";"Natural or white PLA, 4 layers of 0.2 mm (0.8 mm). No supports.";"";""
 "Desenhos técnicos";"Arquivo abracadeira-tubo-impressao.stl (abre para cima), sem suportes.";"使用 abracadeira-tubo-impressao.stl（开口朝上），无需支撑。";"File abracadeira-tubo-impressao.stl (opens upward), no supports.";"";""
 "Desenhos técnicos";"atravessam as orelhas e entram";"穿过耳部，拧入";"go through the ears and enter";"";""
 "Desenhos técnicos";"Confirmar no gabarito G1 antes de imprimir em série.";"批量打印前请用校准件 G1 确认。";"Confirm with jig G1 before printing in series.";"";""

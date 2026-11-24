@@ -65,7 +65,7 @@ function sceneFor(version: SuporteVersion, step: ManualStep) {
   const qty: Record<string, number> = {};
   for (const l of manualBom(version)) qty[l.id] = l.qty;
   const highlight = overview ? new Set<string>() : new Set([...step.adds, ...(step.also ?? [])]);
-  const ids = overview ? step.adds.filter((id) => !id.startsWith("G") && id !== "W3") : [...highlight].filter((id) => only!.has(id) && !id.startsWith("G"));
+  const ids = overview ? step.adds.filter((id) => !id.startsWith("G") && id !== "W3" && id !== "WP") : [...highlight].filter((id) => only!.has(id) && !id.startsWith("G") && id !== "WP");
   const fit: Fit = overview ? { center: [0, 12, 120], radius: 190, dir: [0.55, -0.68, 0.42] } : fitFor(version, step, only!);
   return { only, highlight, ids, qty, fit, arrows: overview ? [] : arrowsFor(step), explode: overview ? 38 : 0 };
 }
@@ -246,6 +246,7 @@ function Doc({ version }: { version: SuporteVersion }) {
       <div className="steps">
         {steps.map((s) => (
           <section className="sheet step" key={s.n}>
+            {s.phase && <p className="step-phase"><Bi t={s.phase} /></p>}
             <h3><span className="step-n">{s.n}</span> <Bi t={s.title} /> <span className="step-min">{s.minutes} min</span></h3>
             <figure className="step-fig">
               <img src={stepImage(version, s.n)} alt="" loading="lazy" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
@@ -253,10 +254,10 @@ function Doc({ version }: { version: SuporteVersion }) {
             <Bi as="p" t={s.text} />
             {s.warn && <p className="warn-note"><b>⚠ </b><Bi t={s.warn} /></p>}
             {s.check && <p className="check-note"><b>✔ </b><Bi t={s.check} /></p>}
-            {s.adds.length > 0 && (
+            {s.adds.filter((id) => id !== "WP").length > 0 && (
               <table className="data mini">
                 <thead><tr><th>ID</th><th><Tx pt="Peça neste passo" zh="本步零件" en="Part in this step" /></th><th><Tx pt="Qtd" zh="数量" en="Qty" /></th></tr></thead>
-                <tbody>{s.adds.map((id) => <tr key={id}><td className="mono">{id}</td><td><Bi t={nameOf(id)} /></td><td className="mono">{lines.find((x) => x.id === id)?.qty ?? 1}</td></tr>)}</tbody>
+                <tbody>{s.adds.filter((id) => id !== "WP").map((id) => <tr key={id}><td className="mono">{id}</td><td><Bi t={nameOf(id)} /></td><td className="mono">{lines.find((x) => x.id === id)?.qty ?? 1}</td></tr>)}</tbody>
               </table>
             )}
           </section>
@@ -374,6 +375,7 @@ export function StepViewer({ version, start, onStep }: { version: SuporteVersion
         <button className="primary" onClick={() => pick(n + 1)} disabled={n >= steps.length}>{next}</button>
       </div>
       <div className="step-text">
+        {step.phase && <p className="small muted"><Bi t={step.phase} /></p>}
         <h4><span className="step-n">{n}</span> / {steps.length} <Bi t={step.title} /></h4>
         <Bi as="p" t={step.text} />
         {step.check && <p className="small muted">✔ <Bi t={step.check} /></p>}

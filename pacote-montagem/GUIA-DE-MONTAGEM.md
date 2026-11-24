@@ -1,6 +1,6 @@
 # Guia de montagem: suporte e luz do pregoscópio
 
-Revisão 4 (24/11/2026). Gerado por `scripts/build-suporte.ts`, `scripts/build-eletronica.ts` e `scripts/build-lista-de-compras.ts`; os parâmetros estão em `packages/adapter-cad/src/holder.ts`. Este guia cobre a **400x (v1 e v2)** e, na seção 10, a **1000x econômica** (só v2), que também tem manual próprio, `MANUAL-v2-1000x-pt.pdf` (e `-zh`, `-en`), e custos em `CUSTOS-v2-1000x-1un.csv`.
+Revisão 5 (24/11/2026). Gerado por `scripts/build-suporte.ts`, `scripts/build-eletronica.ts` e `scripts/build-lista-de-compras.ts`; os parâmetros estão em `packages/adapter-cad/src/holder.ts`. Este guia cobre a **400x (v1 e v2)** e, na seção 10, a **1000x econômica** (só v2), que também tem manual próprio, `MANUAL-v2-1000x-pt.pdf` (e `-zh`, `-en`), e custos em `CUSTOS-v2-1000x-1un.csv`.
 
 > **Status: projeto digital completo, nada impresso nem montado ainda.** Tudo o que não foi medido ou testado na bancada está na seção "O que ainda não foi verificado". Imprima antes os gabaritos de `CALIBRACAO.md` e depois a abraçadeira, antes das peças grandes.
 
@@ -145,19 +145,33 @@ Material PLA, camada de 0,2 mm, 3 perímetros, enchimento de 20 a 30 %.
 Cor escura nas paredes ajuda a evitar luz espalhada. Imprima na ordem do roteiro (seção 9).
 
 ## 7. Montagem
-A ordem é a do manual de construção (os mesmos passos, com as imagens).
-1. Imprima, remova os suportes e limpe todos os furos com uma broca de 3 mm. Passe lixa fina nas bordas do canal da lâmina e confira que não ficou resto dentro da caixa.
-2. Cole o difusor (⌀ 26 × 0,8 mm) no encaixe do teto da caixa, por dentro, com um cordão fino de cola quente (W3) na borda, sem cobrir a janela de ⌀ 24 mm.
-3. Prove a lâmina (76 × 26 × 1 mm) no canal: ela deve entrar e sair sem esforço e sem folga lateral visível. Se prender, use o gabarito G2.
-4. Instale o interruptor KCD1-101, de fora para dentro, no recorte de 21,2 × 15,0 mm da parede frontal, até as travas estalarem.
-5. **v2:** instale o conector DC-022B no furo de ⌀ 7,8 mm da parede direita e o reostato no furo de ⌀ 7,5 mm da frente, com a porca por fora e o botão.
-6. Tampa, LED: solde os dois fios do LED (laranja na perna longa, o ânodo; preto na curta, o cátodo), isole as emendas com o termorretrátil (W2) e encaixe o LED no porta-LED da tampa, com o flange na sede. Os fios descem pelo furo do porta-LED e saem pela **fenda lateral**, voltada para a placa do driver (a tampa não tem furo para fora).
-7. Tampa, placa do driver: solde U1, R1 e C1 (**v2:** e o diodo D2, com a faixa para o lado do pad pin2) na placa, nos pads do Gerber, com o U1 de rótulo para a frente (ADJ, OUT, IN da esquerda para a direita). Parafuse a placa nos 4 suportes da tampa com M3 × 8 (H3) e solde nela os fios do LED, nos pads marcados. **v1:** coloque a pilha no berço, solde o fio vermelho do clipe no pad BT1 POS e o preto no BT1 NEG, e só então encaixe o clipe na pilha.
-8. Ligue os fios do painel aos pads, nas cores da lista de ligações: **v1:** interruptor SW1 (pads A e B); **v2:** conector J1 (VIN e GND), interruptor SW1 (A e B) e os três terminais do reostato RV1. Deixe folga para a tampa abrir.
-9. Faça o plano de teste da seção 5 antes de fechar. Todas as leituras devem ficar na faixa, e o LED deve acender.
-10. Feche a tampa com 4 parafusos M3 × 10, apertando aos poucos e em cruz. Cuide para não prender fio.
-11. Encaixe o pregoscópio no anel da coluna: tire a metade da abraçadeira, encoste o tubo externo de lado, recoloque e aperte os 2 parafusos M3 × 16 sem forçar.
-12. Foco: **v2:** ligue a fonte de 12 V ao conector e o interruptor, e gire o botão do reostato para o brilho. Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno, até a lâmina ficar nítida. Foco nominal: lente a 0,8 mm da lâmina, com o tubo interno estendido 37 mm (leia a escala impressa no tubo). A ponta da objetiva tem mola, mas não force contra o vidro.
+A ordem é a do manual de construção (os mesmos passos, com as imagens e o detalhe de cada solda), em cinco fases, na ordem da bancada: primeiro a eletrônica, depois a caixa, por fim o pregoscópio. O manual da v1 tem 14 passos e o da v2, 15; a lista abaixo agrupa os passos por fase.
+
+**Fase 1: parte elétrica e placa**
+1. Solde na placa PCB1 (**v1:** 40 × 25 mm; **v2:** 70 × 25 mm), dos componentes mais baixos para os mais altos: R1 (68 Ω), **v2:** o diodo D2 (faixa para o lado do pad pin2), C1 (100 nF) e por último o U1, com o rótulo para a frente (ADJ, OUT, IN da esquerda para a direita) e a aleta para trás. Cada solda deve ficar brilhante, em cone. Com o multímetro em continuidade, confirme que não há curto entre IN e GND nem entre OUT e GND.
+2. Fixe a placa na tampa M3, nos 4 suportes de 6 mm, com 4 parafusos M3 × 8 (H3), em cruz e sem forçar. A seta FRENTE / FRONT da placa aponta para o lado do interruptor, que será a frente da caixa.
+3. **v1:** encaixe a pilha de 9 V no berço da tampa, solde o fio vermelho do clipe no pad BT1 POS e o preto no BT1 NEG, e só então encaixe o clipe na pilha.
+
+**Fase 2: componentes de iluminação**
+4. Solde os dois fios do LED (laranja na perna longa, o ânodo; preto na curta, o cátodo), com menos de 3 segundos por perna, isole as emendas com o termorretrátil (W2) e encaixe o LED no porta-LED da tampa, com o flange na sede. Os fios descem pelo furo do porta-LED e saem pela **fenda lateral**, voltada para a placa (a tampa não tem furo para fora).
+5. Ligue o LED à placa: fio laranja no pad D1 ANODO, preto no D1 CATODO. Puxe cada fio de leve, afaste-os da aleta do U1 e prenda os soltos com um ponto de cola quente.
+
+**Fase 3: suporte (a caixa)**
+6. Retire os suportes de impressão da caixa M1 e limpe todos os furos com uma broca de 3 mm. Passe lixa fina nas bordas do canal da lâmina e confira que não ficou resto dentro da caixa.
+7. Com a caixa de cabeça para baixo, cole o difusor (⌀ 26 × 0,8 mm) no encaixe do teto, por dentro, com um cordão fino de cola quente (W3) na borda, sem cobrir a janela de ⌀ 24 mm.
+8. Prove a lâmina (76 × 26 × 1 mm) no canal: ela deve entrar e sair sem esforço e sem folga lateral visível. Se prender, use o gabarito G2.
+9. Instale o interruptor KCD1-101, de fora para dentro, no recorte de 21,2 × 15,0 mm da parede frontal, até as travas estalarem.
+10. **v2:** instale o conector DC-022B no furo de ⌀ 7,8 mm da parede direita (porca por fora, terminais para dentro).
+11. **v2:** instale o reostato no furo de ⌀ 7,5 mm da frente, com a porca por fora, e encaixe o botão.
+
+**Fase 4: ligação, teste e fechamento**
+12. Ligue os fios do painel aos pads, nas cores da lista de ligações, e deixe folga para a tampa abrir. **v1:** interruptor SW1 (vermelho no terminal 1 e no pad SW1 A, laranja no terminal 2 e no pad SW1 B). **v2:** conector J1 (vermelho no pad J1 VIN, preto no J1 GND), interruptor SW1 (A e B) e os três terminais do reostato RV1 (amarelo, verde e azul nos pads pin1, pin2 e pin3). Isole as soldas com termorretrátil.
+13. Faça o plano de teste da seção 5 antes de fechar, na ordem da tabela. Todas as leituras devem ficar na faixa, e o LED deve acender.
+14. Feche a tampa com 4 parafusos M3 × 10, apertando aos poucos e em cruz. Cuide para não prender fio.
+
+**Fase 5: posicionar o pregoscópio**
+15. Encaixe o pregoscópio no anel da coluna: tire a metade da abraçadeira, encoste o tubo externo de lado, recoloque e aperte os 2 parafusos M3 × 16 sem forçar.
+16. Foco: **v2:** ligue a fonte de 12 V ao conector e o interruptor, e gire o botão do reostato para o brilho. Afrouxe a abraçadeira e deslize o tubo externo, ou puxe o tubo interno, até a lâmina ficar nítida. Foco nominal: lente a 0,8 mm da lâmina, com o tubo interno estendido 37 mm (leia a escala impressa no tubo). A ponta da objetiva tem mola, mas não force contra o vidro.
 
 **Cuidados** (os mesmos avisos do manual)
 - Ferro de soldar a 300 °C: apoie-o no suporte, solde em local ventilado e com menos de 3 segundos por perna do LED.
@@ -183,7 +197,7 @@ A ordem é a do manual de construção (os mesmos passos, com as imagens).
 6. Registrar os ajustes em `holder.ts` e regenerar com `npx tsx scripts/build-suporte.ts`.
 
 ## 10. Versão 1000x econômica (só v2)
-Mesma caixa, coluna e fonte da v2, com as peças a mais para a objetiva de imersão. O manual próprio (`MANUAL-v2-1000x-pt.pdf`) traz os 10 passos com imagens; aqui estão as diferenças e a ordem. Os números marcados "suposto" em `packages/adapter-cad/src/suporte-1000x.ts` vêm de anúncios e precisam ser medidos nas peças compradas.
+Mesma caixa, coluna e fonte da v2, com as peças a mais para a objetiva de imersão. O manual próprio (`MANUAL-v2-1000x-pt.pdf`) traz os 11 passos com imagens; aqui estão as diferenças e a ordem. Os números marcados "suposto" em `packages/adapter-cad/src/suporte-1000x.ts` vêm de anúncios e precisam ser medidos nas peças compradas.
 
 ### O que muda em relação à v2 de 400x
 | Item | 400x (v2) | 1000x |
@@ -220,17 +234,27 @@ PLA, camada de 0,2 mm, 3 perímetros, enchimento de 20 a 30 %. **Mesa com mais d
 | M5 tubo de luz | em pé, **PLA preto**, a fenda do pé voltada para o lado; o pino do topo é fino: imprima devagar | não |
 | AP1 roda de aberturas | arquivo `-impressao` (deitada), **enchimento de 100 %** | não |
 
-### Montagem (a ordem do manual de 10 passos)
-1. Passe pasta térmica (TP1) na parte de baixo da estrela do LED e assente-a no centro do dissipador HS1, colado com cola quente no centro da tampa M3, com os pads da estrela para a frente. Ponha o tubo de luz M5 em volta, com a fenda do pé voltada para a coluna, e cole a base. **Nunca ligue o LED sem o dissipador.**
-2. Aparafuse a placa ilhada PCB1 nos 4 suportes da tampa com M3 × 8 (H3), atrás do tubo de luz, e cole o driver DR1 no centro dela, com as entradas (IN+, IN−) para a esquerda e as saídas (LED+, LED−) para a direita. O driver não pode encostar no tubo.
-3. Na caixa de cabeça para baixo, encaixe a chave SW1 e o conector J1, e solde o ânodo do D2 ao terminal + do J1, com a faixa para o lado livre.
-4. Corte os 5 fios, descasque 6 mm de cada ponta, solde F1 a F5 como na tabela acima e proteja as emendas com termorretrátil (W2). Nenhum fio pode tocar o dissipador.
-5. Teste na bancada, com a tampa aberta (tabela abaixo). Deixe o LED aceso por 30 minutos e meça o dissipador.
-6. Cole o difusor M4 no encaixe do teto, por dentro, com cordão de cola quente (W3) na borda, sem cobrir a janela.
-7. Feche a tampa com 4 parafusos M3 × 10, em cruz, deixando folga nos fios F1 a F3.
-8. Com a tampa fechada, entre com a roda AP1 de lado pela fenda da parede direita, até o furo central cair no pino do tubo de luz. Cada um dos 5 furos deve parar no eixo da janela, e a borda deve sair cerca de 13 mm da caixa.
-9. Rosqueie a objetiva 100x no tubo interno, encaixe o tubo externo no anel e feche a abraçadeira com 2 parafusos M3 × 16. Coloque o ocular WF10X e ligue a fonte de 12 V ao J1.
-10. Cubra a amostra com a lamínula, deslize a lâmina no canal e ponha uma gota de óleo sobre a lamínula. Com a roda em 24 mm, estenda o tubo interno até 37 mm na escala e desça devagar até o óleo tocar a objetiva. Foque girando o tubo, sem forçar a ponta com mola, e só então feche a abertura da roda para ajustar brilho e contraste.
+### Montagem (a ordem do manual de 11 passos, em cinco fases)
+**Fase 1: parte elétrica e placa**
+1. Cole o driver DR1 no centro da placa ilhada PCB1 (40 × 25 mm), com as entradas (IN+, IN−) para a esquerda e as saídas (LED+, LED−) para a direita. Não solde nada na placa: ela só serve de apoio.
+2. Aparafuse a placa nos 4 suportes de 6 mm da tampa M3 com 4 parafusos M3 × 8 (H3), atrás do círculo central onde ficará o tubo de luz. O driver não pode encostar nesse círculo.
+
+**Fase 2: componentes de iluminação**
+3. Cole o dissipador HS1 com cola quente no centro da tampa. Passe pasta térmica (TP1) na parte de baixo da estrela do LED e assente-a no dissipador, com os pads para a frente. Ponha o tubo de luz M5 em volta, com a fenda do pé voltada para a coluna, e cole a base. Não tape os 12 furos de ventilação. **Nunca ligue o LED sem o dissipador.**
+
+**Fase 3: suporte (a caixa)**
+4. Limpe os furos da caixa M1 com uma broca de 3 mm, tire os suportes de impressão e vire a caixa de cabeça para baixo. Encaixe a chave SW1 e o conector J1 (parede direita, atrás do tubo de luz, y = 32 mm, porca por fora) e solde o ânodo do diodo D2 (lado sem faixa) ao terminal + do J1, com o corpo do D2 no ar e a faixa para o lado livre.
+5. Ainda com a caixa de cabeça para baixo, cole o difusor M4 no encaixe do teto, por dentro, com um cordão de cola quente (W3) na borda, sem cobrir a janela.
+
+**Fase 4: ligação, teste e fechamento**
+6. Corte os 5 fios, descasque 6 mm de cada ponta e solde F1 a F5 como na tabela acima, protegendo as emendas com termorretrátil (W2). Deixe folga nos fios F1 a F3. Nenhum fio pode tocar o dissipador.
+7. Teste na bancada, com a tampa aberta (tabela abaixo). Deixe o LED aceso por 30 minutos e meça o dissipador.
+8. Feche a tampa com 4 parafusos M3 × 10, em cruz, deixando folga nos fios F1 a F3.
+9. Com a tampa fechada, entre com a roda AP1 de lado pela fenda da parede direita, até o furo central cair no pino do tubo de luz. Cada um dos 5 furos deve parar no eixo da janela, e a borda deve sair cerca de 13 mm da caixa.
+
+**Fase 5: posicionar o pregoscópio**
+10. Rosqueie a objetiva 100x no tubo interno, encaixe o tubo externo no anel e feche a abraçadeira com 2 parafusos M3 × 16. Coloque o ocular WF10X e ligue a fonte de 12 V ao J1.
+11. Cubra a amostra com a lamínula, deslize a lâmina no canal e ponha uma gota de óleo sobre a lamínula. Com a roda em 24 mm, estenda o tubo interno até 37 mm na escala e desça devagar até o óleo tocar a objetiva. Foque girando o tubo, sem forçar a ponta com mola, e só então feche a abertura da roda para ajustar brilho e contraste.
 
 ### Teste elétrico com o multímetro
 | Ponto | Esperado | Faixa | Se estiver fora |
