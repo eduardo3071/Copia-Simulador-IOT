@@ -1,0 +1,16 @@
+﻿Olá! Gostaria de um orçamento para fabricar placas de circuito impresso NUAS (somente a placa, sem componentes e sem montagem).
+
+São 2 modelos, ambos FR-4, 2 faces, 1,6 mm, cobre 35 um, furos metalizados, máscara verde nas duas faces, serigrafia branca na face superior e acabamento HASL (sem chumbo, se possível):
+
+- Placa A: 40 x 25 mm
+- Placa B: 70 x 25 mm
+
+Envio os arquivos Gerber e de furação (um ZIP por placa) e a especificação.
+
+Podem me informar:
+1) O preço para 5 e para 10 unidades de cada modelo (e se há quantidade mínima);
+2) Se há taxa de preparação/ferramental, cobrada à parte;
+3) Se conseguem produzir com trilha de 0,15 mm e folga de 0,12 mm (Placa A) / 0,16 mm (Placa B), e via com furo de 0,3 mm. Se não, qual é o mínimo de vocês?
+4) Prazo de produção, valor do frete para o meu CEP e formas de pagamento.
+
+Antes de produzir, me avisem se encontrarem qualquer problema nos arquivos. Obrigado!

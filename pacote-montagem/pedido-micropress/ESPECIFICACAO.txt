@@ -1,0 +1,38 @@
+﻿ESPECIFICAÇÃO PARA FABRICAÇÃO DE PLACAS NUAS (sem componentes, sem montagem)
+
+                              PLACA A                 PLACA B
+Arquivo                       placa-A-40x25mm.zip     placa-B-70x25mm.zip
+Dimensões                     40 x 25 mm              70 x 25 mm
+Camadas                       2                       2
+Furos metalizados             13                      19
+  diâmetro 1,0 mm             11                      14
+  diâmetro 0,7 mm             2                       4
+  diâmetro 0,3 mm (via)       0                       1
+Furos NÃO metalizados 3,2 mm  4                       4
+Trilha mais fina              0,15 mm                 0,15 mm
+Menor folga entre cobres      0,12 mm (face inferior) 0,16 mm
+Menor anel de cobre           0,25 mm                 0,15 mm (na via)
+
+Comum às duas
+  Material: FR-4
+  Espessura: 1,6 mm
+  Cobre: 35 um (1 oz)
+  Furos metalizados: sim
+  Máscara de solda: verde, nas duas faces
+  Serigrafia: branca, só na face superior
+  Acabamento: HASL (estanho), de preferência sem chumbo
+  Contorno: retangular, no arquivo Edge_Cuts.gbr
+  Sem pasta de solda, sem componentes, sem montagem
+
+Arquivos dentro de cada ZIP
+  F_Cu.gbr           cobre, face superior
+  B_Cu.gbr           cobre, face inferior
+  F_Mask.gbr         máscara de solda, face superior
+  B_Mask.gbr         máscara de solda, face inferior
+  F_SilkScreen.gbr   serigrafia, face superior
+  Edge_Cuts.gbr      contorno da placa
+  drill-L1-L2.drl    furos metalizados (Excellon, mm)
+  drill_npth.drl     furos não metalizados (Excellon, mm)
+
+Pedido: confirmar se a fábrica atende a trilha e a folga acima. Se não atender,
+informar o mínimo antes de produzir, para ajustarmos o desenho.
